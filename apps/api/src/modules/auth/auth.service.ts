@@ -42,7 +42,7 @@ export class AuthService {
         status: "pending_email",
         termsAcceptedAt: now,
         sensitiveDataConsentAt: dto.sensitiveDataConsent ? now : null,
-        profile: { create: { displayName: dto.displayName.trim(), timezone: dto.timezone } },
+        profile: { create: { displayName: dto.displayName.trim(), gender: dto.gender, timezone: dto.timezone } },
         preferences: { create: {} },
         notificationPreference: { create: { timezone: dto.timezone, waterRemindersEnabled: false, nutritionRemindersEnabled: false, workoutRemindersEnabled: false, streakRemindersEnabled: false, weeklySummaryEnabled: false } },
         hydrationGoals: { create: { dailyGoalMl: 2000, startsOn } },

@@ -1,8 +1,9 @@
 import { ActivityLevel, FitnessGoal } from "@prisma/client";
-import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString, IsTimeZone, Max, MaxLength, Min, MinLength } from "class-validator";
+import { IsBoolean, IsEnum, IsIn, IsNumber, IsOptional, IsString, IsTimeZone, Max, MaxLength, Min, MinLength } from "class-validator";
 
 export class UpdateMeDto {
   @IsOptional() @IsString() @MinLength(2) @MaxLength(80) displayName?: string;
+  @IsOptional() @IsIn(["female", "male", "non_binary", null]) gender?: string | null;
   @IsOptional() @IsTimeZone() timezone?: string;
   @IsOptional() @IsEnum(FitnessGoal) fitnessGoal?: FitnessGoal;
   @IsOptional() @IsEnum(ActivityLevel) activityLevel?: ActivityLevel;

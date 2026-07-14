@@ -171,7 +171,7 @@ Campos:
 - `user_id uuid unique fk users`
 - `display_name varchar(120)`
 - `birth_date date null`
-- `gender varchar(40) null`
+- `gender varchar(40) null`: opcional; usado apenas para personalização e nunca obrigatório para cadastro.
 - `height_cm numeric(5,2) null`
 - `fitness_goal fitness_goal null`
 - `activity_level activity_level null`

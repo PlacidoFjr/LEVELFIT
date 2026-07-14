@@ -1,5 +1,5 @@
 import { Transform } from "class-transformer";
-import { IsBoolean, IsEmail, IsOptional, IsString, IsTimeZone, Length, MaxLength, MinLength } from "class-validator";
+import { IsBoolean, IsEmail, IsIn, IsOptional, IsString, IsTimeZone, Length, MaxLength, MinLength } from "class-validator";
 
 export class RegisterDto {
   @Transform(({ value }) => typeof value === "string" ? value.trim().toLowerCase() : value)
@@ -15,6 +15,10 @@ export class RegisterDto {
   @IsString()
   @Length(2, 80)
   displayName: string;
+
+  @IsOptional()
+  @IsIn(["female", "male", "non_binary"])
+  gender?: string;
 
   @IsBoolean()
   termsAccepted: boolean;

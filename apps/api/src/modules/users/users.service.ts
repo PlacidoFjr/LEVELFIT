@@ -23,6 +23,7 @@ export class UsersService {
   async update(userId: string, dto: UpdateMeDto) {
     const profileData = {
       ...(dto.displayName !== undefined ? { displayName: dto.displayName.trim() } : {}),
+      ...(dto.gender !== undefined ? { gender: dto.gender } : {}),
       ...(dto.timezone !== undefined ? { timezone: dto.timezone } : {}),
       ...(dto.fitnessGoal !== undefined ? { fitnessGoal: dto.fitnessGoal } : {}),
       ...(dto.activityLevel !== undefined ? { activityLevel: dto.activityLevel } : {}),

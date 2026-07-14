@@ -273,7 +273,7 @@ Nos contratos abaixo, `auth` significa access token valido e sessão ativa. Toda
 
 #### `POST /v1/auth/register`
 
-- Payload: `email`, `password`, `displayName`, `termsAccepted: true`, `sensitiveDataConsent: boolean`, `timezone` IANA.
+- Payload: `email`, `password`, `displayName`, `gender?`, `termsAccepted: true`, `sensitiveDataConsent: boolean`, `timezone` IANA.
 - Resposta: `201` com `user { id, email, emailVerified }` e `verificationRequired: true`.
 - Validação: e-mail valido e até 254 chars; senha de 10 a 128 chars; nome de 2 a 80; timezone valido; aceite obrigatório.
 - Permissao: publica.
@@ -375,7 +375,7 @@ Nos contratos abaixo, `auth` significa access token valido e sessão ativa. Toda
 
 #### `PATCH /v1/me`
 
-- Payload: subconjunto de `displayName`, `timezone`, `fitnessGoal`, `activityLevel`, `heightCm`, `rankingOptIn`, preferências.
+- Payload: subconjunto de `displayName`, `gender`, `timezone`, `fitnessGoal`, `activityLevel`, `heightCm`, `rankingOptIn`, preferências.
 - Resposta: `200` com perfil atualizado e `updatedAt`.
 - Validação: allowlist; altura de 80 a 250 cm; enums; timezone IANA; nenhum campo de sistema.
 - Permissao: proprio usuário.
