@@ -15,8 +15,8 @@ jobs:
     timeout-minutes: 15
     env:
       DATABASE_URL: postgresql://ci_user:${{ secrets.CI_POSTGRES_PASSWORD }}@localhost:5432/levelfit
-      JWT_ACCESS_SECRET: ci-access-secret-with-at-least-thirty-two-characters
-      TOKEN_HASH_SECRET: ci-token-secret-with-at-least-thirty-two-characters
+      JWT_ACCESS_SECRET: ${{ secrets.CI_JWT_ACCESS_SECRET }}
+      TOKEN_HASH_SECRET: ${{ secrets.CI_TOKEN_HASH_SECRET }}
       WEB_ORIGIN: http://127.0.0.1:3000
       NODE_ENV: test
     steps:

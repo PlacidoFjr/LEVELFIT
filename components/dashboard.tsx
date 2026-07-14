@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
   Check,
@@ -9,15 +9,30 @@ import {
   Clock3,
   Dumbbell,
   Flame,
+  GlassWater,
+  HeartPulse,
   Plus,
+  Salad,
   Sparkles,
   Trophy,
   Zap,
+  type LucideIcon,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import { useAuthSession } from "@/lib/auth-client";
-import { getCurrentAvatarStage, getNextAvatarStage, getTodaysNutritionPlan, missions, user, weeklyActivity } from "@/lib/mock-data";
+import {
+  addFoodLog,
+  addWaterLog,
+  completeMission as completeMissionApi,
+  getHydrationToday,
+  getNutritionToday,
+  getTodayWorkout,
+  getWorkoutFromToday,
+  listMissions,
+  type UserMission,
+} from "@/lib/level-fit-api";
+import { getCurrentAvatarStage, getNextAvatarStage, missions as fallbackMissions, user, weeklyActivity } from "@/lib/mock-data";
 import { getUserProgress } from "@/lib/user-progress";
 import { PageHeader } from "./page-header";
 import { PulseAvatar } from "./pulse-avatar";
@@ -28,61 +43,183 @@ const toneStyles: Record<string, { bg: string; color: string }> = {
   water: { bg: "rgba(34,211,238,0.12)", color: "var(--cyan)" },
   nutrition: { bg: "rgba(56,217,121,0.12)", color: "var(--green)" },
   recovery: { bg: "rgba(167,139,250,0.12)", color: "var(--violet)" },
+  habit: { bg: "rgba(183,255,42,0.12)", color: "var(--lime)" },
+  progress: { bg: "rgba(183,255,42,0.12)", color: "var(--lime)" },
 };
+
+const missionIcons: Record<string, LucideIcon> = {
+  workout: Dumbbell,
+  water: GlassWater,
+  nutrition: Salad,
+  habit: HeartPulse,
+  progress: Zap,
+  recovery: Sparkles,
+};
+
+const nutritionChecks = [
+  { id: "hasProtein", label: "Fonte de proteína" },
+  { id: "hasFruitOrVegetable", label: "Fruta, vegetal ou legume" },
+  { id: "avoidedSkippingMeal", label: "Não pulei refeição importante" },
+  { id: "mindfulChoice", label: "Comi com atenção" },
+] as const;
+
+type NutritionCheckId = (typeof nutritionChecks)[number]["id"];
+
+function difficultyLabel(value?: string) {
+  if (value === "easy") return "leve";
+  if (value === "medium") return "moderado";
+  if (value === "hard") return "intenso";
+  return "ajustável";
+}
+
+function DashboardToast({ message }: { message: string | null }) {
+  return (
+    <AnimatePresence>
+      {message && (
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="fixed right-4 top-20 z-50 flex max-w-[calc(100vw-2rem)] items-center gap-3 rounded-[8px] border border-[rgba(183,255,42,0.35)] bg-[#152015] px-4 py-3 text-sm font-bold text-white shadow-2xl lg:right-8 lg:top-8" role="status">
+          <span className="grid size-7 place-items-center rounded-full bg-[var(--lime)] text-[var(--lime-ink)]"><Check size={16} strokeWidth={3} /></span>
+          {message}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
 
 export function Dashboard() {
   const session = useAuthSession();
-  const nutritionPlan = useMemo(() => getTodaysNutritionPlan(), []);
   const progress = getUserProgress(session.user);
   const avatarStage = getCurrentAvatarStage(progress.level);
   const nextAvatarStage = getNextAvatarStage(progress.level);
   const displayName = session.user?.displayName || user.name;
-  const [completed, setCompleted] = useState<string[]>(["recovery"]);
-  const [water, setWater] = useState(1250);
-  const [foodDone, setFoodDone] = useState(() => nutritionPlan.items.filter((item) => item.done).map((item) => item.id));
+
+  const [liveMissions, setLiveMissions] = useState<UserMission[]>([]);
+  const [completed, setCompleted] = useState<string[]>([]);
+  const [water, setWater] = useState(0);
+  const [waterGoal, setWaterGoal] = useState(2000);
+  const [foodDone, setFoodDone] = useState<NutritionCheckId[]>([]);
+  const [workoutSummary, setWorkoutSummary] = useState({ title: "Treino do dia", minutes: 20, difficulty: "ajustável", exerciseCount: 1 });
   const [toast, setToast] = useState<string | null>(null);
-  const missionProgress = Math.round((completed.length / missions.length) * 100);
+
+  const dashboardMissions = liveMissions.length
+    ? liveMissions.map((mission) => ({
+      id: mission.id,
+      title: mission.dailyMission.title,
+      detail: mission.dailyMission.description,
+      xp: mission.dailyMission.xpReward,
+      icon: missionIcons[mission.dailyMission.type] ?? Zap,
+      tone: mission.dailyMission.type,
+    }))
+    : fallbackMissions;
+
+  const earnedToday = dashboardMissions.filter((mission) => completed.includes(mission.id)).reduce((sum, mission) => sum + mission.xp, 0);
+  const missionProgress = Math.round((completed.length / Math.max(1, dashboardMissions.length)) * 100);
   const levelProgress = Math.round((progress.currentXp / progress.nextLevelXp) * 100);
-  const waterProgress = Math.min(100, Math.round((water / 2000) * 100));
-  const nutritionProgress = Math.round((foodDone.length / nutritionPlan.items.length) * 100);
+  const waterProgress = Math.min(100, Math.round((water / waterGoal) * 100));
+  const nutritionProgress = Math.round((foodDone.length / nutritionChecks.length) * 100);
 
-  const earnedToday = useMemo(
-    () => missions.filter((mission) => completed.includes(mission.id)).reduce((sum, mission) => sum + mission.xp, 0),
-    [completed],
-  );
+  useEffect(() => {
+    const timer = window.setTimeout(async () => {
+      try {
+        const [missionsData, hydrationData, nutritionData, todayWorkout] = await Promise.all([
+          listMissions(),
+          getHydrationToday(),
+          getNutritionToday(),
+          getTodayWorkout(),
+        ]);
 
-  function completeMission(id: string, title: string) {
-    if (completed.includes(id)) return;
-    setCompleted((items) => [...items, id]);
-    setToast(`${title} concluída. Bom trabalho.`);
-    window.setTimeout(() => setToast(null), 2600);
+        setLiveMissions(missionsData);
+        setCompleted(missionsData.filter((mission) => mission.status === "completed").map((mission) => mission.id));
+        setWater(hydrationData.consumedMl);
+        setWaterGoal(hydrationData.goalMl);
+
+        const doneChecks = new Set<NutritionCheckId>();
+        nutritionData.data.forEach((item) => {
+          if (item.hasProtein) doneChecks.add("hasProtein");
+          if (item.hasFruitOrVegetable) doneChecks.add("hasFruitOrVegetable");
+          if (item.avoidedSkippingMeal) doneChecks.add("avoidedSkippingMeal");
+          if (item.mindfulChoice) doneChecks.add("mindfulChoice");
+        });
+        setFoodDone([...doneChecks]);
+
+        const workout = getWorkoutFromToday(todayWorkout);
+        if (workout) {
+          setWorkoutSummary({
+            title: workout.title,
+            minutes: workout.estimatedMinutes,
+            difficulty: difficultyLabel(workout.difficulty),
+            exerciseCount: workout.exercises.length,
+          });
+        }
+      } catch {
+        setLiveMissions([]);
+      }
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  function showToast(message: string, duration = 2400) {
+    setToast(message);
+    window.setTimeout(() => setToast(null), duration);
   }
 
-  function addWater(amount: number) {
-    setWater((current) => Math.min(4000, current + amount));
-    setToast(`${amount} ml registrados.`);
-    window.setTimeout(() => setToast(null), 2200);
+  async function completeMission(id: string, title: string) {
+    if (completed.includes(id)) return;
+    const previous = completed;
+    setCompleted((items) => [...items, id]);
+
+    try {
+      if (liveMissions.some((mission) => mission.id === id)) {
+        const result = await completeMissionApi(id);
+        setLiveMissions((items) => items.map((mission) => mission.id === id ? { ...mission, ...result.mission, dailyMission: mission.dailyMission } : mission));
+        showToast(result.xpAwarded ? `${title} concluída. +${result.xpAwarded} XP salvos.` : `${title} concluída.`);
+      } else {
+        showToast(`${title} concluída. Bom trabalho.`);
+      }
+    } catch {
+      setCompleted(previous);
+      showToast("Não foi possível salvar a missão agora.");
+    }
+  }
+
+  async function addWater(amount: number) {
+    const previous = water;
+    setWater((current) => Math.min(6000, current + amount));
+    try {
+      const result = await addWaterLog(amount);
+      setWater(result.consumedMl);
+      setWaterGoal(result.goalMl);
+      showToast(result.xpAwarded ? `${amount} ml registrados. +${result.xpAwarded} XP.` : `${amount} ml registrados.`);
+    } catch {
+      setWater(previous);
+      showToast("Não foi possível salvar a água agora.");
+    }
+  }
+
+  async function saveNutritionCheck(id: NutritionCheckId) {
+    if (foodDone.includes(id)) return;
+    const previous = foodDone;
+    setFoodDone((current) => [...current, id]);
+    try {
+      const result = await addFoodLog({ description: "Checklist alimentar", [id]: true });
+      showToast(result.xpAwarded ? `Checklist salvo. +${result.xpAwarded} XP.` : "Checklist salvo.");
+    } catch {
+      setFoodDone(previous);
+      showToast("Não foi possível salvar o checklist agora.");
+    }
   }
 
   return (
     <div className="mx-auto w-full max-w-[1480px] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
       <PageHeader title={`Bom dia, ${displayName}`} description="Seu plano está equilibrado. Escolha uma ação pequena e deixe o resto para depois." />
-
-      <AnimatePresence>
-        {toast && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="fixed right-4 top-20 z-50 flex max-w-[calc(100vw-2rem)] items-center gap-3 rounded-[8px] border border-[rgba(183,255,42,0.35)] bg-[#152015] px-4 py-3 text-sm font-bold text-white shadow-2xl lg:right-8 lg:top-8" role="status">
-            <span className="grid size-7 place-items-center rounded-full bg-[var(--lime)] text-[var(--lime-ink)]"><Check size={16} strokeWidth={3} /></span>
-            {toast}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <DashboardToast message={toast} />
 
       <section className="mb-4 grid gap-4 xl:grid-cols-[1.7fr_1fr]">
         <div className="app-card overflow-hidden p-5 sm:p-6">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
               <div className="mb-3 flex flex-wrap items-center gap-2">
-                <span className="inline-flex min-h-7 items-center gap-1.5 rounded-[6px] bg-[rgba(183,255,42,0.12)] px-2.5 text-xs font-black text-[var(--lime)]"><Zap size={14} fill="currentColor" /> NIVEL {progress.level}</span>
+                <span className="inline-flex min-h-7 items-center gap-1.5 rounded-[6px] bg-[rgba(183,255,42,0.12)] px-2.5 text-xs font-black text-[var(--lime)]"><Zap size={14} fill="currentColor" /> NÍVEL {progress.level}</span>
                 <span className="inline-flex min-h-7 items-center gap-1.5 rounded-[6px] bg-[rgba(250,204,21,0.1)] px-2.5 text-xs font-black text-[var(--gold)]"><Flame size={14} fill="currentColor" /> {progress.streak} DIAS</span>
               </div>
               <h2 className="text-xl font-black text-white sm:text-2xl">Ritmo forte, sem exagero.</h2>
@@ -94,7 +231,7 @@ export function Dashboard() {
             </div>
             <div className="flex items-center gap-4 sm:flex-col sm:items-end">
               <ProgressRing value={missionProgress} label="Missões do dia" />
-              <p className="text-xs font-bold text-[var(--text-muted)]">{completed.length} de {missions.length} missões</p>
+              <p className="text-xs font-bold text-[var(--text-muted)]">{completed.length} de {dashboardMissions.length} missões</p>
             </div>
           </div>
         </div>
@@ -123,10 +260,10 @@ export function Dashboard() {
             <Link href="/missions" className="ghost-button">Ver todas <ChevronRight size={17} /></Link>
           </div>
           <div className="divide-y divide-[var(--border)]">
-            {missions.map((mission) => {
+            {dashboardMissions.map((mission) => {
               const done = completed.includes(mission.id);
               const Icon = mission.icon;
-              const style = toneStyles[mission.tone];
+              const style = toneStyles[mission.tone] ?? toneStyles.progress;
               return (
                 <div key={mission.id} className="flex min-h-[76px] items-center gap-3 py-3 sm:gap-4">
                   <span className="grid size-10 shrink-0 place-items-center rounded-[7px]" style={{ background: style.bg, color: style.color }}><Icon size={20} /></span>
@@ -144,7 +281,7 @@ export function Dashboard() {
         <div className="app-card flex flex-col p-5">
           <div className="mb-5 flex items-center justify-between"><div><p className="eyebrow text-[var(--cyan)]">Hidratação</p><h2 className="mt-2 text-lg font-black text-white">{water.toLocaleString("pt-BR")} ml</h2></div><ProgressRing value={waterProgress} size={78} stroke={7} color="var(--cyan)" label="Meta de água" /></div>
           <div className="progress-track"><motion.div className="progress-fill bg-[var(--cyan)]" animate={{ width: `${waterProgress}%` }} /></div>
-          <p className="mt-3 text-sm text-[var(--text-muted)]">Faltam {Math.max(0, 2000 - water).toLocaleString("pt-BR")} ml para sua meta flexivel.</p>
+          <p className="mt-3 text-sm text-[var(--text-muted)]">Faltam {Math.max(0, waterGoal - water).toLocaleString("pt-BR")} ml para sua meta flexível.</p>
           <div className="mt-auto grid grid-cols-2 gap-2 pt-5">
             <button onClick={() => addWater(250)} className="secondary-button px-2"><Plus size={17} /> 250 ml</button>
             <button onClick={() => addWater(500)} className="secondary-button px-2"><Plus size={17} /> 500 ml</button>
@@ -153,7 +290,7 @@ export function Dashboard() {
 
         <div className="app-card overflow-hidden p-5 xl:col-span-2">
           <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div><p className="eyebrow text-[var(--coral)]">Treino do dia</p><h2 className="mt-2 text-xl font-black text-white">Corpo inteiro essencial</h2><p className="mt-2 flex flex-wrap items-center gap-3 text-sm text-[var(--text-muted)]"><span className="inline-flex items-center gap-1.5"><Clock3 size={16} /> 28 min</span><span className="inline-flex items-center gap-1.5"><Dumbbell size={16} /> Moderado</span><span>5 exercícios</span></p></div>
+            <div><p className="eyebrow text-[var(--coral)]">Treino do dia</p><h2 className="mt-2 text-xl font-black text-white">{workoutSummary.title}</h2><p className="mt-2 flex flex-wrap items-center gap-3 text-sm text-[var(--text-muted)]"><span className="inline-flex items-center gap-1.5"><Clock3 size={16} /> {workoutSummary.minutes} min</span><span className="inline-flex items-center gap-1.5"><Dumbbell size={16} /> {workoutSummary.difficulty}</span><span>{workoutSummary.exerciseCount} exercícios</span></p></div>
             <span className="inline-flex h-8 items-center rounded-[6px] bg-[rgba(255,107,61,0.12)] px-3 text-xs font-black text-[var(--coral)]">+60 XP</span>
           </div>
           <div className="mb-5 grid grid-cols-5 gap-1.5" aria-label="Cinco blocos do treino">
@@ -166,11 +303,11 @@ export function Dashboard() {
         </div>
 
         <div className="app-card p-5">
-          <div className="mb-4 flex items-center justify-between gap-3"><div className="min-w-0"><p className="eyebrow text-[var(--green)]">Alimentação</p><h2 className="mt-2 truncate text-lg font-black text-white">{nutritionPlan.title}</h2></div><span className="shrink-0 text-sm font-black text-[var(--green)]">{nutritionProgress}%</span></div>
+          <div className="mb-4 flex items-center justify-between gap-3"><div className="min-w-0"><p className="eyebrow text-[var(--green)]">Alimentação</p><h2 className="mt-2 truncate text-lg font-black text-white">Checklist de energia</h2></div><span className="shrink-0 text-sm font-black text-[var(--green)]">{nutritionProgress}%</span></div>
           <div className="space-y-2">
-            {nutritionPlan.items.map((item) => {
+            {nutritionChecks.map((item) => {
               const done = foodDone.includes(item.id);
-              return <button key={item.id} onClick={() => setFoodDone((current) => done ? current.filter((id) => id !== item.id) : [...current, item.id])} className="flex min-h-10 w-full items-center gap-3 text-left text-sm"><span className={`grid size-6 shrink-0 place-items-center rounded-[5px] border ${done ? "border-[var(--green)] bg-[var(--green)] text-[#052313]" : "border-[var(--border-strong)] text-transparent"}`}><Check size={15} strokeWidth={3} /></span><span className={done ? "text-[var(--text-muted)]" : "text-white"}>{item.label}</span></button>;
+              return <button key={item.id} onClick={() => saveNutritionCheck(item.id)} disabled={done} className="flex min-h-10 w-full items-center gap-3 text-left text-sm disabled:cursor-default"><span className={`grid size-6 shrink-0 place-items-center rounded-[5px] border ${done ? "border-[var(--green)] bg-[var(--green)] text-[#052313]" : "border-[var(--border-strong)] text-transparent"}`}><Check size={15} strokeWidth={3} /></span><span className={done ? "text-[var(--text-muted)]" : "text-white"}>{item.label}</span></button>;
             })}
           </div>
           <Link href="/nutrition" className="ghost-button mt-4 w-full">Abrir alimentação <ChevronRight size={17} /></Link>

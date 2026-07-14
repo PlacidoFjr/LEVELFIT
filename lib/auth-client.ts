@@ -7,6 +7,12 @@ const ACCESS_TOKEN_KEY = "levelfit.accessToken";
 const CSRF_TOKEN_KEY = "levelfit.csrfToken";
 const USER_KEY = "levelfit.user";
 
+let memoryAccessToken: string | null = null;
+let memoryCsrfToken: string | null = null;
+let memoryUser: AuthUser | null = null;
+let refreshPromise: Promise<boolean> | null = null;
+let sessionPromise: Promise<AuthUser | null> | null = null;
+
 export type AuthUser = {
   id: string;
   email: string;
@@ -56,8 +62,8 @@ export class ApiClientError extends Error {
 }
 
 function readStoredUser(): AuthUser | null {
-  if (typeof window === "undefined") return null;
-  const raw = window.localStorage.getItem(USER_KEY);
+  if (memoryUser) return memoryUser;
+  const raw = readStorage(USER_KEY);
   if (!raw) return null;
   try {
     return JSON.parse(raw) as AuthUser;
@@ -66,27 +72,75 @@ function readStoredUser(): AuthUser | null {
   }
 }
 
-export function getAccessToken() {
+function readStorage(key: string) {
   if (typeof window === "undefined") return null;
-  return window.localStorage.getItem(ACCESS_TOKEN_KEY);
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function writeStorage(key: string, value: string) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(key, value);
+  } catch {
+    // Browsers can block storage in strict privacy modes. The in-memory copy keeps the current tab usable.
+  }
+}
+
+function removeStorage(key: string) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.removeItem(key);
+  } catch {
+    // Ignore storage cleanup failures; memory is cleared separately.
+  }
+}
+
+function readCookie(name: string) {
+  if (typeof document === "undefined") return null;
+  return document.cookie
+    .split("; ")
+    .find((cookie) => cookie.startsWith(`${name}=`))
+    ?.split("=")[1] ?? null;
+}
+
+function saveUser(user: AuthUser) {
+  memoryUser = user;
+  writeStorage(USER_KEY, JSON.stringify(user));
+}
+
+export function getAccessToken() {
+  return memoryAccessToken ?? readStorage(ACCESS_TOKEN_KEY);
 }
 
 function saveSession(response: LoginResponse) {
-  window.localStorage.setItem(ACCESS_TOKEN_KEY, response.accessToken);
-  window.localStorage.setItem(CSRF_TOKEN_KEY, response.csrfToken);
-  window.localStorage.setItem(USER_KEY, JSON.stringify(response.user));
+  memoryAccessToken = response.accessToken;
+  memoryCsrfToken = response.csrfToken;
+  writeStorage(ACCESS_TOKEN_KEY, response.accessToken);
+  writeStorage(CSRF_TOKEN_KEY, response.csrfToken);
+  saveUser(response.user);
   window.dispatchEvent(new Event("levelfit:auth"));
 }
 
 export function clearSession() {
   if (typeof window === "undefined") return;
-  window.localStorage.removeItem(ACCESS_TOKEN_KEY);
-  window.localStorage.removeItem(CSRF_TOKEN_KEY);
-  window.localStorage.removeItem(USER_KEY);
+  memoryAccessToken = null;
+  memoryCsrfToken = null;
+  memoryUser = null;
+  removeStorage(ACCESS_TOKEN_KEY);
+  removeStorage(CSRF_TOKEN_KEY);
+  removeStorage(USER_KEY);
   window.dispatchEvent(new Event("levelfit:auth"));
 }
 
 async function readError(response: Response) {
+  if (response.status === 429) {
+    return new ApiClientError("Muitas tentativas em pouco tempo. Aguarde um instante e tente novamente.", "RATE_LIMITED", response.status);
+  }
+
   try {
     const payload = await response.json() as { error?: { message?: string; code?: string; fields?: string[] } };
     return new ApiClientError(
@@ -100,7 +154,7 @@ async function readError(response: Response) {
   }
 }
 
-async function request<T>(path: string, init: RequestInit = {}, retry = true): Promise<T> {
+export async function apiRequest<T>(path: string, init: RequestInit = {}, retry = true): Promise<T> {
   const headers = new Headers(init.headers);
   const token = getAccessToken();
   if (token) headers.set("Authorization", `Bearer ${token}`);
@@ -114,7 +168,7 @@ async function request<T>(path: string, init: RequestInit = {}, retry = true): P
 
   if (response.status === 401 && retry && path !== "/auth/login" && path !== "/auth/refresh") {
     const refreshed = await refreshSession();
-    if (refreshed) return request<T>(path, init, false);
+    if (refreshed) return apiRequest<T>(path, init, false);
   }
 
   if (!response.ok) throw await readError(response);
@@ -123,7 +177,7 @@ async function request<T>(path: string, init: RequestInit = {}, retry = true): P
 }
 
 export async function loginUser(email: string, password: string) {
-  const response = await request<LoginResponse>("/auth/login", {
+  const response = await apiRequest<LoginResponse>("/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password, deviceName: "LevelFit Web" }),
   }, false);
@@ -133,7 +187,7 @@ export async function loginUser(email: string, password: string) {
 
 export async function registerUser(input: { displayName: string; email: string; password: string; gender?: string }) {
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Sao_Paulo";
-  const registration = await request<RegisterResponse>("/auth/register", {
+  const registration = await apiRequest<RegisterResponse>("/auth/register", {
     method: "POST",
     body: JSON.stringify({
       email: input.email,
@@ -147,7 +201,7 @@ export async function registerUser(input: { displayName: string; email: string; 
   }, false);
 
   if (registration.devVerificationToken) {
-    await request<{ emailVerified: boolean }>("/auth/verify-email", {
+    await apiRequest<{ emailVerified: boolean }>("/auth/verify-email", {
       method: "POST",
       body: JSON.stringify({ token: registration.devVerificationToken }),
     }, false);
@@ -158,17 +212,26 @@ export async function registerUser(input: { displayName: string; email: string; 
 }
 
 export async function refreshSession() {
+  refreshPromise ??= refreshSessionOnce().finally(() => {
+    refreshPromise = null;
+  });
+  return refreshPromise;
+}
+
+async function refreshSessionOnce() {
   if (typeof window === "undefined") return false;
-  const csrfToken = window.localStorage.getItem(CSRF_TOKEN_KEY);
+  const csrfToken = memoryCsrfToken ?? readStorage(CSRF_TOKEN_KEY) ?? readCookie("lf_csrf");
   if (!csrfToken) return false;
 
   try {
-    const response = await request<Omit<LoginResponse, "user">>("/auth/refresh", {
+    const response = await apiRequest<Omit<LoginResponse, "user">>("/auth/refresh", {
       method: "POST",
       headers: { "X-CSRF-Token": csrfToken },
     }, false);
-    window.localStorage.setItem(ACCESS_TOKEN_KEY, response.accessToken);
-    window.localStorage.setItem(CSRF_TOKEN_KEY, response.csrfToken);
+    memoryAccessToken = response.accessToken;
+    memoryCsrfToken = response.csrfToken;
+    writeStorage(ACCESS_TOKEN_KEY, response.accessToken);
+    writeStorage(CSRF_TOKEN_KEY, response.csrfToken);
     return true;
   } catch {
     clearSession();
@@ -177,12 +240,44 @@ export async function refreshSession() {
 }
 
 export async function fetchMe() {
-  return request<AuthUser & { profile?: { displayName?: string | null }; level?: AuthUser["level"]; streaks?: AuthUser["streaks"] }>("/me");
+  return apiRequest<AuthUser & { profile?: { displayName?: string | null }; level?: AuthUser["level"]; streaks?: AuthUser["streaks"] }>("/me");
+}
+
+function toAuthUser(me: Awaited<ReturnType<typeof fetchMe>>): AuthUser {
+  return {
+    id: me.id,
+    email: me.email,
+    displayName: me.profile?.displayName ?? me.displayName,
+    level: me.level ?? null,
+    streaks: me.streaks ?? [],
+  };
+}
+
+async function loadSessionUser() {
+  sessionPromise ??= loadSessionUserOnce().finally(() => {
+    sessionPromise = null;
+  });
+  return sessionPromise;
+}
+
+async function loadSessionUserOnce() {
+  if (!getAccessToken()) await refreshSession();
+  if (!getAccessToken()) return null;
+
+  try {
+    const me = await fetchMe();
+    const nextUser = toAuthUser(me);
+    saveUser(nextUser);
+    return nextUser;
+  } catch {
+    clearSession();
+    return null;
+  }
 }
 
 export async function logoutUser() {
   try {
-    await request<void>("/auth/logout", {
+    await apiRequest<void>("/auth/logout", {
       method: "POST",
       body: JSON.stringify({ allDevices: false }),
     }, false);
@@ -199,31 +294,10 @@ export function useAuthSession() {
     let active = true;
 
     async function load() {
-      if (!getAccessToken()) await refreshSession();
-      if (!getAccessToken()) {
-        if (active) {
-          setUser(null);
-          setLoading(false);
-        }
-        return;
-      }
-
-      try {
-        const me = await fetchMe();
-        const nextUser = {
-          id: me.id,
-          email: me.email,
-          displayName: me.profile?.displayName ?? me.displayName,
-          level: me.level ?? null,
-          streaks: me.streaks ?? [],
-        };
-        window.localStorage.setItem(USER_KEY, JSON.stringify(nextUser));
-        if (active) setUser(nextUser);
-      } catch {
-        clearSession();
-        if (active) setUser(null);
-      } finally {
-        if (active) setLoading(false);
+      const nextUser = await loadSessionUser();
+      if (active) {
+        setUser(nextUser);
+        setLoading(false);
       }
     }
 

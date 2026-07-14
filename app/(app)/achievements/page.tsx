@@ -1,2 +1,2 @@
-import { AchievementsPage } from "@/components/feature-pages";
-export default function Page() { return <AchievementsPage />; }
+import { AchievementsLivePage } from "@/components/live-pages";
+export default function Page() { return <AchievementsLivePage />; }

@@ -1,0 +1,822 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import type { LucideIcon } from "lucide-react";
+import {
+  Activity,
+  Apple,
+  ArrowLeft,
+  ArrowRight,
+  Bell,
+  BicepsFlexed,
+  Camera,
+  CalendarClock,
+  Check,
+  CheckCircle2,
+  ChevronRight,
+  Clock3,
+  Dumbbell,
+  Flame,
+  GlassWater,
+  HeartPulse,
+  Info,
+  KeyRound,
+  LockKeyhole,
+  Mail,
+  Medal,
+  MoonStar,
+  Pencil,
+  Plus,
+  Salad,
+  ShieldCheck,
+  Smartphone,
+  Sparkles,
+  Target,
+  Timer,
+  TrendingUp,
+  Trophy,
+  UserRound,
+  UsersRound,
+  Utensils,
+  Zap,
+} from "lucide-react";
+import { ApiClientError, clearSession, useAuthSession } from "@/lib/auth-client";
+import {
+  addFoodLog,
+  addMeasurement,
+  addWaterLog,
+  completeMission,
+  finishWorkoutSession,
+  formatExerciseTarget,
+  getHydrationToday,
+  getNotificationPreferences,
+  getNutritionToday,
+  getTodayWorkout,
+  getWorkoutFromToday,
+  isWorkoutSession,
+  listMissions,
+  listAchievements,
+  listMeasurements,
+  listNotifications,
+  listRanking,
+  listSecurityEvents,
+  listWorkouts,
+  logoutAllDevices,
+  markAllNotificationsRead,
+  markNotificationRead,
+  startWorkoutSession,
+  timeValue,
+  updateNotificationPreferences,
+  updateMe,
+  type Achievement,
+  type BodyMeasurement,
+  type HydrationToday,
+  type NotificationItem,
+  type NotificationPreferences,
+  type NutritionToday,
+  type RankingEntry,
+  type TodayWorkout,
+  type UserMission,
+  type Workout,
+  type WorkoutSession,
+} from "@/lib/level-fit-api";
+import { avatarStages, getCurrentAvatarStage, getNextAvatarStage, user as fallbackUser } from "@/lib/mock-data";
+import { getUserProgress } from "@/lib/user-progress";
+import { PageHeader } from "./page-header";
+import { PulseAvatar } from "./pulse-avatar";
+import { ProgressRing } from "./progress-ring";
+
+function Screen({ title, description, action, children }: { title: string; description?: string; action?: React.ReactNode; children: React.ReactNode }) {
+  return <div className="mx-auto w-full max-w-[1480px] px-4 py-5 sm:px-6 lg:px-8 lg:py-7"><PageHeader title={title} description={description} action={action} />{children}</div>;
+}
+
+function Pill({ children, tone = "lime" }: { children: React.ReactNode; tone?: "lime" | "cyan" | "coral" | "green" | "gold" | "violet" }) {
+  const colors = { lime: "var(--lime)", cyan: "var(--cyan)", coral: "var(--coral)", green: "var(--green)", gold: "var(--gold)", violet: "var(--violet)" };
+  return <span className="inline-flex min-h-7 items-center gap-1.5 rounded-[6px] px-2.5 text-xs font-black" style={{ color: colors[tone], background: `color-mix(in srgb, ${colors[tone]} 12%, transparent)` }}>{children}</span>;
+}
+
+function Notice({ message, tone = "lime" }: { message: string | null; tone?: "lime" | "danger" }) {
+  if (!message) return null;
+  const color = tone === "danger" ? "var(--danger)" : "var(--lime)";
+  return <div className="mb-4 border-l-2 bg-[rgba(183,255,42,0.06)] p-3 text-sm font-bold text-white" style={{ borderColor: color }}>{message}</div>;
+}
+
+function EmptyState({ icon: Icon, title, detail }: { icon: LucideIcon; title: string; detail: string }) {
+  return <div className="app-card grid min-h-[220px] place-items-center p-6 text-center"><div><Icon className="mx-auto text-[var(--text-dim)]" size={32} /><h2 className="mt-4 font-black text-white">{title}</h2><p className="mt-2 max-w-md text-sm leading-6 text-[var(--text-muted)]">{detail}</p></div></div>;
+}
+
+function LoadingCard() {
+  return <div className="app-card grid min-h-[240px] place-items-center p-6 text-sm font-bold text-[var(--text-muted)]">Carregando dados seguros...</div>;
+}
+
+function errorMessage(error: unknown) {
+  if (error instanceof ApiClientError) return error.message;
+  return "Não foi possível concluir agora. Tente novamente.";
+}
+
+const missionIcon: Record<string, LucideIcon> = {
+  workout: Dumbbell,
+  water: GlassWater,
+  nutrition: Salad,
+  habit: HeartPulse,
+  progress: TrendingUp,
+  recovery: MoonStar,
+};
+
+const missionTone: Record<string, "lime" | "cyan" | "coral" | "green" | "violet"> = {
+  workout: "coral",
+  water: "cyan",
+  nutrition: "green",
+  habit: "lime",
+  progress: "lime",
+  recovery: "violet",
+};
+
+export function MissionsLivePage() {
+  const [items, setItems] = useState<UserMission[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function load() {
+    setLoading(true);
+    setError(null);
+    try {
+      setItems(await listMissions());
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { const id = window.setTimeout(() => void load(), 0); return () => window.clearTimeout(id); }, []);
+
+  async function markDone(id: string) {
+    setError(null);
+    const previous = items;
+    setItems((current) => current.map((item) => item.id === id ? { ...item, status: "completed", completedAt: new Date().toISOString() } : item));
+    try {
+      const result = await completeMission(id);
+      setItems((current) => current.map((item) => item.id === id ? { ...item, ...result.mission, dailyMission: item.dailyMission } : item));
+      setNotice(result.xpAwarded ? `Missão concluída. +${result.xpAwarded} XP salvos.` : "Missão já estava concluída.");
+    } catch (err) {
+      setItems(previous);
+      setError(errorMessage(err));
+    }
+  }
+
+  async function chooseLightMode() {
+    const light = items.find((item) => ["recovery", "habit"].includes(item.dailyMission.type) && item.status === "pending");
+    if (!light) {
+      setNotice("Modo leve já está em dia. Voltar com calma também conta.");
+      return;
+    }
+    await markDone(light.id);
+  }
+
+  const completed = items.filter((item) => item.status === "completed");
+  const xpAvailable = items.filter((item) => item.status !== "completed").reduce((sum, item) => sum + item.dailyMission.xpReward, 0);
+
+  return <Screen title="Missões do dia" description="O app salva suas ações reais, sem XP negativo e sem cobrança tóxica.">
+    <Notice message={notice} />
+    <Notice message={error} tone="danger" />
+    {loading ? <LoadingCard /> : (
+      <>
+        <div className="mb-4 grid gap-4 sm:grid-cols-3">
+          <div className="app-card p-5"><p className="eyebrow">Concluídas</p><p className="mt-2 text-xl font-black text-white">{completed.length} de {items.length}</p><p className="mt-1 text-xs text-[var(--text-muted)]">Seu dia não precisa ser perfeito.</p></div>
+          <div className="app-card p-5"><p className="eyebrow">XP restante</p><p className="mt-2 text-xl font-black text-white">{xpAvailable} XP</p><p className="mt-1 text-xs text-[var(--text-muted)]">Sem punição por pausa.</p></div>
+          <div className="app-card p-5"><p className="eyebrow">Ritmo leve</p><p className="mt-2 text-xl font-black text-white">Disponível</p><p className="mt-1 text-xs text-[var(--text-muted)]">Uma ação pequena ainda vale.</p></div>
+        </div>
+        <section className="app-card p-4 sm:p-5">
+          <div className="divide-y divide-[var(--border)]">
+            {items.map((mission, index) => {
+              const Icon = missionIcon[mission.dailyMission.type] ?? CheckCircle2;
+              const done = mission.status === "completed";
+              return <motion.div key={mission.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.04 }} className="flex flex-col gap-4 py-5 first:pt-0 last:pb-0 sm:flex-row sm:items-center">
+                <span className="grid size-12 shrink-0 place-items-center rounded-[8px] bg-[var(--surface-soft)] text-[var(--lime)]"><Icon size={23} /></span>
+                <div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><h2 className={`font-black ${done ? "text-[var(--text-dim)] line-through" : "text-white"}`}>{mission.dailyMission.title}</h2><Pill tone={missionTone[mission.dailyMission.type] ?? "lime"}>+{mission.dailyMission.xpReward} XP</Pill></div><p className="mt-1.5 text-sm text-[var(--text-muted)]">{mission.dailyMission.description}</p></div>
+                <button onClick={() => markDone(mission.id)} disabled={done} className={done ? "secondary-button border-[rgba(183,255,42,0.3)] text-[var(--lime)] disabled:opacity-80" : "primary-button"}>{done ? <><Check size={18} /> Concluída</> : <>Concluir <ArrowRight size={18} /></>}</button>
+              </motion.div>;
+            })}
+          </div>
+        </section>
+        <section className="mt-4 flex flex-col gap-4 border-l-2 border-[var(--violet)] bg-[rgba(167,139,250,0.06)] p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div><p className="font-black text-white">Hoje ficou pesado?</p><p className="mt-1 text-sm text-[var(--text-muted)]">O modo leve conclui uma missão de recuperação ou hábito, quando disponível.</p></div>
+          <button onClick={chooseLightMode} className="secondary-button shrink-0"><MoonStar size={18} /> Escolher modo leve</button>
+        </section>
+      </>
+    )}
+  </Screen>;
+}
+
+function difficultyLabel(value: Workout["difficulty"]) {
+  return ({ easy: "leve", medium: "moderado", hard: "intenso" } as const)[value];
+}
+
+function categoryLabel(value: Workout["category"]) {
+  return ({ strength: "força", cardio: "cardio", mobility: "mobilidade", full_body: "corpo inteiro", recovery: "recuperação" } as const)[value];
+}
+
+export function WorkoutsLivePage() {
+  const router = useRouter();
+  const [today, setToday] = useState<TodayWorkout>(null);
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function load() {
+    setLoading(true);
+    setError(null);
+    try {
+      const [todayData, list] = await Promise.all([getTodayWorkout(), listWorkouts()]);
+      setToday(todayData);
+      setWorkouts(list.data);
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { const id = window.setTimeout(() => void load(), 0); return () => window.clearTimeout(id); }, []);
+
+  async function start(workoutId: string) {
+    setBusyId(workoutId);
+    setError(null);
+    try {
+      await startWorkoutSession(workoutId);
+      router.push("/workouts/session");
+    } catch (err) {
+      if (err instanceof ApiClientError && err.code === "SESSION_ALREADY_STARTED") {
+        router.push("/workouts/session");
+        return;
+      }
+      setError(errorMessage(err));
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  const workout = getWorkoutFromToday(today) ?? workouts[0] ?? null;
+  const options = workouts.filter((item) => item.id !== workout?.id).slice(0, 3);
+
+  return <Screen title="Treino do dia" description="Um plano curto, ajustável e com espaço para descanso." action={<Link href="/settings/notifications" className="secondary-button"><CalendarClock size={18} /> Agenda</Link>}>
+    <Notice message={error} tone="danger" />
+    {loading ? <LoadingCard /> : !workout ? <EmptyState icon={Dumbbell} title="Nenhum treino disponível" detail="Rode os seeds de produção ou cadastre treinos públicos para começar." /> : (
+      <>
+        <section className="app-card overflow-hidden">
+          <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="p-5 sm:p-7">
+              <div className="flex flex-wrap gap-2"><Pill tone="coral"><Dumbbell size={14} /> {categoryLabel(workout.category).toUpperCase()}</Pill><Pill>{difficultyLabel(workout.difficulty).toUpperCase()}</Pill>{isWorkoutSession(today) && <Pill tone="gold">{today.status === "in_progress" ? "EM ANDAMENTO" : today.status.toUpperCase()}</Pill>}</div>
+              <h2 className="mt-5 text-2xl font-black text-white">{workout.title}</h2>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--text-muted)]">{workout.description ?? "Movimentos adaptáveis. Pare se sentir dor e reduza a intensidade quando necessário."}</p>
+              <div className="mt-5 flex flex-wrap gap-5 text-sm font-bold text-[var(--text-muted)]"><span className="inline-flex items-center gap-2"><Clock3 size={18} /> {workout.estimatedMinutes} minutos</span><span className="inline-flex items-center gap-2"><Activity size={18} /> {workout.exercises.length} exercícios</span><span className="inline-flex items-center gap-2"><Zap size={18} /> 60 XP</span></div>
+              <div className="mt-7 flex flex-col gap-2 sm:flex-row"><button onClick={() => start(workout.id)} disabled={busyId === workout.id} className="primary-button bg-[var(--coral)] text-white disabled:opacity-60">{isWorkoutSession(today) ? "Continuar treino" : "Começar treino"} <ArrowRight size={18} /></button><button onClick={() => start(options[0]?.id ?? workout.id)} className="secondary-button">Ajustar intensidade</button></div>
+            </div>
+            <div className="border-t border-[var(--border)] bg-[var(--surface-elevated)] p-5 lg:border-l lg:border-t-0"><p className="eyebrow mb-3">Sequência do treino</p><div className="divide-y divide-[var(--border)]">{workout.exercises.map((exercise, index) => <div key={exercise.id} className="flex min-h-[64px] items-center gap-3"><span className="grid size-8 shrink-0 place-items-center rounded-[6px] bg-[var(--surface-soft)] text-[var(--coral)]"><BicepsFlexed size={17} /></span><span className="min-w-0 flex-1 truncate text-sm font-bold text-white">{exercise.exercise.name}</span><span className="text-xs font-bold text-[var(--text-muted)]">{formatExerciseTarget(exercise)}</span><span className="text-xs text-[var(--text-dim)]">{index + 1}</span></div>)}</div></div>
+          </div>
+        </section>
+        <h2 className="mb-3 mt-7 text-lg font-black text-white">Outras opções</h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          {options.map((item) => <button key={item.id} onClick={() => start(item.id)} className="app-card flex min-h-[112px] items-center gap-4 p-4 text-left transition-transform hover:-translate-y-0.5"><span className="grid size-11 place-items-center rounded-[7px] bg-[rgba(34,211,238,0.12)] text-[var(--cyan)]"><Activity size={22} /></span><span className="flex-1"><strong className="block text-sm text-white">{item.title}</strong><span className="mt-1 block text-xs text-[var(--text-muted)]">{item.estimatedMinutes} min · {difficultyLabel(item.difficulty)}</span></span><ChevronRight size={18} className="text-[var(--text-dim)]" /></button>)}
+        </div>
+      </>
+    )}
+  </Screen>;
+}
+
+export function WorkoutSessionLivePage() {
+  const [session, setSession] = useState<WorkoutSession | null>(null);
+  const [started, setStarted] = useState(false);
+  const [seconds, setSeconds] = useState(0);
+  const [done, setDone] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    async function load() {
+      setLoading(true);
+      try {
+        const today = await getTodayWorkout();
+        let nextSession: WorkoutSession;
+        if (isWorkoutSession(today)) nextSession = today;
+        else {
+          const workout = getWorkoutFromToday(today);
+          if (!workout) throw new Error("NO_WORKOUT");
+          nextSession = await startWorkoutSession(workout.id);
+        }
+        if (active) {
+          setSession(nextSession);
+          setDone(nextSession.exercises.filter((item) => item.status === "completed").map((item) => item.exerciseId));
+        }
+      } catch (err) {
+        if (active) setError(errorMessage(err));
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+    void load();
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => { if (!started) return; const timer = window.setInterval(() => setSeconds((value) => value + 1), 1000); return () => window.clearInterval(timer); }, [started]);
+
+  async function finish() {
+    if (!session) return;
+    setStarted(false);
+    setError(null);
+    try {
+      const completedExercises = session.exercises.map((item) => ({ ...item, setsCompleted: item.setsCompleted || 1 }));
+      const updated = await finishWorkoutSession(session.id, completedExercises, 5);
+      setSession(updated);
+      setDone(updated.exercises.map((item) => item.exerciseId));
+      setNotice(`Treino concluído e salvo. +${updated.xpAwarded} XP.`);
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+
+  const exercises = session?.exercises ?? [];
+  const current = exercises.find((item) => !done.includes(item.exerciseId));
+  const minutesLabel = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+
+  return <Screen title="Sessão de treino" description="Siga no seu ritmo. Você pode pausar, adaptar ou encerrar a qualquer momento." action={<Link href="/workouts" className="secondary-button"><ArrowLeft size={18} /> Sair</Link>}>
+    <Notice message={notice} />
+    <Notice message={error} tone="danger" />
+    {loading ? <LoadingCard /> : !session ? <EmptyState icon={Dumbbell} title="Treino indisponível" detail="Não foi possível iniciar uma sessão agora." /> : (
+      <div className="grid gap-4 xl:grid-cols-[1fr_360px]">
+        <section className="app-card flex min-h-[460px] flex-col items-center justify-center p-6 text-center">
+          <Pill tone="coral">EXERCÍCIO {Math.min(done.length + 1, exercises.length)} DE {exercises.length}</Pill>
+          <span className="mt-8 grid size-20 place-items-center rounded-[8px] bg-[rgba(255,107,61,0.12)] text-[var(--coral)]"><BicepsFlexed size={40} /></span>
+          <h2 className="mt-6 text-2xl font-black text-white">{current?.exercise.name ?? "Treino concluído"}</h2>
+          <p className="mt-2 text-[var(--text-muted)]">{current ? formatExerciseTarget(current) : "Todos os movimentos foram registrados."}</p>
+          <div className="mt-8 font-mono text-5xl font-black text-white" aria-label={`Tempo ${minutesLabel}`}>{minutesLabel}</div>
+          <div className="mt-8 flex flex-wrap justify-center gap-2">
+            <button onClick={() => setStarted((value) => !value)} className="secondary-button"><Timer size={18} /> {started ? "Pausar" : seconds ? "Continuar" : "Iniciar"}</button>
+            {current ? <button onClick={() => { setDone((items) => [...items, current.exerciseId]); setSeconds(0); setStarted(false); }} className="primary-button bg-[var(--coral)] text-white"><Check size={18} /> Concluir bloco</button> : <button onClick={finish} className="primary-button bg-[var(--coral)] text-white"><Check size={18} /> Salvar treino</button>}
+          </div>
+          <p className="mt-6 max-w-md text-xs leading-5 text-[var(--text-dim)]">Movimento controlado e respiração confortável. Dor aguda não faz parte do treino.</p>
+        </section>
+        <aside className="app-card p-5"><div className="mb-5 flex items-center justify-between"><div><p className="eyebrow">Progresso</p><p className="mt-2 font-black text-white">{done.length} de {exercises.length}</p></div><ProgressRing value={Math.round((done.length / Math.max(1, exercises.length)) * 100)} size={76} stroke={7} color="var(--coral)" label="Progresso do treino" /></div><div className="divide-y divide-[var(--border)]">{exercises.map((exercise) => <div key={exercise.id} className="flex min-h-[60px] items-center gap-3"><span className={`grid size-7 place-items-center rounded-[5px] border ${done.includes(exercise.exerciseId) ? "border-[var(--lime)] bg-[var(--lime)] text-[var(--lime-ink)]" : current?.exerciseId === exercise.exerciseId ? "border-[var(--coral)] text-[var(--coral)]" : "border-[var(--border)] text-[var(--text-dim)]"}`}>{done.includes(exercise.exerciseId) ? <Check size={15} strokeWidth={3} /> : <span className="size-1.5 rounded-full bg-current" />}</span><div className="min-w-0"><p className="truncate text-sm font-bold text-white">{exercise.exercise.name}</p><p className="mt-0.5 text-xs text-[var(--text-muted)]">{formatExerciseTarget(exercise)}</p></div></div>)}</div></aside>
+      </div>
+    )}
+  </Screen>;
+}
+
+const checklist = [
+  { id: "hasProtein", label: "Fonte de proteína", icon: BicepsFlexed },
+  { id: "hasFruitOrVegetable", label: "Fruta, vegetal ou legume", icon: Apple },
+  { id: "avoidedSkippingMeal", label: "Não pulei refeição importante", icon: Utensils },
+  { id: "mindfulChoice", label: "Comi com atenção", icon: HeartPulse },
+] as const;
+
+type FoodLogInput = {
+  description?: string;
+  hasProtein?: boolean;
+  hasFruitOrVegetable?: boolean;
+  avoidedSkippingMeal?: boolean;
+  mindfulChoice?: boolean;
+};
+
+export function NutritionLivePage() {
+  const [data, setData] = useState<NutritionToday | null>(null);
+  const [showAdd, setShowAdd] = useState(false);
+  const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function load() {
+    setLoading(true);
+    setError(null);
+    try {
+      setData(await getNutritionToday());
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { const id = window.setTimeout(() => void load(), 0); return () => window.clearTimeout(id); }, []);
+
+  async function saveFood(extra?: FoodLogInput) {
+    setError(null);
+    try {
+      const result = await addFoodLog({ description: description || extra?.description || "Checklist alimentar", ...extra });
+      setNotice(result.xpAwarded ? `Registro salvo. +${result.xpAwarded} XP.` : "Registro salvo.");
+      setDescription("");
+      setShowAdd(false);
+      await load();
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+
+  const logs = data?.data ?? [];
+  const doneChecks = new Set<string>();
+  logs.forEach((item) => {
+    if (item.hasProtein) doneChecks.add("hasProtein");
+    if (item.hasFruitOrVegetable) doneChecks.add("hasFruitOrVegetable");
+    if (item.avoidedSkippingMeal) doneChecks.add("avoidedSkippingMeal");
+    if (item.mindfulChoice) doneChecks.add("mindfulChoice");
+  });
+
+  return <Screen title="Alimentação" description="Registre refeições sem transformar comida em prêmio ou culpa." action={<button onClick={() => setShowAdd(true)} className="primary-button"><Plus size={18} /> Registrar refeição</button>}>
+    <Notice message={notice} />
+    <Notice message={error} tone="danger" />
+    {showAdd && <div className="app-card mb-4 p-5"><div className="flex items-start justify-between gap-3"><div><p className="eyebrow text-[var(--green)]">Nova refeição</p><h2 className="mt-2 text-lg font-black text-white">O que você comeu?</h2></div><button onClick={() => setShowAdd(false)} className="ghost-button">Fechar</button></div><textarea className="field mt-4 min-h-24" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Descrição breve e opcional" /><button onClick={() => saveFood({ mindfulChoice: true })} className="primary-button mt-3 bg-[var(--green)] text-[#052313]">Salvar registro</button></div>}
+    {loading ? <LoadingCard /> : (
+      <div className="grid gap-4 xl:grid-cols-[1fr_0.8fr]">
+        <section className="app-card p-5"><div className="mb-5 flex items-center justify-between gap-4"><div><p className="eyebrow text-[var(--green)]">Checklist de hoje</p><h2 className="mt-2 text-lg font-black text-white">Escolhas que sustentam energia</h2><p className="mt-1 max-w-md text-xs leading-5 text-[var(--text-muted)]">Cada item salvo cria um registro real no diário alimentar.</p></div><ProgressRing value={Math.round((doneChecks.size / checklist.length) * 100)} size={82} stroke={7} color="var(--green)" label="Checklist alimentar" /></div><div className="divide-y divide-[var(--border)]">{checklist.map((item) => { const Icon = item.icon; const done = doneChecks.has(item.id); return <button key={item.id} onClick={() => !done && saveFood({ [item.id]: true } as FoodLogInput)} disabled={done} className="flex min-h-[72px] w-full items-center gap-3 text-left disabled:cursor-default"><span className="grid size-10 place-items-center rounded-[7px] bg-[rgba(56,217,121,0.1)] text-[var(--green)]"><Icon size={20} /></span><span className={`flex-1 text-sm font-bold ${done ? "text-[var(--text-muted)]" : "text-white"}`}>{item.label}</span><span className={`grid size-8 place-items-center rounded-[6px] border ${done ? "border-[var(--green)] bg-[var(--green)] text-[#052313]" : "border-[var(--border-strong)] text-transparent"}`}><Check size={17} strokeWidth={3} /></span></button>; })}</div></section>
+        <section className="app-card p-5"><p className="eyebrow">Refeições registradas</p><div className="mt-4 divide-y divide-[var(--border)]">{logs.length ? logs.map((item) => <div key={item.id} className="flex min-h-[84px] items-center gap-3"><span className="grid size-10 place-items-center rounded-[7px] bg-[var(--surface-soft)] text-[var(--green)]"><Utensils size={20} /></span><div className="min-w-0 flex-1"><p className="text-sm font-black text-white">{item.meal?.name ?? "Registro alimentar"}</p><p className="mt-1 truncate text-xs text-[var(--text-muted)]">{item.description || "Checklist salvo"}</p></div><span className="text-xs font-bold text-[var(--text-dim)]">{new Date(item.loggedAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span></div>) : <p className="py-8 text-sm text-[var(--text-muted)]">Nenhuma refeição registrada hoje.</p>}</div><div className="mt-4 border-l-2 border-[var(--green)] bg-[rgba(56,217,121,0.06)] p-4"><p className="text-sm font-bold text-white">Sem contagem obrigatória</p><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Calorias e macros continuam opcionais. O foco é regularidade e bem-estar.</p></div></section>
+      </div>
+    )}
+  </Screen>;
+}
+
+export function HydrationLivePage() {
+  const [data, setData] = useState<HydrationToday | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function load() {
+    setLoading(true);
+    setError(null);
+    try {
+      setData(await getHydrationToday());
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { const id = window.setTimeout(() => void load(), 0); return () => window.clearTimeout(id); }, []);
+
+  async function add(amount: number) {
+    setError(null);
+    try {
+      const result = await addWaterLog(amount);
+      setNotice(result.xpAwarded ? `${amount} ml salvos. Meta concluída: +${result.xpAwarded} XP.` : `${amount} ml salvos.`);
+      await load();
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+
+  const consumed = data?.consumedMl ?? 0;
+  const goal = data?.goalMl ?? 2000;
+  const percent = data?.percentage ?? 0;
+
+  return <Screen title="Hidratação" description="Pequenas pausas ao longo do dia, sem transformar a meta em obrigação." action={<Link href="/settings/notifications" className="secondary-button"><Bell size={18} /> Lembretes</Link>}>
+    <Notice message={notice} />
+    <Notice message={error} tone="danger" />
+    {loading ? <LoadingCard /> : (
+      <div className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
+        <section className="app-card flex min-h-[360px] flex-col items-center justify-center p-6 text-center"><ProgressRing value={percent} size={164} stroke={13} color="var(--cyan)" label="Meta de hidratação" /><h2 className="mt-6 text-2xl font-black text-white">{consumed.toLocaleString("pt-BR")} <span className="text-base text-[var(--text-muted)]">/ {goal.toLocaleString("pt-BR")} ml</span></h2><p className="mt-2 text-sm text-[var(--text-muted)]">{percent >= 100 ? "Meta alcançada. Continue ouvindo seu corpo." : `Faltam ${Math.max(0, goal - consumed).toLocaleString("pt-BR")} ml, no seu ritmo.`}</p><div className="mt-6 grid w-full max-w-sm grid-cols-3 gap-2">{[250, 350, 500].map((amount) => <button key={amount} onClick={() => add(amount)} className="secondary-button px-2"><Plus size={16} /> {amount}</button>)}</div></section>
+        <section className="app-card p-5"><div className="flex items-center justify-between"><div><p className="eyebrow text-[var(--cyan)]">Hoje</p><h2 className="mt-2 text-lg font-black text-white">Registros de água</h2></div><Pill tone="cyan"><GlassWater size={14} /> {data?.logs.length ?? 0} REGISTROS</Pill></div><div className="mt-5 divide-y divide-[var(--border)]">{data?.logs.length ? data.logs.map((item) => <div key={item.id} className="flex min-h-[68px] items-center gap-3"><span className="grid size-9 place-items-center rounded-[7px] bg-[rgba(34,211,238,0.1)] text-[var(--cyan)]"><GlassWater size={18} /></span><div className="flex-1"><p className="text-sm font-black text-white">{item.amountMl} ml</p><p className="mt-0.5 text-xs text-[var(--text-muted)]">Copo de água</p></div><span className="text-xs font-bold text-[var(--text-dim)]">{new Date(item.loggedAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span></div>) : <p className="py-8 text-sm text-[var(--text-muted)]">Nenhum copo registrado hoje.</p>}</div><div className="mt-5 bg-[var(--surface-elevated)] p-4"><div className="flex items-center gap-2 text-sm font-bold text-white"><Info size={17} className="text-[var(--cyan)]" /> Lembretes ficam nas preferências</div><p className="mt-1.5 text-xs text-[var(--text-muted)]">Respeitamos horário silencioso e opt-out.</p></div></section>
+      </div>
+    )}
+  </Screen>;
+}
+
+export function NotificationsLivePage() {
+  const [items, setItems] = useState<NotificationItem[]>([]);
+  const [unread, setUnread] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  async function load() {
+    setLoading(true);
+    try {
+      const data = await listNotifications();
+      setItems(data.items);
+      setUnread(data.unreadCount);
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { const id = window.setTimeout(() => void load(), 0); return () => window.clearTimeout(id); }, []);
+
+  async function read(id: string) {
+    setItems((current) => current.map((item) => item.id === id ? { ...item, readAt: item.readAt ?? new Date().toISOString() } : item));
+    setUnread((count) => Math.max(0, count - 1));
+    try {
+      await markNotificationRead(id);
+    } catch {
+      await load();
+    }
+  }
+
+  async function readAll() {
+    setItems((current) => current.map((item) => ({ ...item, readAt: item.readAt ?? new Date().toISOString() })));
+    setUnread(0);
+    try {
+      await markAllNotificationsRead();
+    } catch {
+      await load();
+    }
+  }
+
+  return <Screen title="Notificações" description="Atualizações importantes, sem excesso." action={<button onClick={readAll} className="secondary-button" disabled={!unread}><CheckCircle2 size={18} /> Marcar todas</button>}>
+    <Notice message={error} tone="danger" />
+    {loading ? <LoadingCard /> : items.length ? <section className="app-card px-5"><div className="divide-y divide-[var(--border)]">{items.map((notification) => { const isRead = Boolean(notification.readAt); return <button key={notification.id} onClick={() => !isRead && read(notification.id)} className="flex min-h-[92px] w-full items-center gap-4 text-left"><span className="relative grid size-11 shrink-0 place-items-center rounded-[7px] bg-[var(--surface-soft)] text-[var(--lime)]"><Bell size={21} />{!isRead && <span className="absolute -right-1 -top-1 size-2.5 rounded-full border-2 border-[var(--surface)] bg-[var(--coral)]" />}</span><div className="min-w-0 flex-1"><p className={`text-sm font-black ${isRead ? "text-[var(--text-muted)]" : "text-white"}`}>{notification.title}</p><p className="mt-1 truncate text-sm text-[var(--text-muted)]">{notification.body}</p></div><span className="shrink-0 text-xs text-[var(--text-dim)]">{new Date(notification.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}</span></button>; })}</div></section> : <EmptyState icon={Bell} title="Tudo em dia" detail="Quando houver lembretes ou conquistas importantes, eles aparecem aqui." />}
+  </Screen>;
+}
+
+function Toggle({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
+  return <button type="button" onClick={onChange} role="switch" aria-checked={checked} aria-label={label} className={`relative h-7 w-12 shrink-0 rounded-full border transition-colors ${checked ? "border-[var(--lime)] bg-[var(--lime)]" : "border-[var(--border-strong)] bg-[var(--surface-soft)]"}`}><span className={`absolute top-1 size-[18px] rounded-full transition-transform ${checked ? "left-1 translate-x-5 bg-[var(--lime-ink)]" : "left-1 translate-x-0 bg-[var(--text-muted)]"}`} /></button>;
+}
+
+export function NotificationPreferencesLivePage() {
+  const [prefs, setPrefs] = useState<NotificationPreferences | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    async function load() {
+      try {
+        const data = await getNotificationPreferences();
+        if (active) setPrefs(data);
+      } catch (err) {
+        if (active) setError(errorMessage(err));
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+    void load();
+    return () => { active = false; };
+  }, []);
+
+  function updateLocal(key: keyof NotificationPreferences, value: boolean | string | number) {
+    setPrefs((current) => current ? { ...current, [key]: value } : current);
+  }
+
+  async function save() {
+    if (!prefs) return;
+    setError(null);
+    try {
+      const saved = await updateNotificationPreferences({
+        ...prefs,
+        preferredWorkoutTime: timeValue(prefs.preferredWorkoutTime),
+        streakRiskTime: timeValue(prefs.streakRiskTime),
+        quietHoursStart: timeValue(prefs.quietHoursStart),
+        quietHoursEnd: timeValue(prefs.quietHoursEnd),
+      });
+      setPrefs(saved);
+      setNotice("Preferências salvas.");
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+
+  const rows: { key: keyof NotificationPreferences; title: string; detail: string; icon: LucideIcon; color: string }[] = [
+    { key: "emailEnabled", title: "E-mails do produto", detail: "Controla lembretes e resumos, não segurança.", icon: Mail, color: "var(--cyan)" },
+    { key: "workoutRemindersEnabled", title: "Lembrete de treino", detail: "No horário escolhido por você.", icon: Dumbbell, color: "var(--coral)" },
+    { key: "waterRemindersEnabled", title: "Lembrete de água", detail: "Gentil e configurável.", icon: GlassWater, color: "var(--cyan)" },
+    { key: "nutritionRemindersEnabled", title: "Checklist de alimentação", detail: "Uma lembrança sem cobrança.", icon: Salad, color: "var(--green)" },
+    { key: "streakRemindersEnabled", title: "Streak em risco", detail: "No máximo uma vez por dia.", icon: Flame, color: "var(--gold)" },
+    { key: "weeklySummaryEnabled", title: "Resumo semanal", detail: "Resumo de consistência.", icon: TrendingUp, color: "var(--lime)" },
+  ];
+
+  return <Screen title="Preferências de notificação" description="Escolha o que ajuda. Todas as opções de produto podem ser desligadas." action={<Link href="/settings" className="secondary-button"><ArrowLeft size={18} /> Configurações</Link>}>
+    <Notice message={notice} />
+    <Notice message={error} tone="danger" />
+    {loading || !prefs ? <LoadingCard /> : <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,1fr)_380px]"><section className="app-card min-w-0 px-5">{rows.map(({ key, title, detail, icon: Icon, color }) => <div key={key} className="flex min-h-[82px] min-w-0 items-center gap-3 border-b border-[var(--border)] last:border-0"><span className="grid size-10 shrink-0 place-items-center rounded-[7px] bg-[var(--surface-soft)]" style={{ color }}><Icon size={20} /></span><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold text-white">{title}</p><p className="mt-1 truncate text-xs text-[var(--text-muted)]">{detail}</p></div><Toggle checked={Boolean(prefs[key])} onChange={() => updateLocal(key, !prefs[key])} label={title} /></div>)}</section><aside className="min-w-0 space-y-4"><section className="app-card p-5"><p className="eyebrow">Horário silencioso</p><div className="mt-4 grid grid-cols-2 gap-3"><label className="min-w-0 text-xs font-bold text-[var(--text-muted)]">Início<input className="field mt-2 min-w-0" type="time" value={timeValue(prefs.quietHoursStart) || "22:00"} onChange={(event) => updateLocal("quietHoursStart", event.target.value)} /></label><label className="min-w-0 text-xs font-bold text-[var(--text-muted)]">Fim<input className="field mt-2 min-w-0" type="time" value={timeValue(prefs.quietHoursEnd) || "08:00"} onChange={(event) => updateLocal("quietHoursEnd", event.target.value)} /></label></div><label className="mt-4 block text-xs font-bold text-[var(--text-muted)]">Treino<input className="field mt-2" type="time" value={timeValue(prefs.preferredWorkoutTime) || "18:30"} onChange={(event) => updateLocal("preferredWorkoutTime", event.target.value)} /></label></section><section className="app-card p-5"><p className="eyebrow">Timezone</p><select className="field mt-4" value={prefs.timezone} onChange={(event) => updateLocal("timezone", event.target.value)} aria-label="Timezone"><option value="America/Sao_Paulo">America/Sao_Paulo</option><option value="America/Manaus">America/Manaus</option><option value="America/Recife">America/Recife</option><option value="UTC">UTC</option></select><button onClick={save} className="primary-button mt-4 w-full">Salvar preferências</button></section></aside></div>}
+  </Screen>;
+}
+
+const eventLabel: Record<string, string> = {
+  login_success: "Login reconhecido",
+  login_failed: "Tentativa de login falhou",
+  suspicious_login: "Login suspeito",
+  password_changed: "Senha alterada",
+  sessions_revoked: "Sessões encerradas",
+  data_export_requested: "Exportação solicitada",
+};
+
+export function SecurityLivePage() {
+  const router = useRouter();
+  const session = useAuthSession();
+  const [events, setEvents] = useState<Array<{ id: string; type: string; createdAt: string }>>([]);
+  const [loading, setLoading] = useState(true);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    async function load() {
+      try {
+        const data = await listSecurityEvents();
+        if (active) setEvents(data.data);
+      } catch (err) {
+        if (active) setError(errorMessage(err));
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+    void load();
+    return () => { active = false; };
+  }, []);
+
+  async function revokeAll() {
+    setError(null);
+    try {
+      await logoutAllDevices();
+      clearSession();
+      router.push("/login");
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+
+  return <Screen title="Segurança da conta" description="Revise acessos e mantenha seus dados protegidos." action={<Link href="/settings" className="secondary-button"><ArrowLeft size={18} /> Configurações</Link>}>
+    <Notice message={notice} />
+    <Notice message={error} tone="danger" />
+    <div className="grid gap-4 lg:grid-cols-2"><section className="app-card p-5"><p className="eyebrow">Credenciais</p><div className="mt-4 divide-y divide-[var(--border)]"><div className="flex min-h-[76px] items-center gap-3"><span className="grid size-10 place-items-center rounded-[7px] bg-[var(--surface-soft)] text-[var(--lime)]"><KeyRound size={20} /></span><div className="flex-1"><p className="text-sm font-bold text-white">Senha</p><p className="mt-1 text-xs text-[var(--text-muted)]">Use recuperação segura para trocar a senha.</p></div><Link href="/login" className="ghost-button">Recuperar</Link></div><div className="flex min-h-[76px] items-center gap-3"><span className="grid size-10 place-items-center rounded-[7px] bg-[var(--surface-soft)] text-[var(--cyan)]"><Smartphone size={20} /></span><div className="flex-1"><p className="text-sm font-bold text-white">Autenticação em duas etapas</p><p className="mt-1 text-xs text-[var(--text-muted)]">Backend ainda não liberado para produção.</p></div><button onClick={() => setNotice("2FA está bloqueado até a implementação segura no backend.")} className="secondary-button">Ver status</button></div></div></section><section className="app-card p-5"><div className="flex items-center justify-between"><div><p className="eyebrow">Dispositivo atual</p><h2 className="mt-2 text-lg font-black text-white">Sessão ativa</h2></div><button onClick={revokeAll} className="ghost-button text-[var(--danger)]">Sair de todos</button></div><div className="mt-4 flex min-h-[72px] items-center gap-3 border-t border-[var(--border)]"><span className="grid size-10 place-items-center rounded-[7px] bg-[var(--surface-soft)] text-[var(--text-muted)]"><Smartphone size={20} /></span><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold text-white">LevelFit Web</p><p className="mt-1 text-xs text-[var(--text-muted)]">{session.user?.email}</p></div><Pill>ATUAL</Pill></div></section></div>
+    <section className="mt-4 app-card p-5"><p className="eyebrow">Eventos recentes</p>{loading ? <p className="mt-4 text-sm text-[var(--text-muted)]">Carregando eventos...</p> : <div className="mt-4 divide-y divide-[var(--border)]">{events.length ? events.map((event) => <div key={event.id} className="flex min-h-[68px] items-center gap-3"><ShieldCheck size={19} className="text-[var(--lime)]" /><div className="flex-1"><p className="text-sm font-bold text-white">{eventLabel[event.type] ?? event.type}</p><p className="mt-1 text-xs text-[var(--text-muted)]">Registrado com dados sensíveis minimizados.</p></div><span className="text-xs text-[var(--text-dim)]">{new Date(event.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}</span></div>) : <p className="py-6 text-sm text-[var(--text-muted)]">Nenhum evento recente.</p>}</div>}</section>
+  </Screen>;
+}
+
+const rarityTone: Record<string, "lime" | "cyan" | "coral" | "green" | "gold" | "violet"> = {
+  common: "lime",
+  uncommon: "cyan",
+  rare: "gold",
+  epic: "violet",
+};
+
+export function AchievementsLivePage() {
+  const [items, setItems] = useState<Achievement[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const id = window.setTimeout(async () => {
+      try {
+        const result = await listAchievements();
+        setItems(result.data);
+      } catch (err) {
+        setError(errorMessage(err));
+      } finally {
+        setLoading(false);
+      }
+    }, 0);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  return <Screen title="Conquistas" description="Badges conquistados por consistência, não por extremos.">
+    <Notice message={error} tone="danger" />
+    {loading ? <LoadingCard /> : <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{items.map((achievement, index) => {
+      const tone = rarityTone[achievement.rarity] ?? "lime";
+      return <motion.article key={achievement.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.04 }} className={`app-card min-h-[190px] p-5 ${achievement.unlocked ? "" : "opacity-55"}`}><div className="flex items-start justify-between"><span className="grid size-14 place-items-center rounded-[8px] border border-[rgba(250,204,21,0.3)] bg-[rgba(250,204,21,0.1)] text-[var(--gold)]"><Trophy size={28} /></span>{achievement.unlocked ? <Pill tone={tone}>DESBLOQUEADA</Pill> : <LockKeyhole size={18} className="text-[var(--text-dim)]" />}</div><h2 className="mt-5 font-black text-white">{achievement.name}</h2><p className="mt-1.5 text-sm leading-5 text-[var(--text-muted)]">{achievement.description}</p><p className="mt-4 text-xs font-black text-[var(--gold)]">+{achievement.xpReward} XP</p></motion.article>;
+    })}</div>}
+  </Screen>;
+}
+
+function numberValue(value: FormDataEntryValue | null) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
+}
+
+export function ProgressLivePage() {
+  const [items, setItems] = useState<BodyMeasurement[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function load() {
+    setError(null);
+    try {
+      const result = await listMeasurements();
+      setItems(result.data);
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { const id = window.setTimeout(() => void load(), 0); return () => window.clearTimeout(id); }, []);
+
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    setError(null);
+    try {
+      await addMeasurement({
+        weightKg: numberValue(form.get("weightKg")),
+        waistCm: numberValue(form.get("waistCm")),
+        hipCm: numberValue(form.get("hipCm")),
+        chestCm: numberValue(form.get("chestCm")),
+        notes: String(form.get("notes") ?? ""),
+      });
+      setShowForm(false);
+      setNotice("Check-in privado salvo.");
+      await load();
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+
+  const latest = items[0];
+
+  return <Screen title="Seu progresso" description="Observe tendências amplas. Um número isolado nunca define sua evolução." action={<button onClick={() => setShowForm(true)} className="secondary-button"><Plus size={18} /> Novo check-in</button>}>
+    <Notice message={notice} />
+    <Notice message={error} tone="danger" />
+    {showForm && <form onSubmit={submit} className="app-card mb-4 p-5"><div className="flex items-start justify-between gap-3"><div><p className="eyebrow">Check-in privado</p><h2 className="mt-2 text-lg font-black text-white">Registre somente o que fizer sentido</h2></div><button type="button" onClick={() => setShowForm(false)} className="ghost-button">Fechar</button></div><div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><input className="field" name="weightKg" type="number" step="0.1" placeholder="Peso kg" /><input className="field" name="waistCm" type="number" step="0.1" placeholder="Cintura cm" /><input className="field" name="hipCm" type="number" step="0.1" placeholder="Quadril cm" /><input className="field" name="chestCm" type="number" step="0.1" placeholder="Peito cm" /></div><textarea className="field mt-3 min-h-20" name="notes" placeholder="Notas opcionais" /><button className="primary-button mt-3">Salvar check-in</button></form>}
+    {loading ? <LoadingCard /> : <div className="grid gap-4 lg:grid-cols-2"><section className="app-card p-5"><div className="flex items-center justify-between"><div><p className="eyebrow">Medidas privadas</p><h2 className="mt-2 text-lg font-black text-white">Último check-in</h2></div><LockKeyhole size={20} className="text-[var(--text-dim)]" /></div>{latest ? <div className="mt-5 grid grid-cols-2 gap-3">{[{ label: "Peso", value: latest.weightKg ? `${latest.weightKg} kg` : "-" }, { label: "Cintura", value: latest.waistCm ? `${latest.waistCm} cm` : "-" }, { label: "Quadril", value: latest.hipCm ? `${latest.hipCm} cm` : "-" }, { label: "Peito", value: latest.chestCm ? `${latest.chestCm} cm` : "-" }].map((item) => <div key={item.label} className="subtle-card p-4"><p className="text-xs font-bold text-[var(--text-muted)]">{item.label}</p><p className="mt-2 font-black text-white">{item.value}</p></div>)}</div> : <p className="mt-5 text-sm text-[var(--text-muted)]">Nenhum check-in registrado ainda.</p>}<p className="mt-4 text-xs leading-5 text-[var(--text-dim)]">Visível somente para você. Medidas são opcionais e não afetam XP.</p></section><section className="app-card p-5"><div className="flex items-center justify-between"><div><p className="eyebrow">Fotos de progresso</p><h2 className="mt-2 text-lg font-black text-white">Registro visual privado</h2></div><Camera size={20} className="text-[var(--text-dim)]" /></div><div className="mt-5 grid min-h-[180px] place-items-center border border-dashed border-[var(--border-strong)] bg-[var(--surface)] p-6 text-center"><div><Camera className="mx-auto text-[var(--text-dim)]" size={30} /><p className="mt-3 text-sm font-bold text-white">Upload seguro pendente de storage</p><p className="mt-1 text-xs text-[var(--text-muted)]">A API já registra metadados; falta configurar S3/R2 para URL assinada.</p></div></div></section></div>}
+  </Screen>;
+}
+
+export function RankingLivePage() {
+  const [items, setItems] = useState<RankingEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function load() {
+    setError(null);
+    try {
+      const result = await listRanking();
+      setItems(result.data);
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { const id = window.setTimeout(() => void load(), 0); return () => window.clearTimeout(id); }, []);
+
+  async function joinRanking() {
+    setError(null);
+    try {
+      await updateMe({ rankingOptIn: true });
+      setNotice("Participação no ranking ativada. Só nome abreviado, XP, nível e streak aparecem.");
+      await load();
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+
+  const podium = items.slice(0, 3);
+
+  return <Screen title="Ranking geral" description="Competição saudável apenas entre pessoas que aceitaram aparecer publicamente." action={<button onClick={joinRanking} className="secondary-button"><ShieldCheck size={18} /> Participação opt-in</button>}>
+    <Notice message={notice} />
+    <Notice message={error} tone="danger" />
+    {loading ? <LoadingCard /> : <section className="mb-4 grid gap-4 lg:grid-cols-[1fr_360px]"><div className="app-card p-5"><div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><p className="eyebrow text-[var(--gold)]">Top da semana</p><h2 className="mt-2 text-lg font-black text-white">XP conquistado com consistência</h2></div><Pill tone="gold"><Trophy size={14} /> RANKING REAL</Pill></div>{podium.length ? <div className="mt-5 grid gap-3 md:grid-cols-3">{podium.map((person) => <article key={person.userId} className={`subtle-card p-4 ${person.rank === 1 ? "border-[rgba(250,204,21,0.45)]" : ""}`}><div className="flex items-center justify-between"><span className={`grid size-11 place-items-center rounded-[7px] ${person.rank === 1 ? "bg-[rgba(250,204,21,0.16)] text-[var(--gold)]" : "bg-[var(--surface-soft)] text-[var(--text-muted)]"}`}><Medal size={22} /></span><span className="text-xs font-black text-[var(--text-dim)]">#{person.rank}</span></div><h3 className="mt-4 font-black text-white">{person.displayName}</h3><p className="mt-1 text-xs text-[var(--text-muted)]">Nível {person.level} · {person.streak} dias</p><p className="mt-4 text-xl font-black text-[var(--lime)]">{person.totalXp.toLocaleString("pt-BR")} XP</p></article>)}</div> : <p className="mt-6 text-sm text-[var(--text-muted)]">Ainda não há participantes opt-in no ranking.</p>}</div><aside className="app-card p-5"><p className="eyebrow text-[var(--cyan)]">Sua privacidade</p><h2 className="mt-2 text-lg font-black text-white">Você controla se aparece</h2><p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">Ranking é desligado por padrão. Ao participar, o app mostra apenas nome abreviado, XP, nível e streak.</p><div className="mt-5 border-l-2 border-[var(--lime)] bg-[rgba(183,255,42,0.06)] p-4"><p className="text-sm font-black text-white">Dados nunca exibidos</p><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Peso, medidas, fotos, refeições detalhadas e informações sensíveis de saúde.</p></div><button onClick={joinRanking} className="primary-button mt-5 w-full"><UsersRound size={18} /> Entrar no ranking</button></aside></section>}
+    {!loading && items.length > 0 && <section className="app-card px-5"><div className="divide-y divide-[var(--border)]">{items.map((person) => <div key={person.userId} className="flex min-h-[78px] items-center gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-[7px] bg-[var(--surface-soft)] text-sm font-black text-white">#{person.rank}</span><div className="min-w-0 flex-1"><p className="truncate text-sm font-black text-white">{person.displayName}</p><p className="mt-1 truncate text-xs text-[var(--text-muted)]">Nível {person.level}</p></div><span className="hidden text-xs font-black text-[var(--gold)] sm:inline">{person.streak} dias</span><span className="text-sm font-black text-[var(--lime)]">{person.totalXp.toLocaleString("pt-BR")} XP</span></div>)}</div></section>}
+  </Screen>;
+}
+
+export function ProfileLivePage() {
+  const session = useAuthSession();
+  const progress = getUserProgress(session.user);
+  const avatarStage = getCurrentAvatarStage(progress.level);
+  const nextAvatarStage = getNextAvatarStage(progress.level);
+  const displayName = session.user?.displayName || fallbackUser.name;
+  const email = session.user?.email || fallbackUser.email;
+  const [editing, setEditing] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    setError(null);
+    try {
+      await updateMe({
+        displayName: String(form.get("displayName") ?? displayName),
+        gender: (String(form.get("gender") || "") || null) as "female" | "male" | "non_binary" | null,
+      });
+      setEditing(false);
+      setNotice("Perfil salvo. Recarregue a página se quiser ver o nome atualizado imediatamente.");
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+
+  return <Screen title="Perfil" description="Sua identidade e preferências principais no LevelFit." action={<button onClick={() => setEditing(true)} className="secondary-button"><Pencil size={18} /> Editar perfil</button>}>
+    <Notice message={notice} />
+    <Notice message={error} tone="danger" />
+    {editing && <form onSubmit={submit} className="app-card mb-4 p-5"><div className="flex items-start justify-between gap-3"><div><p className="eyebrow">Perfil</p><h2 className="mt-2 text-lg font-black text-white">Atualize seus dados básicos</h2></div><button type="button" onClick={() => setEditing(false)} className="ghost-button">Fechar</button></div><div className="mt-4 grid gap-3 sm:grid-cols-2"><input className="field" name="displayName" defaultValue={displayName} minLength={2} maxLength={80} /><select className="field" name="gender" defaultValue=""><option value="">Prefiro não informar</option><option value="female">Feminino</option><option value="male">Masculino</option><option value="non_binary">Não binário</option></select></div><button className="primary-button mt-3">Salvar perfil</button></form>}
+    <section className="app-card overflow-hidden"><div className="grid md:grid-cols-[280px_1fr]"><PulseAvatar stage={avatarStage} alt={`${avatarStage.name}, avatar atual`} className="min-h-[320px]" imageClassName="p-4" /><div className="p-5 sm:p-7"><div className="flex flex-wrap items-center gap-2"><Pill><Zap size={14} /> NÍVEL {progress.level}</Pill><Pill tone="gold"><Flame size={14} /> {progress.streak} DIAS</Pill><Pill tone="cyan"><Sparkles size={14} /> {avatarStage.name}</Pill></div><h2 className="mt-5 text-2xl font-black text-white">{displayName}</h2><p className="mt-1 text-sm text-[var(--text-muted)]">{email}</p><p className="mt-5 max-w-xl text-sm leading-6 text-[var(--text-muted)]">Construindo força e consistência com uma rotina flexível. O Pulse evolui com XP, missões concluídas e retomadas saudáveis.</p><div className="mt-7 grid gap-3 sm:grid-cols-3"><div className="subtle-card p-4"><p className="eyebrow">XP total</p><p className="mt-2 text-lg font-black text-white">{progress.totalXp.toLocaleString("pt-BR")}</p></div><div className="subtle-card p-4"><p className="eyebrow">Nível</p><p className="mt-2 text-lg font-black text-white">{progress.level}</p></div><div className="subtle-card p-4"><p className="eyebrow">Streak</p><p className="mt-2 text-lg font-black text-white">{progress.streak}</p></div></div></div></div></section>
+    <section className="mt-4 app-card p-5"><div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div><p className="eyebrow text-[var(--cyan)]">Evolução do Pulse</p><h2 className="mt-2 text-lg font-black text-white">Seu companheiro melhora com o tempo</h2><p className="mt-1 max-w-2xl text-xs leading-5 text-[var(--text-muted)]">Pausas não removem upgrades. Elas só adiam o próximo desbloqueio até você voltar para o seu ritmo.</p></div>{nextAvatarStage && <Pill tone="gold"><Sparkles size={14} /> PRÓXIMO: NÍVEL {nextAvatarStage.levelRequired}</Pill>}</div><div className="mt-5 grid gap-3 md:grid-cols-5">{avatarStages.map((stage) => { const unlocked = progress.level >= stage.levelRequired; const current = avatarStage.id === stage.id; return <article key={stage.id} className={`subtle-card min-h-[250px] overflow-hidden p-4 ${unlocked ? "" : "opacity-55"}`}><div className="flex items-center justify-between gap-2"><span className={`grid size-9 place-items-center rounded-[7px] ${current ? "bg-[var(--lime)] text-[var(--lime-ink)]" : "bg-[var(--surface-soft)] text-[var(--text-muted)]"}`}>{unlocked ? <Check size={17} strokeWidth={3} /> : <LockKeyhole size={16} />}</span><span className="text-xs font-black text-[var(--text-dim)]">NÍVEL {stage.levelRequired}</span></div><PulseAvatar stage={stage} alt={`${stage.name}, estágio do Pulse`} locked={!unlocked} className="mt-4 h-[104px] rounded-[7px] border border-[var(--border)]" imageClassName="p-2" /><h3 className="mt-4 text-sm font-black text-white">{stage.name}</h3><p className="mt-1 text-xs font-bold" style={{ color: stage.accent }}>{stage.personality}</p><p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{stage.activeBenefit}</p>{current && <p className="mt-3 text-xs font-black text-[var(--lime)]">ATUAL</p>}</article>; })}</div></section>
+    <div className="mt-4 grid gap-4 lg:grid-cols-2"><section className="app-card p-5"><p className="eyebrow">Objetivos atuais</p><div className="mt-4 flex flex-wrap gap-2"><Pill><Target size={14} /> CONSISTÊNCIA</Pill><Pill tone="coral"><Dumbbell size={14} /> FORÇA</Pill><Pill tone="cyan"><GlassWater size={14} /> HIDRATAÇÃO</Pill></div></section><section className="app-card p-5"><p className="eyebrow">Privacidade social</p><div className="mt-4 flex items-center justify-between gap-4"><div><p className="text-sm font-bold text-white">Ranking opt-in</p><p className="mt-1 text-xs text-[var(--text-muted)]">Você decide aparecer ou não no ranking público.</p></div><Link href="/ranking" className="secondary-button"><UserRound size={18} /> Ver ranking</Link></div></section></div>
+  </Screen>;
+}

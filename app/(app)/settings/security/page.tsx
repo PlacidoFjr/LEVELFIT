@@ -1,2 +1,2 @@
-import { SecurityPage } from "@/components/feature-pages";
-export default function Page() { return <SecurityPage />; }
+import { SecurityLivePage } from "@/components/live-pages";
+export default function Page() { return <SecurityLivePage />; }

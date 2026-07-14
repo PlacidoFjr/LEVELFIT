@@ -1,5 +1,5 @@
-import { RankingPage } from "@/components/feature-pages";
+import { RankingLivePage } from "@/components/live-pages";
 
 export default function Ranking() {
-  return <RankingPage />;
+  return <RankingLivePage />;
 }

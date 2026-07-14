@@ -1,2 +1,2 @@
-import { HydrationPage } from "@/components/feature-pages";
-export default function Page() { return <HydrationPage />; }
+import { HydrationLivePage } from "@/components/live-pages";
+export default function Page() { return <HydrationLivePage />; }

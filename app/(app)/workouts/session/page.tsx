@@ -1,2 +1,2 @@
-import { WorkoutSessionPage } from "@/components/feature-pages";
-export default function Page() { return <WorkoutSessionPage />; }
+import { WorkoutSessionLivePage } from "@/components/live-pages";
+export default function Page() { return <WorkoutSessionLivePage />; }

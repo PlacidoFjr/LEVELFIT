@@ -1,2 +1,2 @@
-import { WorkoutsPage } from "@/components/feature-pages";
-export default function Page() { return <WorkoutsPage />; }
+import { WorkoutsLivePage } from "@/components/live-pages";
+export default function Page() { return <WorkoutsLivePage />; }

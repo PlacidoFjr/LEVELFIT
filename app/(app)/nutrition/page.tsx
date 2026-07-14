@@ -1,2 +1,2 @@
-import { NutritionPage } from "@/components/feature-pages";
-export default function Page() { return <NutritionPage />; }
+import { NutritionLivePage } from "@/components/live-pages";
+export default function Page() { return <NutritionLivePage />; }

@@ -11,4 +11,5 @@ export class GamificationController {
   @Get("xp") xp(@CurrentUser() user: AuthUser) { return this.game.xp(user.userId); }
   @Get("streak") streak(@CurrentUser() user: AuthUser) { return this.game.streaks(user.userId); }
   @Get("achievements") achievements(@CurrentUser() user: AuthUser) { return this.game.achievements(user.userId); }
+  @Get("ranking") ranking() { return this.game.ranking(); }
 }

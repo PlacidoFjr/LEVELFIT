@@ -64,7 +64,6 @@ function formError(error: unknown) {
 }
 
 export function LoginPage() {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -76,7 +75,7 @@ export function LoginPage() {
     const data = new FormData(event.currentTarget);
     try {
       await loginUser(String(data.get("email")), String(data.get("password")));
-      router.push("/");
+      window.location.assign("/");
     } catch (err) {
       setError(formError(err));
     } finally {
@@ -89,7 +88,7 @@ export function LoginPage() {
       <form onSubmit={submit} className="space-y-5">
         <label htmlFor="email" className="block text-sm font-bold text-[var(--text-muted)]">
           E-mail
-          <input id="email" name="email" type="email" className="field mt-2" placeholder="voce@exemplo.com" required autoComplete="email" defaultValue="marina@levelfit.app" />
+          <input id="email" name="email" type="email" className="field mt-2" placeholder="voce@exemplo.com" required autoComplete="email" />
         </label>
         <PasswordField />
         {error && <div className="border-l-2 border-[var(--danger)] bg-[rgba(244,63,94,0.08)] p-3 text-sm leading-5 text-white" role="alert">{error}</div>}
@@ -110,12 +109,14 @@ export function LoginPage() {
 export function RegisterPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    setErrorCode(null);
     setMessage(null);
     setLoading(true);
 
@@ -129,13 +130,19 @@ export function RegisterPage() {
       });
 
       if (user) {
-        router.push("/onboarding");
+        router.replace("/onboarding");
         return;
       }
 
       setMessage("Conta criada. Confira seu e-mail para confirmar o acesso antes de entrar.");
     } catch (err) {
-      setError(formError(err));
+      if (err instanceof ApiClientError && err.code === "EMAIL_UNAVAILABLE") {
+        setError("Este e-mail já está cadastrado no LevelFit. Entre com ele ou recupere sua senha.");
+        setErrorCode(err.code);
+      } else {
+        setError(formError(err));
+        setErrorCode(err instanceof ApiClientError ? err.code : null);
+      }
     } finally {
       setLoading(false);
     }
@@ -170,7 +177,17 @@ export function RegisterPage() {
           <input type="checkbox" className="mt-1 size-4 shrink-0 accent-[var(--lime)]" required />
           <span>Autorizo o tratamento dos meus dados sensíveis de saúde para personalizar minha experiência no LevelFit.</span>
         </label>
-        {error && <div className="border-l-2 border-[var(--danger)] bg-[rgba(244,63,94,0.08)] p-3 text-sm leading-5 text-white" role="alert">{error}</div>}
+        {error && (
+          <div className="border-l-2 border-[var(--danger)] bg-[rgba(244,63,94,0.08)] p-3 text-sm leading-5 text-white" role="alert">
+            <p>{error}</p>
+            {errorCode === "EMAIL_UNAVAILABLE" && (
+              <div className="mt-3 flex flex-wrap gap-3">
+                <Link href="/login" className="font-bold text-[var(--lime)]">Ir para login</Link>
+                <button type="button" className="font-bold text-[var(--lime)]">Esqueci a senha</button>
+              </div>
+            )}
+          </div>
+        )}
         {message && <div className="border-l-2 border-[var(--lime)] bg-[rgba(183,255,42,0.08)] p-3 text-sm leading-5 text-white" role="status">{message}</div>}
         <button type="submit" disabled={loading} className="primary-button w-full disabled:cursor-not-allowed disabled:opacity-60">
           {loading ? "Criando conta..." : "Continuar"} <ArrowRight size={18} />
@@ -217,7 +234,7 @@ export function OnboardingPage() {
 
         <div className="mt-10 flex items-center justify-between gap-3">
           <button onClick={() => step > 1 ? setStep((value) => value - 1) : router.push("/register")} className="secondary-button"><ArrowLeft size={18} /> Voltar</button>
-          <button onClick={() => step < 3 ? setStep((value) => value + 1) : router.push("/")} className="primary-button">{step < 3 ? "Continuar" : "Entrar no LevelFit"} <ArrowRight size={18} /></button>
+          <button onClick={() => step < 3 ? setStep((value) => value + 1) : window.location.assign("/")} className="primary-button">{step < 3 ? "Continuar" : "Entrar no LevelFit"} <ArrowRight size={18} /></button>
         </div>
       </div>
     </main>

@@ -3,8 +3,8 @@ import { validateEnvironment } from "../src/config/environment";
 
 const base = {
   DATABASE_URL: "postgresql://unit_user:unit_db_credential_32_chars@localhost:5432/levelfit",
-  JWT_ACCESS_SECRET: "access-secret-with-at-least-thirty-two-characters",
-  TOKEN_HASH_SECRET: "token-secret-with-at-least-thirty-two-characters",
+  JWT_ACCESS_SECRET: "test-access-key-material-with-at-least-thirty-two-characters",
+  TOKEN_HASH_SECRET: "test-token-key-material-with-at-least-thirty-two-characters",
 };
 
 describe("environment security validation", () => {

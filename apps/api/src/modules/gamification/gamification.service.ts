@@ -57,4 +57,30 @@ export class GamificationService {
     });
     return { data: achievements.map(({ users, ...item }) => ({ ...item, unlocked: users.length > 0, unlockedAt: users[0]?.unlockedAt ?? null })) };
   }
+
+  async ranking() {
+    const users = await this.prisma.user.findMany({
+      where: { rankingOptIn: true, status: "active", deletedAt: null },
+      select: {
+        id: true,
+        rankingOptIn: true,
+        profile: { select: { displayName: true } },
+        level: true,
+        streaks: { where: { type: "daily" }, select: { currentCount: true } },
+      },
+      orderBy: { level: { totalXp: "desc" } },
+      take: 50,
+    });
+
+    return {
+      data: users.map((user, index) => ({
+        rank: index + 1,
+        userId: user.id,
+        displayName: user.profile?.displayName ? `${user.profile.displayName.split(" ")[0]} ${user.profile.displayName.split(" ")[1]?.[0] ?? ""}`.trim() : "Atleta LevelFit",
+        level: user.level?.level ?? 1,
+        totalXp: user.level?.totalXp ?? 0,
+        streak: user.streaks[0]?.currentCount ?? 0,
+      })),
+    };
+  }
 }

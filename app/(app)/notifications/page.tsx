@@ -1,2 +1,2 @@
-import { NotificationsPage } from "@/components/feature-pages";
-export default function Page() { return <NotificationsPage />; }
+import { NotificationsLivePage } from "@/components/live-pages";
+export default function Page() { return <NotificationsLivePage />; }
