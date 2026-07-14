@@ -8,7 +8,7 @@ services:
     autoDeploy: true
     healthCheckPath: /v1/health
     buildCommand: npm ci --include=dev && npm run db:generate && npm run build:api && test -f apps/api/dist/main.js
-    startCommand: npm run db:migrate:deploy && node apps/api/dist/main.js
+    startCommand: npm run db:migrate:deploy && npm run db:seed && node apps/api/dist/main.js
     envVars:
       - key: NODE_ENV
         value: production

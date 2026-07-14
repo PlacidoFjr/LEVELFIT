@@ -221,6 +221,29 @@ function categoryLabel(value: Workout["category"]) {
   return ({ strength: "força", cardio: "cardio", mobility: "mobilidade", full_body: "corpo inteiro", recovery: "recuperação" } as const)[value];
 }
 
+type WorkoutFocusId = "all" | "female" | "male" | "full_body" | "low_impact";
+
+const workoutFocuses: Array<{ id: WorkoutFocusId; label: string; detail: string }> = [
+  { id: "all", label: "Todos", detail: "Biblioteca completa" },
+  { id: "female", label: "Foco feminino", detail: "Glúteos e pernas" },
+  { id: "male", label: "Foco masculino", detail: "Peito, costas e ombros" },
+  { id: "full_body", label: "Corpo todo", detail: "Treino equilibrado" },
+  { id: "low_impact", label: "Baixo impacto", detail: "Sem saltos ou corrida" },
+];
+
+function searchable(value: string) {
+  return value.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+}
+
+function workoutMatchesFocus(workout: Workout, focus: WorkoutFocusId) {
+  if (focus === "all") return true;
+  const text = searchable(`${workout.title} ${workout.description ?? ""} ${workout.category}`);
+  if (focus === "female") return text.includes("inferiores") || text.includes("gluteos") || text.includes("pernas");
+  if (focus === "male") return text.includes("superiores") || text.includes("peito") || text.includes("costas") || text.includes("bracos") || text.includes("ombros");
+  if (focus === "full_body") return workout.category === "full_body" || text.includes("corpo todo");
+  return workout.difficulty === "easy" || text.includes("baixo impacto") || text.includes("sem saltos") || text.includes("sem corrida");
+}
+
 export function WorkoutsLivePage() {
   const router = useRouter();
   const [today, setToday] = useState<TodayWorkout>(null);
@@ -228,16 +251,27 @@ export function WorkoutsLivePage() {
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [focus, setFocus] = useState<WorkoutFocusId>("all");
 
   async function load() {
     setLoading(true);
     setError(null);
     try {
-      const [todayData, list] = await Promise.all([getTodayWorkout(), listWorkouts()]);
-      setToday(todayData);
-      setWorkouts(list.data);
-    } catch (err) {
-      setError(errorMessage(err));
+      const [todayResult, listResult] = await Promise.allSettled([getTodayWorkout(), listWorkouts()]);
+
+      if (todayResult.status === "fulfilled") {
+        setToday(todayResult.value);
+      } else {
+        setToday(null);
+        setError(errorMessage(todayResult.reason));
+      }
+
+      if (listResult.status === "fulfilled") {
+        setWorkouts(listResult.value.data);
+      } else {
+        setWorkouts([]);
+        setError(errorMessage(listResult.reason));
+      }
     } finally {
       setLoading(false);
     }
@@ -262,12 +296,21 @@ export function WorkoutsLivePage() {
     }
   }
 
-  const workout = getWorkoutFromToday(today) ?? workouts[0] ?? null;
-  const options = workouts.filter((item) => item.id !== workout?.id).slice(0, 3);
+  const focusedWorkouts = workouts.filter((item) => workoutMatchesFocus(item, focus));
+  const todayWorkout = getWorkoutFromToday(today);
+  const workout = (focus === "all" ? todayWorkout : null) ?? focusedWorkouts[0] ?? todayWorkout ?? workouts[0] ?? null;
+  const optionPool = focusedWorkouts.length > 1 ? focusedWorkouts : workouts;
+  const options = optionPool.filter((item) => item.id !== workout?.id).slice(0, 3);
 
   return <Screen title="Treino do dia" description="Um plano curto, ajustável e com espaço para descanso." action={<Link href="/settings/notifications" className="secondary-button"><CalendarClock size={18} /> Agenda</Link>}>
     <Notice message={error} tone="danger" />
-    {loading ? <LoadingCard /> : !workout ? <EmptyState icon={Dumbbell} title="Nenhum treino disponível" detail="Rode os seeds de produção ou cadastre treinos públicos para começar." /> : (
+    {!loading && workouts.length > 0 && <section className="mb-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-5" aria-label="Filtro de foco do treino">
+      {workoutFocuses.map((item) => <button key={item.id} onClick={() => setFocus(item.id)} className={`min-h-[74px] rounded-[8px] border px-3 py-3 text-left transition-colors ${focus === item.id ? "border-[var(--lime)] bg-[rgba(183,255,42,0.1)]" : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-strong)]"}`}>
+        <span className={`block text-sm font-black ${focus === item.id ? "text-[var(--lime)]" : "text-white"}`}>{item.label}</span>
+        <span className="mt-1 block text-xs font-bold leading-4 text-[var(--text-muted)]">{item.detail}</span>
+      </button>)}
+    </section>}
+    {loading ? <LoadingCard /> : !workout ? <section className="app-card grid min-h-[240px] place-items-center p-6 text-center"><div><Dumbbell className="mx-auto text-[var(--text-dim)]" size={32} /><h2 className="mt-4 font-black text-white">Nenhum treino disponível</h2><p className="mt-2 max-w-md text-sm leading-6 text-[var(--text-muted)]">{error ? "Não conseguimos carregar sua biblioteca de treinos agora." : "A biblioteca de treinos ainda não foi carregada."}</p><button onClick={() => void load()} className="secondary-button mx-auto mt-5">Tentar novamente</button></div></section> : (
       <>
         <section className="app-card overflow-hidden">
           <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
