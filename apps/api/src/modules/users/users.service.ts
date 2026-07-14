@@ -54,7 +54,7 @@ export class UsersService {
   }
 
   async deleteAccount(auth: AuthUser, dto: DeleteAccountDto) {
-    if (dto.confirmation !== "EXCLUIR") throw new BadRequestException({ code: "CONFIRMATION_REQUIRED", message: "Confirmacao invalida." });
+    if (dto.confirmation !== "EXCLUIR") throw new BadRequestException({ code: "CONFIRMATION_REQUIRED", message: "Confirmação inválida." });
     const user = await this.prisma.user.findUniqueOrThrow({ where: { id: auth.userId }, select: { passwordHash: true } });
     if (!user.passwordHash || !(await argon2.verify(user.passwordHash, dto.password))) throw new UnauthorizedException({ code: "REAUTHENTICATION_REQUIRED", message: "Confirme sua senha." });
     const now = new Date();

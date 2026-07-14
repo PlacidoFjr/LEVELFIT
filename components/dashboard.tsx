@@ -46,7 +46,7 @@ export function Dashboard() {
   function completeMission(id: string, title: string) {
     if (completed.includes(id)) return;
     setCompleted((items) => [...items, id]);
-    setToast(`${title} concluida. Bom trabalho.`);
+    setToast(`${title} concluída. Bom trabalho.`);
     window.setTimeout(() => setToast(null), 2600);
   }
 
@@ -58,7 +58,7 @@ export function Dashboard() {
 
   return (
     <div className="mx-auto w-full max-w-[1480px] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
-      <PageHeader title={`Bom dia, ${user.name}`} description="Seu plano esta equilibrado. Escolha uma acao pequena e deixe o resto para depois." />
+      <PageHeader title={`Bom dia, ${user.name}`} description="Seu plano está equilibrado. Escolha uma ação pequena e deixe o resto para depois." />
 
       <AnimatePresence>
         {toast && (
@@ -78,15 +78,15 @@ export function Dashboard() {
                 <span className="inline-flex min-h-7 items-center gap-1.5 rounded-[6px] bg-[rgba(250,204,21,0.1)] px-2.5 text-xs font-black text-[var(--gold)]"><Flame size={14} fill="currentColor" /> {user.streak} DIAS</span>
               </div>
               <h2 className="text-xl font-black text-white sm:text-2xl">Ritmo forte, sem exagero.</h2>
-              <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--text-muted)]">Voce ja ganhou <strong className="text-white">{earnedToday} XP</strong> hoje. Um treino curto ou mais um copo de agua ja deixa o dia completo.</p>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--text-muted)]">Você já ganhou <strong className="text-white">{earnedToday} XP</strong> hoje. Um treino curto ou mais um copo de água já deixa o dia completo.</p>
               <div className="mt-5 max-w-xl">
                 <div className="mb-2 flex justify-between text-xs font-bold text-[var(--text-muted)]"><span>{user.levelName}</span><span>{user.currentXp} / {user.nextLevelXp} XP</span></div>
                 <div className="progress-track h-2.5"><motion.div className="progress-fill bg-[var(--lime)]" initial={{ width: 0 }} animate={{ width: `${levelProgress}%` }} /></div>
               </div>
             </div>
             <div className="flex items-center gap-4 sm:flex-col sm:items-end">
-              <ProgressRing value={missionProgress} label="Missoes do dia" />
-              <p className="text-xs font-bold text-[var(--text-muted)]">{completed.length} de {missions.length} missoes</p>
+              <ProgressRing value={missionProgress} label="Missões do dia" />
+              <p className="text-xs font-bold text-[var(--text-muted)]">{completed.length} de {missions.length} missões</p>
             </div>
           </div>
         </div>
@@ -96,7 +96,7 @@ export function Dashboard() {
           <div className="absolute inset-0 bg-gradient-to-t from-[#080b0f] via-[rgba(8,11,15,0.15)] to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-5">
             <span className="eyebrow text-[var(--cyan)]">Pulse percebeu</span>
-            <p className="mt-2 text-sm font-bold leading-5 text-white">Sua consistencia subiu nesta semana. Hoje, mantenha leve.</p>
+            <p className="mt-2 text-sm font-bold leading-5 text-white">Sua consistência subiu nesta semana. Hoje, mantenha leve.</p>
           </div>
         </div>
       </section>
@@ -104,7 +104,7 @@ export function Dashboard() {
       <section className="grid gap-4 xl:grid-cols-3">
         <div className="app-card p-5 xl:col-span-2">
           <div className="mb-4 flex items-center justify-between gap-3">
-            <div><p className="eyebrow">Missoes de hoje</p><h2 className="mt-2 text-lg font-black text-white">Seu caminho mais curto</h2></div>
+            <div><p className="eyebrow">Missões de hoje</p><h2 className="mt-2 text-lg font-black text-white">Seu caminho mais curto</h2></div>
             <Link href="/missions" className="ghost-button">Ver todas <ChevronRight size={17} /></Link>
           </div>
           <div className="divide-y divide-[var(--border)]">
@@ -117,7 +117,7 @@ export function Dashboard() {
                   <span className="grid size-10 shrink-0 place-items-center rounded-[7px]" style={{ background: style.bg, color: style.color }}><Icon size={20} /></span>
                   <div className="min-w-0 flex-1"><p className={`text-sm font-extrabold ${done ? "text-[var(--text-dim)] line-through" : "text-white"}`}>{mission.title}</p><p className="mt-1 truncate text-xs text-[var(--text-muted)]">{mission.detail}</p></div>
                   <span className="hidden text-xs font-black text-[var(--gold)] sm:inline">+{mission.xp} XP</span>
-                  <button onClick={() => completeMission(mission.id, mission.title)} disabled={done} className={`grid size-10 shrink-0 place-items-center rounded-[7px] border transition-colors ${done ? "border-[rgba(183,255,42,0.3)] bg-[rgba(183,255,42,0.12)] text-[var(--lime)]" : "border-[var(--border-strong)] text-[var(--text-muted)] hover:border-[var(--lime)] hover:text-[var(--lime)]"}`} aria-label={done ? `${mission.title} concluida` : `Concluir ${mission.title}`} title={done ? "Concluida" : "Marcar como concluida"}>
+                  <button onClick={() => completeMission(mission.id, mission.title)} disabled={done} className={`grid size-10 shrink-0 place-items-center rounded-[7px] border transition-colors ${done ? "border-[rgba(183,255,42,0.3)] bg-[rgba(183,255,42,0.12)] text-[var(--lime)]" : "border-[var(--border-strong)] text-[var(--text-muted)] hover:border-[var(--lime)] hover:text-[var(--lime)]"}`} aria-label={done ? `${mission.title} concluída` : `Concluir ${mission.title}`} title={done ? "Concluída" : "Marcar como concluída"}>
                     <Check size={18} strokeWidth={3} />
                   </button>
                 </div>
@@ -127,7 +127,7 @@ export function Dashboard() {
         </div>
 
         <div className="app-card flex flex-col p-5">
-          <div className="mb-5 flex items-center justify-between"><div><p className="eyebrow text-[var(--cyan)]">Hidratacao</p><h2 className="mt-2 text-lg font-black text-white">{water.toLocaleString("pt-BR")} ml</h2></div><ProgressRing value={waterProgress} size={78} stroke={7} color="var(--cyan)" label="Meta de agua" /></div>
+          <div className="mb-5 flex items-center justify-between"><div><p className="eyebrow text-[var(--cyan)]">Hidratação</p><h2 className="mt-2 text-lg font-black text-white">{water.toLocaleString("pt-BR")} ml</h2></div><ProgressRing value={waterProgress} size={78} stroke={7} color="var(--cyan)" label="Meta de água" /></div>
           <div className="progress-track"><motion.div className="progress-fill bg-[var(--cyan)]" animate={{ width: `${waterProgress}%` }} /></div>
           <p className="mt-3 text-sm text-[var(--text-muted)]">Faltam {Math.max(0, 2000 - water).toLocaleString("pt-BR")} ml para sua meta flexivel.</p>
           <div className="mt-auto grid grid-cols-2 gap-2 pt-5">
@@ -138,27 +138,27 @@ export function Dashboard() {
 
         <div className="app-card overflow-hidden p-5 xl:col-span-2">
           <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div><p className="eyebrow text-[var(--coral)]">Treino do dia</p><h2 className="mt-2 text-xl font-black text-white">Corpo inteiro essencial</h2><p className="mt-2 flex flex-wrap items-center gap-3 text-sm text-[var(--text-muted)]"><span className="inline-flex items-center gap-1.5"><Clock3 size={16} /> 28 min</span><span className="inline-flex items-center gap-1.5"><Dumbbell size={16} /> Moderado</span><span>5 exercicios</span></p></div>
+            <div><p className="eyebrow text-[var(--coral)]">Treino do dia</p><h2 className="mt-2 text-xl font-black text-white">Corpo inteiro essencial</h2><p className="mt-2 flex flex-wrap items-center gap-3 text-sm text-[var(--text-muted)]"><span className="inline-flex items-center gap-1.5"><Clock3 size={16} /> 28 min</span><span className="inline-flex items-center gap-1.5"><Dumbbell size={16} /> Moderado</span><span>5 exercícios</span></p></div>
             <span className="inline-flex h-8 items-center rounded-[6px] bg-[rgba(255,107,61,0.12)] px-3 text-xs font-black text-[var(--coral)]">+60 XP</span>
           </div>
           <div className="mb-5 grid grid-cols-5 gap-1.5" aria-label="Cinco blocos do treino">
             {[0, 1, 2, 3, 4].map((item) => <span key={item} className={`h-2 rounded-[3px] ${item === 0 ? "bg-[var(--coral)]" : "bg-[#202a34]"}`} />)}
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Link href="/workouts/session" className="primary-button flex-1 bg-[var(--coral)] text-white hover:bg-[#ff805b]">Comecar treino <ArrowRight size={18} /></Link>
+            <Link href="/workouts/session" className="primary-button flex-1 bg-[var(--coral)] text-white hover:bg-[#ff805b]">Começar treino <ArrowRight size={18} /></Link>
             <Link href="/workouts" className="secondary-button">Ver detalhes</Link>
           </div>
         </div>
 
         <div className="app-card p-5">
-          <div className="mb-4 flex items-center justify-between"><div><p className="eyebrow text-[var(--green)]">Alimentacao</p><h2 className="mt-2 text-lg font-black text-white">Checklist simples</h2></div><span className="text-sm font-black text-[var(--green)]">{nutritionProgress}%</span></div>
+          <div className="mb-4 flex items-center justify-between"><div><p className="eyebrow text-[var(--green)]">Alimentação</p><h2 className="mt-2 text-lg font-black text-white">Checklist simples</h2></div><span className="text-sm font-black text-[var(--green)]">{nutritionProgress}%</span></div>
           <div className="space-y-2">
             {nutritionItems.map((item) => {
               const done = foodDone.includes(item.id);
               return <button key={item.id} onClick={() => setFoodDone((current) => done ? current.filter((id) => id !== item.id) : [...current, item.id])} className="flex min-h-10 w-full items-center gap-3 text-left text-sm"><span className={`grid size-6 shrink-0 place-items-center rounded-[5px] border ${done ? "border-[var(--green)] bg-[var(--green)] text-[#052313]" : "border-[var(--border-strong)] text-transparent"}`}><Check size={15} strokeWidth={3} /></span><span className={done ? "text-[var(--text-muted)]" : "text-white"}>{item.label}</span></button>;
             })}
           </div>
-          <Link href="/nutrition" className="ghost-button mt-4 w-full">Abrir alimentacao <ChevronRight size={17} /></Link>
+          <Link href="/nutrition" className="ghost-button mt-4 w-full">Abrir alimentação <ChevronRight size={17} /></Link>
         </div>
 
         <div className="app-card min-h-[300px] p-5 xl:col-span-2">
@@ -177,7 +177,7 @@ export function Dashboard() {
         </div>
 
         <div className="app-card flex flex-col justify-between p-5">
-          <div><p className="eyebrow text-[var(--gold)]">Proxima conquista</p><div className="mt-5 flex items-center gap-4"><span className="grid size-14 shrink-0 place-items-center rounded-[8px] border border-[rgba(250,204,21,0.3)] bg-[rgba(250,204,21,0.1)] text-[var(--gold)]"><Trophy size={28} /></span><div><h2 className="font-black text-white">Constancia 20</h2><p className="mt-1 text-xs text-[var(--text-muted)]">Faltam 2 dias ativos</p></div></div></div>
+          <div><p className="eyebrow text-[var(--gold)]">Próxima conquista</p><div className="mt-5 flex items-center gap-4"><span className="grid size-14 shrink-0 place-items-center rounded-[8px] border border-[rgba(250,204,21,0.3)] bg-[rgba(250,204,21,0.1)] text-[var(--gold)]"><Trophy size={28} /></span><div><h2 className="font-black text-white">Constância 20</h2><p className="mt-1 text-xs text-[var(--text-muted)]">Faltam 2 dias ativos</p></div></div></div>
           <div className="mt-6"><div className="progress-track"><div className="progress-fill w-[90%] bg-[var(--gold)]" /></div><Link href="/achievements" className="ghost-button mt-3 w-full">Ver conquistas <ChevronRight size={17} /></Link></div>
         </div>
       </section>

@@ -4,7 +4,7 @@
 
 O frontend do LevelFit foi implementado como uma aplicacao Next.js com App Router, React, TypeScript, Tailwind CSS, Framer Motion, Lucide Icons e Recharts.
 
-A rota `/` abre diretamente o dashboard real do produto. Nao existe landing page no fluxo principal.
+A rota `/` abre diretamente o dashboard real do produto. Não existe landing page no fluxo principal.
 
 ## Stack
 
@@ -21,33 +21,33 @@ A rota `/` abre diretamente o dashboard real do produto. Nao existe landing page
 
 | Rota | Tela |
 |---|---|
-| `/` | Dashboard diario |
-| `/missions` | Missoes do dia |
+| `/` | Dashboard diário |
+| `/missions` | Missões do dia |
 | `/workouts` | Treino do dia e alternativas |
-| `/workouts/session` | Sessao de treino interativa |
+| `/workouts/session` | Sessão de treino interativa |
 | `/nutrition` | Checklist e registros alimentares |
-| `/hydration` | Meta e registros de agua |
-| `/progress` | Graficos, medidas e fotos privadas |
+| `/hydration` | Meta e registros de água |
+| `/progress` | Gráficos, medidas e fotos privadas |
 | `/achievements` | Conquistas e badges |
 | `/profile` | Perfil e objetivos |
-| `/settings` | Configuracoes gerais |
-| `/settings/security` | Sessoes e seguranca da conta |
-| `/settings/notifications` | Preferencias e horario silencioso |
-| `/notifications` | Central de notificacoes |
+| `/settings` | Configurações gerais |
+| `/settings/security` | Sessoes e segurança da conta |
+| `/settings/notifications` | Preferências e horário silencioso |
+| `/notifications` | Central de notificações |
 | `/login` | Login |
 | `/register` | Cadastro |
-| `/onboarding` | Onboarding em tres etapas |
+| `/onboarding` | Onboarding em três etapas |
 
 ## Componentes principais
 
 - `AppShell`: sidebar desktop, header e bottom navigation mobile.
-- `Dashboard`: XP, streak, missoes, treino, agua, nutricao e grafico.
-- `PageHeader`: titulo, contexto, busca e notificacoes.
+- `Dashboard`: XP, streak, missões, treino, água, nutrição e grafico.
+- `PageHeader`: titulo, contexto, busca e notificações.
 - `ProgressRing`: indicador circular acessivel.
 - `MissionsPage`: conclusao e modo leve.
 - `WorkoutSessionPage`: cronometro e progresso por exercicio.
-- `NutritionPage`: checklist e registro de refeicao.
-- `HydrationPage`: quick add e historico.
+- `NutritionPage`: checklist e registro de refeição.
+- `HydrationPage`: quick add e histórico.
 - `ProgressPage`: Recharts e dados privados.
 - `NotificationPreferencesPage`: toggles, timezone e quiet hours.
 - `LoginPage`, `RegisterPage` e `OnboardingPage`.
@@ -56,54 +56,54 @@ A rota `/` abre diretamente o dashboard real do produto. Nao existe landing page
 
 Os dados ficam em `lib/mock-data.ts` e representam:
 
-- Usuario, nivel, XP e streak.
-- Missoes diarias.
-- Exercicios e treino.
+- Usuário, nível, XP e streak.
+- Missões diárias.
+- Exercícios e treino.
 - Checklist alimentar.
 - Atividade semanal e progresso.
-- Conquistas e notificacoes.
+- Conquistas e notificações.
 
-Para integrar a API, substituir os imports de mocks por hooks de consulta. Os contratos esperados estao em `docs/40-backend-api-seguranca.md`.
+Para integrar a API, substituir os imports de mocks por hooks de consulta. Os contratos esperados estão em `docs/40-backend-api-seguranca.md`.
 
 ## Design tokens
 
-Os tokens estao em `app/globals.css`:
+Os tokens estão em `app/globals.css`:
 
 - Fundo: `#080B0F`.
 - Superficie: `#10161D`.
 - Superficie elevada: `#151D26`.
 - Texto: `#F4F7FA`.
-- Primaria: `#B7FF2A`.
-- Agua: `#22D3EE`.
+- Primária: `#B7FF2A`.
+- Água: `#22D3EE`.
 - Treino: `#FF6B3D`.
-- Alimentacao: `#38D979`.
+- Alimentação: `#38D979`.
 - Conquistas: `#FACC15`.
-- Recuperacao: `#A78BFA`.
+- Recuperação: `#A78BFA`.
 
 ## Estados e interacoes
 
 - Loading global com skeleton.
 - Erro recuperavel.
 - Pagina 404.
-- Toast de missao e hidratacao.
-- Conclusao de missoes.
-- Quick add de agua.
+- Toast de missão e hidratação.
+- Conclusao de missões.
+- Quick add de água.
 - Checklist alimentar.
 - Cronometro de treino.
-- Filtros de periodo.
-- Toggles de notificacao.
+- Filtros de período.
+- Toggles de notificação.
 - Onboarding em etapas.
 
 ## Acessibilidade
 
 - Navegacao semantica e `aria-current`.
-- Skip link para o conteudo.
-- Foco visivel.
+- Skip link para o conteúdo.
+- Foco visível.
 - Alvos de toque com pelo menos 44 px.
 - Labels nos campos e controles por icone.
 - Suporte a `prefers-reduced-motion`.
 - Contraste alto no tema escuro.
-- Indicadores nao dependem apenas de cor.
+- Indicadores não dependem apenas de cor.
 
 ## Responsividade validada
 
@@ -112,7 +112,7 @@ Os tokens estao em `app/globals.css`:
 - Todas as rotas verificadas sem imagens quebradas.
 - Overflows horizontais removidos.
 - Sidebar desktop e bottom navigation mobile verificadas.
-- Graficos SVG verificados como nao vazios.
+- Gráficos SVG verificados como não vazios.
 
 ## Estrutura principal
 
@@ -158,7 +158,7 @@ npm install
 npm run dev
 ```
 
-Validacao:
+Validação:
 
 ```bash
 npm run lint
@@ -166,12 +166,12 @@ npm run typecheck
 npm run build
 ```
 
-## Proximos passos tecnicos
+## Proximos passos técnicos
 
 - Adicionar cliente HTTP tipado e TanStack Query.
 - Trocar mocks pelos endpoints `/v1`.
-- Implementar sessao real com access token em memoria e refresh cookie seguro.
+- Implementar sessão real com access token em memória e refresh cookie seguro.
 - Conectar upload assinado de fotos.
-- Persistir preferencias e eventos de gamificacao.
+- Persistir preferências e eventos de gamificação.
 - Adicionar testes de componentes e E2E.
 

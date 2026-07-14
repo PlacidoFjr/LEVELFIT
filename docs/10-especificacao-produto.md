@@ -1,10 +1,10 @@
-# LevelFit - Especificacao Completa de Produto
+# LevelFit - Especificação Completa de Produto
 
 ## 1. Nome do produto
 
 LevelFit.
 
-O nome comunica evolucao, progresso e fitness sem prometer transformacoes irreais. A palavra "Level" cria uma ponte direta com gamificacao, XP, missoes e progressao.
+O nome comunica evolução, progresso e fitness sem prometer transformações irreais. A palavra "Level" cria uma ponte direta com gamificação, XP, missões e progressão.
 
 ## 2. Slogan
 
@@ -12,154 +12,154 @@ Evolua um pouco todos os dias.
 
 Alternativas:
 
-- Seu corpo, seus habitos, seu proximo nivel.
+- Seu corpo, seus hábitos, seu próximo nível.
 - Fitness sem culpa, progresso com jogo.
-- Pequenas missoes. Grandes mudancas.
+- Pequenas missões. Grandes mudancas.
 
 ## 3. Posicionamento
 
-LevelFit e um app fitness gamificado para pessoas que querem criar consistencia em treino, alimentacao, hidratacao e habitos saudaveis sem pressao toxica. O produto combina a clareza de missoes diarias com progressao visual, XP, streaks flexiveis e recompensas saudaveis.
+LevelFit é um app fitness gamificado para pessoas que querem criar consistência em treino, alimentação, hidratação e hábitos saudáveis sem pressão tóxica. O produto combina a clareza de missões diárias com progressão visual, XP, streaks flexíveis e recompensas saudáveis.
 
 O app se posiciona entre:
 
 - A disciplina leve do Duolingo.
 - O acompanhamento fitness do Fitbit/Nike Training Club.
-- A sensacao de progresso social/visual do Strava.
+- A sensação de progresso social/visual do Strava.
 - A simplicidade de apps de habit tracking.
 
-## 4. Publico-alvo
+## 4. Público-alvo
 
-Publico principal:
+Público principal:
 
 - Adultos de 18 a 40 anos.
-- Pessoas que ja tentaram manter rotina fitness, mas abandonaram por falta de constancia.
-- Usuarios que gostam de apps bonitos, feedback visual e recompensas.
-- Iniciantes e intermediarios em fitness.
-- Pessoas com rotina corrida que precisam de orientacao simples.
+- Pessoas que já tentaram manter rotina fitness, mas abandonaram por falta de constância.
+- Usuários que gostam de apps bonitos, feedback visual e recompensas.
+- Iniciantes e intermediários em fitness.
+- Pessoas com rotina corrida que precisam de orientação simples.
 
-Publico secundario:
+Público secundário:
 
-- Usuarios em retomada apos pausa, ferias, lesao leve ou periodo de baixa motivacao.
+- Usuários em retomada após pausa, férias, lesão leve ou período de baixa motivação.
 - Pessoas que treinam em casa ou academia e querem registrar progresso.
-- Profissionais ocupados que preferem metas pequenas e praticas.
+- Profissionais ocupados que preferem metas pequenas e práticas.
 
 Fora de escopo inicial:
 
 - Atletas de alta performance.
-- Tratamento clinico de doencas.
-- Prescricao nutricional individualizada.
+- Tratamento clínico de doenças.
+- Prescrição nutricional individualizada.
 - Comunidades competitivas agressivas.
 
 ## 5. Problema principal
 
-Apps fitness tradicionais frequentemente falham em manter o usuario engajado porque:
+Apps fitness tradicionais frequentemente falham em manter o usuário engajado porque:
 
 - Comecam com metas grandes demais.
 - Tratam falhas como fracasso.
-- Sao frios, clinicos ou excessivamente tecnicos.
+- São frios, clinicos ou excessivamente técnicos.
 - Exigem muito registro manual.
-- Prometem resultado fisico rapido.
-- Nao conectam treino, alimentacao, agua e habitos num ritual diario simples.
+- Prometem resultado físico rápido.
+- Não conectam treino, alimentação, água e hábitos num ritual diário simples.
 
-O problema central do LevelFit e: como ajudar uma pessoa comum a voltar todos os dias, fazer o minimo viavel saudavel e sentir progresso real sem culpa?
+O problema central do LevelFit e: como ajudar uma pessoa comum a voltar todos os dias, fazer o mínimo viável saudável e sentir progresso real sem culpa?
 
-## 6. Solucao proposta
+## 6. Solução proposta
 
-LevelFit transforma a rotina fitness em um sistema diario de missoes leves:
+LevelFit transforma a rotina fitness em um sistema diário de missões leves:
 
 - Treino do dia.
 - Checklist alimentar.
-- Meta de agua.
-- Habitos saudaveis.
+- Meta de água.
+- Hábitos saudáveis.
 - Registro de progresso corporal.
-- XP, niveis, conquistas e streaks flexiveis.
+- XP, niveis, conquistas e streaks flexíveis.
 
-A experiencia central e um dashboard diario que mostra "o que importa hoje" em vez de um menu complexo. O usuario sempre sabe qual e o proximo passo.
+A experiência central é um dashboard diário que mostra "o que importa hoje" em vez de um menu complexo. O usuário sempre sabe qual é o próximo passo.
 
 ## 7. Diferencial competitivo
 
-O diferencial do LevelFit e unir fitness, habitos e gamificacao com uma filosofia de seguranca emocional:
+O diferencial do LevelFit é unir fitness, hábitos e gamificação com uma filosofia de segurança emocional:
 
-- Streak saudavel, com protecoes e recuperacao.
-- Recaidas tratadas como informacao, nao como vergonha.
-- Metas adaptativas conforme energia, nivel e historico.
+- Streak saudável, com proteções e recuperação.
+- Recaídas tratadas como informação, não como vergonha.
+- Metas adaptativas conforme energia, nível e histórico.
 - Linguagem positiva, adulta e premium.
 - Visual altamente recompensador sem parecer infantil.
-- Privacidade forte para dados sensiveis.
+- Privacidade forte para dados sensíveis.
 
-## 8. Beneficios para o usuario
+## 8. Benefícios para o usuário
 
-- Mais consistencia.
+- Mais consistência.
 - Menos culpa ao falhar.
 - Clareza sobre o que fazer hoje.
-- Sensacao visual de evolucao.
+- Sensação visual de evolução.
 - Rotina fitness mais prazerosa.
-- Registro simples de agua, treino, comida e progresso.
-- Recompensas por comportamento saudavel, nao por extremos.
+- Registro simples de água, treino, comida e progresso.
+- Recompensas por comportamento saudável, não por extremos.
 - Melhor autoconhecimento sobre padroes pessoais.
 
 ## 9. Tom de voz da marca
 
 O tom deve ser:
 
-- Energico, mas nao agressivo.
-- Confiante, mas nao autoritario.
+- Energico, mas não agressivo.
+- Confiante, mas não autoritario.
 - Adulto, leve e acolhedor.
 - Motivador sem humilhar.
 - Claro, curto e acionavel.
 
 Exemplos:
 
-- "Boa. Voce manteve o ritmo hoje."
-- "Missao feita. Mais um passo no seu nivel."
-- "Pausa faz parte. Vamos voltar pelo basico?"
-- "Seu streak esta em risco, mas ainda da tempo de salvar com uma missao leve."
+- "Boa. Você manteve o ritmo hoje."
+- "Missão feita. Mais um passo no seu nível."
+- "Pausa faz parte. Vamos voltar pelo básico?"
+- "Seu streak está em risco, mas ainda dá tempo de salvar com uma missão leve."
 
 Evitar:
 
 - "Sem desculpas."
-- "Voce falhou."
-- "Queime gordura rapido."
+- "Você falhou."
+- "Queime gordura rápido."
 - "Detox milagroso."
-- "Treine ate nao aguentar."
+- "Treine até não aguentar."
 
 ## 10. Experiencia emocional desejada
 
-O usuario deve sentir:
+O usuário deve sentir:
 
 - Controle: "eu sei o que fazer agora".
 - Progresso: "estou evoluindo mesmo em dias pequenos".
 - Pertencimento: "o app entende minha vida real".
 - Energia: "da vontade de abrir e completar".
-- Seguranca: "meus dados e limites sao respeitados".
+- Segurança: "meus dados e limites são respeitados".
 
 ## 11. Personas principais
 
 ### Persona 1: Marina, 28, profissional ocupada
 
-Marina trabalha muito, ja baixou varios apps fitness e abandona depois de duas semanas. Ela precisa de missoes curtas, notificacoes inteligentes e uma experiencia bonita o suficiente para virar ritual.
+Marina trabalha muito, já baixou varios apps fitness e abandona depois de duas semanas. Ela precisa de missões curtas, notificações inteligentes e uma experiencia bonita o suficiente para virar ritual.
 
 Necessidades:
 
 - Treinos curtos.
 - Lembretes sem excesso.
-- Registro rapido de agua e refeicoes.
+- Registro rápido de água e refeições.
 - Recompensas visuais.
 
 ### Persona 2: Lucas, 34, retomada de rotina
 
-Lucas treinava antes, parou por meses e sente que perdeu o ritmo. Ele nao quer julgamento. Quer voltar com metas pequenas e evolucao gradual.
+Lucas treinava antes, parou por meses e sente que perdeu o ritmo. Ele não quer julgamento. Quer voltar com metas pequenas e evolução gradual.
 
 Necessidades:
 
 - Plano de retomada.
 - Streak flexivel.
 - Dashboard simples.
-- Progresso corporal sem comparacao toxica.
+- Progresso corporal sem comparacao tóxica.
 
 ### Persona 3: Ana, 22, motivada por jogos
 
-Ana gosta de XP, badges, desafios e personalizacao. Ela quer sentir que cada acao conta.
+Ana gosta de XP, badges, desafios e personalizacao. Ela quer sentir que cada ação conta.
 
 Necessidades:
 
@@ -168,97 +168,97 @@ Necessidades:
 - Niveis.
 - Feedback animado.
 
-### Persona 4: Rafael, 39, foco em saude
+### Persona 4: Rafael, 39, foco em saúde
 
-Rafael quer melhorar habitos sem radicalismo. Busca hidratacao, alimentacao melhor e exercicios consistentes.
+Rafael quer melhorar hábitos sem radicalismo. Busca hidratação, alimentação melhor e exercícios consistentes.
 
 Necessidades:
 
 - Metas realistas.
 - Resumos semanais.
 - Privacidade.
-- Recomendacoes seguras.
+- Recomendações seguras.
 
-## 12. Jornada do usuario
+## 12. Jornada do usuário
 
 ### Primeiro acesso
 
-1. Onboarding explica a filosofia: progresso saudavel, sem culpa.
-2. Usuario informa objetivo geral: ganhar consistencia, emagrecer com seguranca, ganhar forca, beber mais agua, melhorar habitos.
-3. Usuario define nivel atual e restricoes basicas.
-4. App pede consentimento explicito para dados sensiveis.
-5. Dashboard diario e criado com missoes iniciais leves.
+1. Onboarding explica a filosofia: progresso saudável, sem culpa.
+2. Usuário informa objetivo geral: ganhar consistência, emagrecer com segurança, ganhar força, beber mais água, melhorar hábitos.
+3. Usuário define nível atual e restrições basicas.
+4. App pede consentimento explicito para dados sensíveis.
+5. Dashboard diário e criado com missões iniciais leves.
 
-### Uso diario
+### Uso diário
 
-1. Usuario abre o dashboard.
-2. Ve XP, streak, nivel e missoes.
-3. Completa uma ou mais missoes.
+1. Usuário abre o dashboard.
+2. Ve XP, streak, nível e missões.
+3. Completa uma ou mais missões.
 4. Recebe feedback visual.
 5. O app ajusta progresso e notifica apenas quando faz sentido.
 
-### Recaida
+### Recaída
 
-1. Usuario perde um dia ou mais.
+1. Usuário perde um dia ou mais.
 2. O app evita linguagem punitiva.
-3. Oferece "missao de retomada".
-4. Permite preservar parte do progresso com um sistema de recuperacao limitado.
+3. Oferece "missão de retomada".
+4. Permite preservar parte do progresso com um sistema de recuperação limitado.
 
-### Evolucao
+### Evolução
 
-1. Usuario acumula XP.
+1. Usuário acumula XP.
 2. Desbloqueia badges e niveis.
-3. Visualiza tendencias corporais e comportamentais.
-4. Recebe resumo semanal com foco em consistencia.
+3. Visualiza tendências corporais e comportamentais.
+4. Recebe resumo semanal com foco em consistência.
 
 ## 13. Funcionalidades principais
 
-- Cadastro, login e seguranca de conta.
-- Perfil de saude e preferencias.
-- Dashboard diario.
-- Missoes do dia.
+- Cadastro, login e segurança de conta.
+- Perfil de saúde e preferências.
+- Dashboard diário.
+- Missões do dia.
 - Treino do dia.
-- Registro de exercicios.
+- Registro de exercícios.
 - Checklist alimentar.
-- Registro de agua.
-- Metas de nutricao e hidratacao.
+- Registro de água.
+- Metas de nutrição e hidratação.
 - XP e niveis.
-- Streaks flexiveis.
+- Streaks flexíveis.
 - Conquistas.
 - Medidas corporais.
 - Fotos de progresso com storage seguro.
-- Notificacoes internas.
-- E-mails transacionais e de retencao.
-- Preferencias de notificacao.
-- Exportacao e exclusao de dados.
+- Notificações internas.
+- E-mails transacionais e de retenção.
+- Preferências de notificação.
+- Exportação e exclusão de dados.
 
 ## 14. Funcionalidades do MVP
 
-MVP deve provar retencao e engajamento diario:
+MVP deve provar retenção e engajamento diário:
 
 - Auth com e-mail e senha.
-- Verificacao de e-mail.
-- Recuperacao de senha.
-- Dashboard diario real.
-- Missoes fixas e simples.
-- Treino do dia mockado/configuravel.
-- Registro de sessao de treino.
-- Registro de agua.
+- Verificação de e-mail.
+- Recuperação de senha.
+- Dashboard diário real.
+- Missões fixas e simples.
+- Treino do dia mockado/configurável.
+- Registro de sessão de treino.
+- Registro de água.
 - Checklist alimentar simples.
-- XP, nivel e streak.
+- XP, nível e streak.
 - Conquistas basicas.
-- Notificacoes internas.
+- Notificações internas.
 - E-mails essenciais.
-- Perfil e preferencias.
+- Perfil e preferências.
 - Medidas corporais basicas.
-- Exportacao/exclusao de dados em fluxo inicial.
+- Exportação/exclusão de dados em fluxo inicial.
 
 ## 15. Funcionalidades futuras
 
 - PWA com Web Push.
 - Planos adaptativos de treino.
 - Integracao com wearables.
-- Biblioteca rica de exercicios.
+- Biblioteca rica de exercícios.
 - Scanner de codigo de barras para alimentos.
 - IA para sugestoes de rotina segura.
 - Comunidades opt-in.
@@ -267,38 +267,38 @@ MVP deve provar retencao e engajamento diario:
 - Planos premium personalizados.
 - Integracao com nutricionistas e treinadores parceiros.
 
-## 16. Estrategia de gamificacao
+## 16. Estratégia de gamificação
 
 ### XP
 
-XP recompensa consistencia e comportamento saudavel:
+XP recompensa consistência e comportamento saudável:
 
-- Completar missao leve: 10 XP.
+- Completar missão leve: 10 XP.
 - Completar treino: 30 XP.
-- Bater meta de agua: 20 XP.
+- Bater meta de água: 20 XP.
 - Completar checklist alimentar: 20 XP.
 - Registrar progresso semanal: 25 XP.
 
 Limites:
 
-- XP diario tem teto para evitar comportamento compulsivo.
-- Overtraining nao gera bonus infinito.
-- Falhas nao removem XP ja conquistado.
+- XP diário tem teto para evitar comportamento compulsivo.
+- Overtraining não gera bonus infinito.
+- Falhas não removem XP já conquistado.
 
 ### Niveis
 
 Niveis representam jornada:
 
-- Nivel 1 a 5: Criando ritmo.
-- Nivel 6 a 15: Construindo base.
-- Nivel 16 a 30: Consistencia.
-- Nivel 31+: Dominio pessoal.
+- Nível 1 a 5: Criando ritmo.
+- Nível 6 a 15: Construindo base.
+- Nível 16 a 30: Consistência.
+- Nível 31+: Dominio pessoal.
 
 ### Streak
 
-Streak deve medir presenca saudavel, nao perfeicao:
+Streak deve medir presenca saudável, não perfeição:
 
-- O usuario mantem streak ao completar pelo menos uma missao essencial.
+- O usuário mantem streak ao completar pelo menos uma missão essencial.
 - Existe "streak shield" limitado.
 - A perda de streak gera retomada acolhedora.
 
@@ -306,39 +306,39 @@ Streak deve medir presenca saudavel, nao perfeicao:
 
 Badges por:
 
-- 7 dias de agua registrada.
+- 7 dias de água registrada.
 - Primeiro treino completo.
 - Primeira semana com 3 treinos.
-- Volta apos pausa.
-- Consistencia de fim de semana.
+- Volta após pausa.
+- Consistência de fim de semana.
 - Primeiro registro de medidas.
 
-## 17. Estrategia de retencao
+## 17. Estratégia de retenção
 
-- Dashboard com proximo passo claro.
-- Missoes pequenas em dias de baixa energia.
-- E-mails e notificacoes personalizaveis.
+- Dashboard com próximo passo claro.
+- Missões pequenas em dias de baixa energia.
+- E-mails e notificações personalizáveis.
 - Resumo semanal positivo.
 - Conquistas em momentos-chave.
-- Reativacao apos 3, 7 e 14 dias de inatividade.
+- Reativação após 3, 7 e 14 dias de inatividade.
 - Experiencia de retorno sem vergonha.
 - Personalizacao gradual.
 
-Loops de retencao:
+Loops de retenção:
 
-- Acao diaria -> XP -> progresso visual -> notificacao inteligente -> retorno.
-- Registro semanal -> insight -> nova meta -> proxima semana.
-- Recaida -> missao de retomada -> recuperacao emocional -> continuidade.
+- Ação diária -> XP -> progresso visual -> notificação inteligente -> retorno.
+- Registro semanal -> insight -> nova meta -> próxima semana.
+- Recaída -> missão de retomada -> recuperação emocional -> continuidade.
 
-## 18. Estrategia de monetizacao
+## 18. Estratégia de monetização
 
 Modelo recomendado: freemium.
 
 Gratis:
 
-- Missoes diarias.
+- Missões diárias.
 - Treino simples.
-- Agua e checklist alimentar.
+- Água e checklist alimentar.
 - XP, streak e conquistas basicas.
 - Medidas basicas.
 
@@ -346,61 +346,61 @@ Premium:
 
 - Planos de treino avancados.
 - Insights semanais completos.
-- Historico expandido.
+- Histórico expandido.
 - Temas e avatar evolutivo.
 - Metas adaptativas.
-- Exportacao avancada.
+- Exportação avancada.
 - Desafios premium.
 
 Cuidados:
 
-- Nao bloquear seguranca, privacidade ou exclusao de dados.
-- Nao monetizar culpa.
-- Nao vender promessas irreais.
+- Não bloquear segurança, privacidade ou exclusão de dados.
+- Não monetizar culpa.
+- Não vender promessas irreais.
 
-## 19. Metricas de sucesso
+## 19. Métricas de sucesso
 
 Ativacao:
 
-- Cadastro concluido.
+- Cadastro concluído.
 - Consentimento registrado.
-- Primeira missao concluida.
-- Primeiro treino ou registro de agua.
+- Primeira missão concluída.
+- Primeiro treino ou registro de água.
 
 Engajamento:
 
 - DAU/WAU.
-- Missoes completas por usuario/dia.
+- Missões completas por usuário/dia.
 - Treinos registrados por semana.
-- Registros de agua por semana.
+- Registros de água por semana.
 - Uso do dashboard.
 
-Retencao:
+Retenção:
 
 - D1, D7, D30.
-- Usuarios com streak ativo.
-- Usuarios reativados.
-- Taxa de retorno apos recaida.
+- Usuários com streak ativo.
+- Usuários reativados.
+- Taxa de retorno após recaída.
 
-Monetizacao:
+Monetização:
 
 - Conversao para premium.
 - ARPU.
 - Churn mensal.
 - LTV.
 
-Seguranca e privacidade:
+Segurança e privacidade:
 
 - Exportacoes solicitadas.
-- Exclusoes concluidas.
+- Exclusoes concluídas.
 - Alertas de login suspeito.
-- Incidentes de seguranca.
+- Incidentes de segurança.
 
 ## 20. Roadmap por fases
 
 ### Fase 0: Fundacao
 
-- Especificacao de produto.
+- Especificação de produto.
 - Design system.
 - Modelagem de banco.
 - Arquitetura backend.
@@ -409,28 +409,28 @@ Seguranca e privacidade:
 ### Fase 1: MVP privado
 
 - Auth completo.
-- Dashboard diario.
-- Missoes.
-- Agua.
+- Dashboard diário.
+- Missões.
+- Água.
 - Checklist alimentar.
 - Treino do dia.
-- XP, nivel, streak e badges.
-- Notificacoes internas.
+- XP, nível, streak e badges.
+- Notificações internas.
 - E-mails essenciais.
 
-### Fase 2: Beta publico
+### Fase 2: Beta público
 
 - Melhorias de onboarding.
 - Medidas corporais.
 - Fotos de progresso.
-- Preferencias de notificacao.
+- Preferências de notificação.
 - Resumo semanal.
 - Observabilidade e analytics.
 
-### Fase 3: Retencao avancada
+### Fase 3: Retenção avancada
 
-- Missoes adaptativas.
-- Reativacao automatizada.
+- Missões adaptativas.
+- Reativação automatizada.
 - Streak shields.
 - Segmentacao de e-mails.
 - Desafios pessoais.

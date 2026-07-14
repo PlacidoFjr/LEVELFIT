@@ -4,23 +4,23 @@
 
 O banco do LevelFit deve sustentar cinco dominios principais:
 
-- Identidade, autenticacao e seguranca.
-- Perfil, preferencias e consentimento.
-- Fitness, alimentacao, hidratacao e progresso corporal.
-- Gamificacao, XP, streaks, missoes e conquistas.
-- Notificacoes, pagamentos, auditoria e operacao.
+- Identidade, autenticação e segurança.
+- Perfil, preferências e consentimento.
+- Fitness, alimentação, hidratação e progresso corporal.
+- Gamificação, XP, streaks, missões e conquistas.
+- Notificações, pagamentos, auditoria e operacao.
 
-PostgreSQL e recomendado como banco principal por oferecer consistencia transacional, bons indices, JSONB quando necessario, constraints fortes e extensoes uteis como `pgcrypto` para UUID.
+PostgreSQL e recomendado como banco principal por oferecer consistência transacional, bons índices, JSONB quando necessário, constraints fortes e extensoes uteis como `pgcrypto` para UUID.
 
-Principios:
+Princípios:
 
-- Dados de saude sao sensiveis.
-- Tokens sensiveis devem ser guardados como hash.
+- Dados de saúde são sensíveis.
+- Tokens sensíveis devem ser guardados como hash.
 - Fotos ficam fora do banco, em storage seguro.
-- Logs nao devem guardar conteudo sensivel desnecessario.
+- Logs não devem guardar conteúdo sensível desnecessário.
 - Rankings e exposicao social devem ser opt-in.
 - Toda tabela operacional relevante deve ter `created_at` e `updated_at`.
-- Soft delete deve ser usado para dados de dominio que podem precisar de recuperacao ou auditoria.
+- Soft delete deve ser usado para dados de dominio que podem precisar de recuperação ou auditoria.
 
 ## 2. Entidades principais
 
@@ -35,7 +35,7 @@ Identidade:
 - `email_verification_tokens`
 - `user_security_events`
 
-Fitness e saude:
+Fitness e saúde:
 
 - `workouts`
 - `exercises`
@@ -50,7 +50,7 @@ Fitness e saude:
 - `body_measurements`
 - `progress_photos`
 
-Gamificacao:
+Gamificação:
 
 - `daily_missions`
 - `user_missions`
@@ -60,7 +60,7 @@ Gamificacao:
 - `user_achievements`
 - `streaks`
 
-Notificacoes:
+Notificações:
 
 - `notifications`
 - `notification_preferences`
@@ -69,7 +69,7 @@ Notificacoes:
 - `scheduled_notifications`
 - `notification_templates`
 
-Conta, monetizacao e auditoria:
+Conta, monetização e auditoria:
 
 - `user_preferences`
 - `subscriptions`
@@ -78,18 +78,18 @@ Conta, monetizacao e auditoria:
 
 ## 3. Relacionamentos
 
-- Um `user` possui um `user_profile`, uma configuracao de preferencias e uma configuracao de notificacoes.
-- Um `user` possui varias sessoes, refresh tokens, eventos de seguranca, missoes, registros de XP, conquistas, streaks, medidas e fotos.
+- Um `user` possui um `user_profile`, uma configuração de preferências e uma configuração de notificações.
+- Um `user` possui várias sessoes, refresh tokens, eventos de segurança, missões, registros de XP, conquistas, streaks, medidas e fotos.
 - `workout_plans` agrupam `workouts`.
 - `workouts` se relacionam com `exercises` por uma tabela de juncao no schema Prisma: `workout_exercises`.
-- `workout_sessions` registram execucoes reais de treino por usuario.
-- `workout_session_exercises` registram execucoes de exercicios dentro de uma sessao.
-- `daily_missions` sao templates de missoes.
-- `user_missions` sao instancias diarias atribuidadas ao usuario.
+- `workout_sessions` registram execucoes reais de treino por usuário.
+- `workout_session_exercises` registram execucoes de exercícios dentro de uma sessão.
+- `daily_missions` são templates de missões.
+- `user_missions` são instâncias diárias atribuidadas ao usuário.
 - `xp_events` devem ser idempotentes por evento de origem.
-- `notifications`, `scheduled_notifications` e `email_logs` devem ser rastreaveis e respeitar preferencias.
+- `notifications`, `scheduled_notifications` e `email_logs` devem ser rastreaveis e respeitar preferências.
 
-## 4. Diagrama logico textual
+## 4. Diagrama lógico textual
 
 ```txt
 users
@@ -150,7 +150,7 @@ Campos:
 - `updated_at timestamptz`
 - `deleted_at timestamptz null`
 
-Indices:
+Índices:
 
 - unique `email`
 - `status`
@@ -158,7 +158,7 @@ Indices:
 
 Constraints:
 
-- `email` obrigatorio.
+- `email` obrigatório.
 - `password_hash` nunca deve receber senha em texto puro.
 
 ### user_profiles
@@ -179,14 +179,14 @@ Campos:
 - `timezone varchar(80) default UTC`
 - `created_at`, `updated_at`, `deleted_at`
 
-Indices:
+Índices:
 
 - unique `user_id`
 - `fitness_goal`
 
 Cuidados:
 
-- Data de nascimento, altura e objetivo sao dados sensiveis contextuais.
+- Data de nascimento, altura e objetivo são dados sensíveis contextuais.
 
 ### auth_accounts
 
@@ -200,7 +200,7 @@ Campos:
 - `provider_account_id varchar(160)`
 - `created_at`, `updated_at`, `deleted_at`
 
-Indices:
+Índices:
 
 - unique `(provider, provider_account_id)`
 - `user_id`
@@ -220,7 +220,7 @@ Campos:
 - `revoked_at timestamptz null`
 - `created_at`, `updated_at`
 
-Indices:
+Índices:
 
 - `user_id`
 - `(user_id, revoked_at)`
@@ -241,7 +241,7 @@ Campos:
 - `revoked_at timestamptz null`
 - `created_at`, `updated_at`
 
-Indices:
+Índices:
 
 - unique `token_hash`
 - `(user_id, session_id)`
@@ -250,7 +250,7 @@ Indices:
 
 ### password_reset_tokens
 
-Objetivo: recuperacao de senha.
+Objetivo: recuperação de senha.
 
 Campos:
 
@@ -263,7 +263,7 @@ Campos:
 
 ### email_verification_tokens
 
-Objetivo: verificacao de e-mail.
+Objetivo: verificação de e-mail.
 
 Campos:
 
@@ -276,7 +276,7 @@ Campos:
 
 ### user_security_events
 
-Objetivo: trilha de eventos de seguranca.
+Objetivo: trilha de eventos de segurança.
 
 Campos:
 
@@ -288,7 +288,7 @@ Campos:
 - `metadata jsonb default {}`
 - `created_at timestamptz`
 
-Indices:
+Índices:
 
 - `(user_id, created_at desc)`
 - `type`
@@ -310,7 +310,7 @@ Campos:
 - `created_by_user_id uuid null fk users`
 - `created_at`, `updated_at`, `deleted_at`
 
-Indices:
+Índices:
 
 - `difficulty`
 - `category`
@@ -318,7 +318,7 @@ Indices:
 
 ### exercises
 
-Objetivo: biblioteca de exercicios.
+Objetivo: biblioteca de exercícios.
 
 Campos:
 
@@ -330,7 +330,7 @@ Campos:
 - `safety_notes text null`
 - `created_at`, `updated_at`, `deleted_at`
 
-Indices:
+Índices:
 
 - `name`
 - `muscle_group`
@@ -350,7 +350,7 @@ Campos:
 
 ### workout_sessions
 
-Objetivo: execucao real de um treino pelo usuario.
+Objetivo: execucao real de um treino pelo usuário.
 
 Campos:
 
@@ -365,14 +365,14 @@ Campos:
 - `xp_awarded int default 0`
 - `created_at`, `updated_at`, `deleted_at`
 
-Indices:
+Índices:
 
 - `(user_id, started_at desc)`
 - `status`
 
 ### workout_session_exercises
 
-Objetivo: exercicios executados em uma sessao.
+Objetivo: exercícios executados em uma sessão.
 
 Campos:
 
@@ -386,14 +386,14 @@ Campos:
 - `status session_exercise_status`
 - `created_at`, `updated_at`
 
-Indices:
+Índices:
 
 - `session_id`
 - `exercise_id`
 
 ### meals
 
-Objetivo: categorias de refeicoes.
+Objetivo: categorias de refeições.
 
 Campos:
 
@@ -404,11 +404,11 @@ Campos:
 
 Seeds:
 
-- cafe da manha, almoco, lanche, jantar, ceia.
+- café da manhã, almoço, lanche, jantar, ceia.
 
 ### food_logs
 
-Objetivo: registros alimentares do usuario.
+Objetivo: registros alimentares do usuário.
 
 Campos:
 
@@ -427,7 +427,7 @@ Campos:
 - `fat_g numeric(6,2) null`
 - `created_at`, `updated_at`, `deleted_at`
 
-Indices:
+Índices:
 
 - `(user_id, logged_at desc)`
 - `meal_id`
@@ -453,13 +453,13 @@ Campos:
 - `ends_on date null`
 - `created_at`, `updated_at`, `deleted_at`
 
-Indices:
+Índices:
 
 - `(user_id, starts_on desc)`
 
 ### water_logs
 
-Objetivo: registros de agua.
+Objetivo: registros de água.
 
 Campos:
 
@@ -469,7 +469,7 @@ Campos:
 - `logged_at timestamptz`
 - `created_at`, `updated_at`, `deleted_at`
 
-Indices:
+Índices:
 
 - `(user_id, logged_at desc)`
 
@@ -479,7 +479,7 @@ Constraint:
 
 ### hydration_goals
 
-Objetivo: meta diaria de hidratacao.
+Objetivo: meta diária de hidratação.
 
 Campos:
 
@@ -496,7 +496,7 @@ Constraint:
 
 ### daily_missions
 
-Objetivo: templates de missoes.
+Objetivo: templates de missões.
 
 Campos:
 
@@ -511,7 +511,7 @@ Campos:
 
 ### user_missions
 
-Objetivo: missoes atribuidas a um usuario em uma data.
+Objetivo: missões atribuidas a um usuário em uma data.
 
 Campos:
 
@@ -527,7 +527,7 @@ Campos:
 - `source_ref_id uuid null`
 - `created_at`, `updated_at`, `deleted_at`
 
-Indices:
+Índices:
 
 - unique `(user_id, daily_mission_id, mission_date)`
 - `(user_id, mission_date)`
@@ -548,7 +548,7 @@ Campos:
 - `idempotency_key varchar(180) unique`
 - `created_at timestamptz`
 
-Indices:
+Índices:
 
 - `(user_id, created_at desc)`
 - unique `idempotency_key`
@@ -559,7 +559,7 @@ Constraint:
 
 ### user_levels
 
-Objetivo: snapshot de nivel do usuario.
+Objetivo: snapshot de nível do usuário.
 
 Campos:
 
@@ -573,7 +573,7 @@ Campos:
 
 ### achievements
 
-Objetivo: catalogo de conquistas.
+Objetivo: catálogo de conquistas.
 
 Campos:
 
@@ -599,13 +599,13 @@ Campos:
 - `unlocked_at timestamptz`
 - `created_at`, `updated_at`
 
-Indices:
+Índices:
 
 - unique `(user_id, achievement_id)`
 
 ### streaks
 
-Objetivo: sequencias saudaveis por tipo.
+Objetivo: sequencias saudáveis por tipo.
 
 Campos:
 
@@ -619,7 +619,7 @@ Campos:
 - `status streak_status`
 - `created_at`, `updated_at`
 
-Indices:
+Índices:
 
 - unique `(user_id, type)`
 
@@ -641,13 +641,13 @@ Campos:
 - `notes text null`
 - `created_at`, `updated_at`, `deleted_at`
 
-Indices:
+Índices:
 
 - `(user_id, measured_at desc)`
 
 Cuidados:
 
-- Dado sensivel. Evitar expor em notificacoes e logs.
+- Dado sensível. Evitar expor em notificações e logs.
 
 ### progress_photos
 
@@ -665,17 +665,17 @@ Campos:
 - `size_bytes int`
 - `created_at`, `updated_at`, `deleted_at`
 
-Indices:
+Índices:
 
 - `(user_id, taken_at desc)`
 
 Cuidados:
 
-- Banco nao guarda o arquivo nem URL publica permanente.
+- Banco não guarda o arquivo nem URL publica permanente.
 
 ### notifications
 
-Objetivo: notificacoes internas.
+Objetivo: notificações internas.
 
 Campos:
 
@@ -689,14 +689,14 @@ Campos:
 - `metadata jsonb default {}`
 - `created_at`, `updated_at`, `deleted_at`
 
-Indices:
+Índices:
 
 - `(user_id, created_at desc)`
 - `(user_id, read_at)`
 
 ### notification_preferences
 
-Objetivo: preferencias de notificacao.
+Objetivo: preferências de notificação.
 
 Campos:
 
@@ -720,7 +720,7 @@ Campos:
 
 ### email_logs
 
-Objetivo: rastrear envios de e-mail sem guardar conteudo sensivel.
+Objetivo: rastrear envios de e-mail sem guardar conteúdo sensível.
 
 Campos:
 
@@ -735,7 +735,7 @@ Campos:
 - `sent_at timestamptz null`
 - `created_at`, `updated_at`
 
-Indices:
+Índices:
 
 - `(user_id, created_at desc)`
 - `provider_message_id`
@@ -759,7 +759,7 @@ Campos:
 
 ### scheduled_notifications
 
-Objetivo: agenda de notificacoes e e-mails.
+Objetivo: agenda de notificações e e-mails.
 
 Campos:
 
@@ -775,7 +775,7 @@ Campos:
 - `cancelled_at timestamptz null`
 - `created_at`, `updated_at`
 
-Indices:
+Índices:
 
 - `(status, scheduled_for)`
 - `(user_id, scheduled_for desc)`
@@ -796,13 +796,13 @@ Campos:
 - `is_active boolean default true`
 - `created_at`, `updated_at`, `deleted_at`
 
-Indices:
+Índices:
 
 - unique `(key, channel, version)`
 
 ### user_preferences
 
-Objetivo: preferencias gerais do usuario.
+Objetivo: preferências gerais do usuário.
 
 Campos:
 
@@ -831,14 +831,14 @@ Campos:
 - `cancel_at_period_end boolean default false`
 - `created_at`, `updated_at`, `deleted_at`
 
-Indices:
+Índices:
 
 - `(user_id, status)`
 - unique `(provider, provider_subscription_id)`
 
 ### payments
 
-Objetivo: historico de pagamentos.
+Objetivo: histórico de pagamentos.
 
 Campos:
 
@@ -853,14 +853,14 @@ Campos:
 - `paid_at timestamptz null`
 - `created_at`, `updated_at`
 
-Indices:
+Índices:
 
 - `(user_id, created_at desc)`
 - unique `(provider, provider_payment_id)`
 
 ### audit_logs
 
-Objetivo: auditoria de acoes sensiveis.
+Objetivo: auditoria de ações sensíveis.
 
 Campos:
 
@@ -875,24 +875,24 @@ Campos:
 - `metadata jsonb default {}`
 - `created_at timestamptz`
 
-Indices:
+Índices:
 
 - `(target_user_id, created_at desc)`
 - `(actor_user_id, created_at desc)`
 - `action`
 
-## 6. Indices recomendados
+## 6. Índices recomendados
 
 Priorizar:
 
-- Busca por usuario + data em registros diarios.
+- Busca por usuário + data em registros diarios.
 - Unicidade de tokens hasheados.
-- Idempotencia em XP e notificacoes agendadas.
-- Sessoes ativas por usuario.
-- Missoes do dia por usuario.
-- Notificacoes nao lidas por usuario.
+- Idempotência em XP e notificações agendadas.
+- Sessoes ativas por usuário.
+- Missões do dia por usuário.
+- Notificações não lidas por usuário.
 
-Indices criticos:
+Índices criticos:
 
 - `users.email`
 - `refresh_tokens.token_hash`
@@ -906,13 +906,13 @@ Indices criticos:
 - `notifications(user_id, read_at)`
 - `scheduled_notifications(status, scheduled_for)`
 
-## 7. Estrategia de migrations
+## 7. Estratégia de migrations
 
-Recomendacao para MVP:
+Recomendação para MVP:
 
 - Usar Prisma Migrate.
 - Toda alteracao de schema deve virar migration versionada.
-- Nunca editar migration ja aplicada em ambiente compartilhado.
+- Nunca editar migration já aplicada em ambiente compartilhado.
 - Rodar migrations em CI antes do deploy.
 - Separar migrations destrutivas em duas etapas:
   1. adicionar campo novo e migrar dados.
@@ -921,26 +921,26 @@ Recomendacao para MVP:
 Ambientes:
 
 - `dev`: migrations frequentes.
-- `staging`: simula producao.
+- `staging`: simula produção.
 - `prod`: migrations revisadas e com backup antes.
 
-## 8. Estrategia de seeds
+## 8. Estratégia de seeds
 
 Seeds iniciais:
 
-- Refeicoes padrao em `meals`.
-- Exercicios basicos em `exercises`.
+- Refeições padrão em `meals`.
+- Exercícios basicos em `exercises`.
 - Plano inicial de treino.
-- Missoes diarias padrao.
+- Missões diárias padrão.
 - Conquistas basicas.
-- Templates de notificacao.
+- Templates de notificação.
 
 Cuidados:
 
 - Seeds devem ser idempotentes via `upsert`.
-- Nunca seedar dados reais de usuarios.
+- Nunca seedar dados reais de usuários.
 
-## 9. Estrategia de soft delete
+## 9. Estratégia de soft delete
 
 Usar `deleted_at` em:
 
@@ -962,14 +962,14 @@ Usar `deleted_at` em:
 - notification_templates
 - subscriptions
 
-Nao usar soft delete em:
+Não usar soft delete em:
 
 - tokens efemeros.
 - logs de auditoria.
 - eventos de XP.
-- eventos de seguranca.
+- eventos de segurança.
 
-## 10. Estrategia de auditoria
+## 10. Estratégia de auditoria
 
 Auditar:
 
@@ -977,56 +977,56 @@ Auditar:
 - Alteracao de e-mail.
 - Alteracao de senha.
 - Ativacao/desativacao de 2FA.
-- Exportacao de dados.
-- Solicitacao de exclusao de conta.
-- Revogacao global de sessoes.
-- Alteracoes em consentimento.
+- Exportação de dados.
+- Solicitação de exclusão de conta.
+- Revogação global de sessoes.
+- Alterações em consentimento.
 
 Evitar:
 
-- Gravar peso, medidas, fotos, alimentos detalhados ou conteudo privado em logs.
+- Gravar peso, medidas, fotos, alimentos detalhados ou conteúdo privado em logs.
 
-## 11. Estrategia de backup
+## 11. Estratégia de backup
 
 MVP:
 
-- Backup diario automatizado.
-- Retencao minima de 30 dias.
+- Backup diário automatizado.
+- Retenção mínima de 30 dias.
 - Teste mensal de restore.
 - Criptografia em repouso.
-- Controle de acesso minimo.
+- Controle de acesso mínimo.
 
 Escala:
 
 - PITR, point-in-time recovery.
 - Backup antes de migrations destrutivas.
-- Replica de leitura se necessario.
+- Replica de leitura se necessário.
 
-## 12. Estrategia de retencao de dados
+## 12. Estratégia de retenção de dados
 
 Regras iniciais:
 
-- Tokens expirados: limpar apos 30 dias.
-- Sessoes revogadas: reter por 180 dias para seguranca.
-- Email logs: reter por 180 a 365 dias, sem conteudo sensivel.
+- Tokens expirados: limpar após 30 dias.
+- Sessoes revogadas: reter por 180 dias para segurança.
+- Email logs: reter por 180 a 365 dias, sem conteúdo sensível.
 - Audit logs: reter por 2 a 5 anos conforme necessidade juridica.
-- Dados de saude: manter enquanto a conta existir ou ate exclusao solicitada.
+- Dados de saúde: manter enquanto a conta existir ou até exclusão solicitada.
 - Conta excluida: anonimizar ou remover dados pessoais conforme LGPD.
 
-## 13. Cuidados com dados sensiveis
+## 13. Cuidados com dados sensíveis
 
 - Usar HTTPS sempre.
 - Criptografar storage de fotos.
 - Usar URLs assinadas com expiracao curta.
-- Hash para IP, user agent, tokens e destinatarios quando possivel.
-- Controle de acesso por usuario em todos os recursos.
+- Hash para IP, user agent, tokens e destinatarios quando possível.
+- Controle de acesso por usuário em todos os recursos.
 - Consentimento explicito antes de coletar dados corporais.
-- Exportacao e exclusao de dados disponiveis ao usuario.
+- Exportação e exclusão de dados disponiveis ao usuário.
 - Rankings apenas opt-in.
 
 ## 14. Prisma ou Drizzle
 
-Recomendacao para MVP: Prisma ORM.
+Recomendação para MVP: Prisma ORM.
 
 Motivos:
 
@@ -1045,4 +1045,4 @@ Arquivos iniciais:
 
 Observacao:
 
-- Em Prisma 7, a URL do banco fica em `prisma.config.ts`, nao dentro do `schema.prisma`. O schema deste projeto ja segue esse formato.
+- Em Prisma 7, a URL do banco fica em `prisma.config.ts`, não dentro do `schema.prisma`. O schema deste projeto já segue esse formato.

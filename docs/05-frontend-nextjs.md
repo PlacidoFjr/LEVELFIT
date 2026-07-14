@@ -2,13 +2,13 @@
 
 ## Papel solicitado
 
-Atuar como desenvolvedor frontend senior, especialista em React, Next.js, TypeScript, Tailwind CSS, design systems, acessibilidade, performance e apps gamificados.
+Atuar como desenvolvedor frontend sênior, especialista em React, Next.js, TypeScript, Tailwind CSS, design systems, acessibilidade, performance e apps gamificados.
 
 ## Contexto
 
-O LevelFit e um web app fitness gamificado estilo Duolingo, voltado para treino, alimentacao, hidratacao, XP, streaks, missoes diarias, conquistas e progresso corporal.
+O LevelFit é um web app fitness gamificado estilo Duolingo, voltado para treino, alimentação, hidratação, XP, streaks, missões diárias, conquistas e progresso corporal.
 
-A primeira tela apos login deve ser o dashboard real do app. Nao criar landing page.
+A primeira tela após login deve ser o dashboard real do app. Não criar landing page.
 
 ## Stack desejada
 
@@ -25,18 +25,18 @@ A primeira tela apos login deve ser o dashboard real do app. Nao criar landing p
 1. Onboarding.
 2. Cadastro.
 3. Login.
-4. Dashboard diario.
-5. Missoes do dia.
+4. Dashboard diário.
+5. Missões do dia.
 6. Treino do dia.
-7. Tela de exercicios.
-8. Alimentacao.
-9. Hidratacao.
+7. Tela de exercícios.
+8. Alimentação.
+9. Hidratação.
 10. Progresso corporal.
 11. Conquistas.
 12. Perfil.
-13. Configuracoes.
-14. Seguranca da conta.
-15. Preferencias de notificacao.
+13. Configurações.
+14. Segurança da conta.
+15. Preferências de notificação.
 
 ## Componentes obrigatorios
 
@@ -55,24 +55,24 @@ A primeira tela apos login deve ser o dashboard real do app. Nao criar landing p
 - Settings toggles.
 - Progress charts.
 
-## Estetica
+## Estética
 
 - Moderna.
 - Premium.
-- Energetica.
+- Energética.
 - Gamificada.
 - Bonita e atrativa.
 - Visual escuro premium com alto contraste.
-- Verde-limao/neon controlado como identidade principal.
-- Azul ciano para agua.
+- Verde-limão/neon controlado como identidade principal.
+- Azul ciano para água.
 - Laranja/coral para treino.
-- Verde natural para alimentacao.
+- Verde natural para alimentação.
 - Amarelo/dourado para conquistas.
 - Cards polidos.
-- Icones modernos.
+- Ícones modernos.
 - Barras de progresso.
-- Animacoes leves.
-- Microinteracoes.
+- Animações leves.
+- Microinterações.
 
 ## Requisitos
 
@@ -95,4 +95,4 @@ A primeira tela apos login deve ser o dashboard real do app. Nao criar landing p
 - Dados mockados.
 - Design tokens.
 - Sugestao de rotas.
-- Boas praticas de implementacao.
+- Boas práticas de implementação.

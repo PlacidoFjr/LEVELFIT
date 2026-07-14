@@ -1,8 +1,8 @@
 # Backend NestJS implementado
 
-## Decisao de API
+## Decisão de API
 
-O LevelFit usa uma API REST propria em NestJS e TypeScript. O frontend consome contratos sob `/v1`, sem acoplamento obrigatorio a Firebase ou Supabase. PostgreSQL e a fonte de verdade e Prisma 7 e a camada de acesso relacional.
+O LevelFit usa uma API REST propria em NestJS e TypeScript. O frontend consome contratos sob `/v1`, sem acoplamento obrigatório a Firebase ou Supabase. PostgreSQL e a fonte de verdade e Prisma 7 e a camada de acesso relacional.
 
 Servicos externos entram por adapters: Resend para e-mail, S3/R2 para fotos privadas e Redis/BullMQ para filas. Nenhum desses provedores controla identidade ou dados centrais do produto.
 
@@ -10,15 +10,15 @@ Servicos externos entram por adapters: Resend para e-mail, S3/R2 para fotos priv
 
 - Monorepo npm com frontend Next.js e `apps/api` em NestJS.
 - PostgreSQL 17 e Redis 7 via Docker Compose.
-- Migration inicial reproduzivel, incluindo extensao `citext`.
-- Seed idempotente com treinos, exercicios, refeicoes, missoes, conquistas e templates.
-- Cadastro, confirmacao de e-mail, login, logout local/global e recuperacao de senha.
-- JWT de 10 minutos e refresh token opaco em cookie `HttpOnly` com rotacao, hash e deteccao de reuso.
-- CSRF por double submit token no refresh, CORS com allowlist, Helmet, validacao estrita e rate limit.
-- Perfil, consentimento para dados sensiveis, exportacao e exclusao de conta.
-- Treinos, sessoes, alimentacao, hidratacao, missoes, XP, streaks e conquistas.
+- Migration inicial reproduzivel, incluindo extensão `citext`.
+- Seed idempotente com treinos, exercícios, refeições, missões, conquistas e templates.
+- Cadastro, confirmação de e-mail, login, logout local/global e recuperação de senha.
+- JWT de 10 minutos e refresh token opaco em cookie `HttpOnly` com rotação, hash e deteccao de reuso.
+- CSRF por double submit token no refresh, CORS com allowlist, Helmet, validação estrita e rate limit.
+- Perfil, consentimento para dados sensíveis, exportação e exclusão de conta.
+- Treinos, sessoes, alimentação, hidratação, missões, XP, streaks e conquistas.
 - Medidas corporais e metadados para upload futuro de fotos privadas.
-- Central de notificacoes, preferencias e subscriptions push criptografadas.
+- Central de notificações, preferências e subscriptions push criptografadas.
 - Health checks e Swagger.
 
 ## Endpoints
@@ -57,7 +57,7 @@ Base local: `http://127.0.0.1:3001/v1`.
 - `GET|POST /body-measurements`
 - `POST /progress-photos`
 
-### Notificacoes e operacao
+### Notificações e operacao
 
 - `GET /notifications`
 - `PATCH /notifications/:id/read`
@@ -68,17 +68,17 @@ Base local: `http://127.0.0.1:3001/v1`.
 - `POST /emails/test-preferences`
 - `GET /health`, `GET /health/ready`
 
-## Seguranca aplicada
+## Segurança aplicada
 
-- Argon2id com custo de memoria para senhas.
-- Tokens de verificacao, reset e refresh armazenados somente como HMAC SHA-256.
+- Argon2id com custo de memória para senhas.
+- Tokens de verificação, reset e refresh armazenados somente como HMAC SHA-256.
 - Endpoint e chaves Web Push cifrados com AES-256-GCM.
-- IP e user agent reduzidos a hashes nos eventos de seguranca.
-- Respostas de login e recuperacao evitam enumeracao de contas.
+- IP e user agent reduzidos a hashes nos eventos de segurança.
+- Respostas de login e recuperação evitam enumeracao de contas.
 - Dados corporais exigem consentimento explicito.
 - Ranking nasce desativado e depende de opt-in.
-- Eventos de login, senha, sessoes, exportacao e exclusao ficam auditaveis.
-- Fotos nao entram no banco; a API atual retorna apenas a intencao de upload futuro.
+- Eventos de login, senha, sessoes, exportação e exclusão ficam auditaveis.
+- Fotos não entram no banco; a API atual retorna apenas a intencao de upload futuro.
 
 ## Executar localmente
 
@@ -101,18 +101,18 @@ O Redis do projeto usa a porta `6380` para evitar conflito com instalacoes locai
 - `API_PORT` e `API_HOST`
 - `REDIS_URL`
 
-Os segredos de exemplo servem apenas para desenvolvimento. Producao deve usar secret manager e valores aleatorios independentes.
+Os segredos de exemplo servem apenas para desenvolvimento. Produção deve usar secret manager e valores aleatorios independentes.
 
 ## Proximas integracoes
 
-- Cliente HTTP do frontend com renovacao de sessao.
+- Cliente HTTP do frontend com renovacao de sessão.
 - Resend e worker BullMQ para e-mails e lembretes.
-- S3/R2 com upload assinado, leitura temporaria e remocao assicrona.
-- MFA TOTP; os endpoints existem e retornam `501` ate o fluxo seguro ser concluido.
-- Jobs de exportacao e exclusao com prazo LGPD.
-- Sentry/OpenTelemetry e alertas de seguranca.
+- S3/R2 com upload assinado, leitura temporária e remoção assicrona.
+- MFA TOTP; os endpoints existem e retornam `501` até o fluxo seguro ser concluído.
+- Jobs de exportação e exclusão com prazo LGPD.
+- Sentry/OpenTelemetry e alertas de segurança.
 - Testes de contrato e E2E em banco isolado no CI.
 
-## Validacao realizada
+## Validação realizada
 
-O smoke test local cobriu health check, cadastro, verificacao de e-mail, login, perfil, catalogo de treinos, missoes diarias, registro de agua, conclusao de missao, conclusao de treino, medida corporal, preferencias e consulta de XP. O fluxo encerrou com 90 XP creditados.
+O smoke test local cobriu health check, cadastro, verificação de e-mail, login, perfil, catálogo de treinos, missões diárias, registro de água, conclusao de missão, conclusao de treino, medida corporal, preferências e consulta de XP. O fluxo encerrou com 90 XP creditados.

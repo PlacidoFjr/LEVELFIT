@@ -24,7 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       where: { id: payload.sid, userId: payload.sub, revokedAt: null, user: { deletedAt: null, status: "active" } },
       select: { id: true, userId: true },
     });
-    if (!session) throw new UnauthorizedException({ code: "SESSION_REVOKED", message: "Sessao invalida ou encerrada." });
+    if (!session) throw new UnauthorizedException({ code: "SESSION_REVOKED", message: "Sessão inválida ou encerrada." });
     return { userId: session.userId, sessionId: session.id };
   }
 }

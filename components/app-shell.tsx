@@ -24,22 +24,22 @@ import { user } from "@/lib/mock-data";
 
 const primaryNav = [
   { href: "/", label: "Hoje", icon: Gauge },
-  { href: "/missions", label: "Missoes", icon: Target },
+  { href: "/missions", label: "Missões", icon: Target },
   { href: "/workouts", label: "Treinos", icon: Dumbbell },
-  { href: "/nutrition", label: "Alimentacao", icon: Apple },
-  { href: "/hydration", label: "Hidratacao", icon: GlassWater },
+  { href: "/nutrition", label: "Alimentação", icon: Apple },
+  { href: "/hydration", label: "Hidratação", icon: GlassWater },
   { href: "/progress", label: "Progresso", icon: TrendingUp },
   { href: "/achievements", label: "Conquistas", icon: Award },
 ];
 
 const secondaryNav = [
   { href: "/profile", label: "Perfil", icon: CircleUserRound },
-  { href: "/settings", label: "Configuracoes", icon: Settings },
+  { href: "/settings", label: "Configurações", icon: Settings },
 ];
 
 const mobileNav = [
   { href: "/", label: "Hoje", icon: Gauge },
-  { href: "/missions", label: "Missoes", icon: Target },
+  { href: "/missions", label: "Missões", icon: Target },
   { href: "/workouts", label: "Treino", icon: Dumbbell },
   { href: "/progress", label: "Progresso", icon: TrendingUp },
 ];
@@ -87,7 +87,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen">
       <a href="#main-content" className="screen-reader-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:h-auto focus:w-auto focus:clip-auto focus:rounded focus:bg-[var(--lime)] focus:px-4 focus:py-3 focus:text-[var(--lime-ink)]">
-        Pular para o conteudo
+        Pular para o conteúdo
       </a>
 
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-[248px] border-r border-[var(--border)] bg-[rgba(8,11,15,0.96)] px-4 py-5 backdrop-blur lg:flex lg:flex-col">
@@ -98,13 +98,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="mt-auto">
           <div className="mb-4 rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-3">
             <div className="mb-2 flex items-center justify-between text-xs font-bold text-[var(--text-muted)]">
-              <span>Nivel {user.level}</span>
+              <span>Nível {user.level}</span>
               <span>{user.currentXp} XP</span>
             </div>
             <div className="progress-track" aria-label={`${user.currentXp} de ${user.nextLevelXp} pontos de experiencia`}>
               <div className="progress-fill bg-[var(--lime)]" style={{ width: `${(user.currentXp / user.nextLevelXp) * 100}%` }} />
             </div>
-            <p className="mt-2 text-xs text-[var(--text-dim)]">{user.nextLevelXp - user.currentXp} XP para o proximo nivel</p>
+            <p className="mt-2 text-xs text-[var(--text-dim)]">{user.nextLevelXp - user.currentXp} XP para o próximo nível</p>
           </div>
           <nav className="flex flex-col gap-1" aria-label="Conta">
             {secondaryNav.map((item) => <NavLink key={item.href} {...item} pathname={pathname} />)}
@@ -115,7 +115,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-[var(--border)] bg-[rgba(8,11,15,0.92)] px-4 backdrop-blur lg:hidden">
         <Brand />
         <div className="flex items-center gap-2">
-          <Link href="/notifications" className="icon-button relative" aria-label="Abrir notificacoes" title="Notificacoes">
+          <Link href="/notifications" className="icon-button relative" aria-label="Abrir notificações" title="Notificações">
             <Bell size={19} />
             <span className="absolute right-2 top-2 size-2 rounded-full bg-[var(--coral)]" aria-hidden="true" />
           </Link>
@@ -148,7 +148,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid h-[72px] grid-cols-5 border-t border-[var(--border)] bg-[rgba(8,11,15,0.96)] px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden" aria-label="Navegacao inferior">
+      <nav className="fixed inset-x-0 bottom-0 z-40 grid h-[72px] grid-cols-5 border-t border-[var(--border)] bg-[rgba(8,11,15,0.96)] px-2 pb-[env(safe-área-inset-bottom)] backdrop-blur lg:hidden" aria-label="Navegacao inferior">
         {mobileNav.map(({ href, label, icon: Icon }) => {
           const active = isActive(pathname, href);
           return (
@@ -158,7 +158,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </Link>
           );
         })}
-        <button onClick={() => setMenuOpen(true)} className="flex min-w-0 flex-col items-center justify-center gap-1 text-[0.68rem] font-bold text-[var(--text-dim)]" aria-label="Abrir mais opcoes">
+        <button onClick={() => setMenuOpen(true)} className="flex min-w-0 flex-col items-center justify-center gap-1 text-[0.68rem] font-bold text-[var(--text-dim)]" aria-label="Abrir mais opções">
           <Menu size={21} aria-hidden="true" />
           <span>Mais</span>
         </button>

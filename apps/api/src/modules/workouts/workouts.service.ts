@@ -24,17 +24,17 @@ export class WorkoutsService {
 
   async startSession(userId: string, dto: StartWorkoutSessionDto) {
     const workout = await this.prisma.workout.findFirst({ where: { id: dto.workoutId, deletedAt: null, OR: [{ isPublic: true }, { createdByUserId: userId }] }, include: { exercises: true } });
-    if (!workout) throw new NotFoundException({ code: "WORKOUT_NOT_FOUND", message: "Treino nao encontrado." });
+    if (!workout) throw new NotFoundException({ code: "WORKOUT_NOT_FOUND", message: "Treino não encontrado." });
     const active = await this.prisma.workoutSession.findFirst({ where: { userId, status: "in_progress", deletedAt: null }, select: { id: true } });
-    if (active) throw new ConflictException({ code: "SESSION_ALREADY_STARTED", message: "Ja existe um treino em andamento." });
+    if (active) throw new ConflictException({ code: "SESSION_ALREADY_STARTED", message: "Já existe um treino em andamento." });
     return this.prisma.workoutSession.create({ data: { userId, workoutId: workout.id, startedAt: dto.startedAt ? new Date(dto.startedAt) : new Date(), status: "in_progress", exercises: { create: workout.exercises.map((item) => ({ exerciseId: item.exerciseId })) } }, include: { workout: true, exercises: { include: { exercise: true } } } });
   }
 
   async updateSession(userId: string, sessionId: string, dto: UpdateWorkoutSessionDto) {
     const session = await this.prisma.workoutSession.findFirst({ where: { id: sessionId, userId, deletedAt: null }, include: { exercises: true } });
-    if (!session) throw new NotFoundException({ code: "SESSION_NOT_FOUND", message: "Sessao nao encontrada." });
+    if (!session) throw new NotFoundException({ code: "SESSION_NOT_FOUND", message: "Sessão não encontrada." });
     const allowed: Record<string, string[]> = { planned: ["in_progress", "cancelled"], in_progress: ["completed", "skipped", "cancelled", "in_progress"], completed: ["completed"], skipped: ["skipped"], cancelled: ["cancelled"] };
-    if (!allowed[session.status].includes(dto.status)) throw new ConflictException({ code: "INVALID_STATUS_TRANSITION", message: "Transicao de status invalida." });
+    if (!allowed[session.status].includes(dto.status)) throw new ConflictException({ code: "INVALID_STATUS_TRANSITION", message: "Transicao de status inválida." });
 
     return this.prisma.$transaction(async (tx) => {
       if (dto.exercises?.length) {

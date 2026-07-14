@@ -2,49 +2,49 @@
 
 ## Conceito visual
 
-LevelFit deve parecer um cockpit diario de evolucao fitness: escuro, premium, energetico, visualmente recompensador e facil de escanear.
+LevelFit deve parecer um cockpit diário de evolução fitness: escuro, premium, energético, visualmente recompensador e fácil de escanear.
 
-A primeira tela apos login e o dashboard real do app, nao uma landing page. O usuario deve ver de imediato:
+A primeira tela após login e o dashboard real do app, não uma landing page. O usuário deve ver de imediato:
 
-- Nivel atual.
+- Nível atual.
 - XP do dia.
 - Streak.
-- Missoes pendentes.
+- Missões pendentes.
 - Treino do dia.
-- Agua.
-- Alimentacao.
+- Água.
+- Alimentação.
 - Conquistas recentes.
 
 ## Moodboard textual
 
 - Grafite profundo.
-- Verde-limao controlado.
+- Verde-limão controlado.
 - Luz de neon dosada.
 - Cards compactos.
 - Dados vivos.
-- Icones claros.
+- Ícones claros.
 - Badges colecionaveis.
 - Barras de progresso brilhantes.
 - Mascote adulto, esportivo e discreto.
 - Movimento leve, sem excesso.
 
-Referencias de sensacao:
+Referencias de sensação:
 
-- Duolingo: loops de recompensa e missoes.
+- Duolingo: loops de recompensa e missões.
 - Strava: energia esportiva.
-- Fitbit: dados e saude cotidiana.
+- Fitbit: dados e saúde cotidiana.
 - Nike Training Club: visual fitness premium.
 - Apps de streak: urgencia leve e progresso continuo.
 
-## Direcao de arte
+## Direção de arte
 
 Tema principal: dark premium com acentos vivos.
 
 Evitar:
 
-- Visual medico.
+- Visual médico.
 - Interfaces frias e hospitalares.
-- Estetica infantil.
+- Estética infantil.
 - Landing page promocional.
 - Excesso de gradientes.
 - Elementos decorativos sem funcao.
@@ -71,8 +71,8 @@ Marca:
 Categorias:
 
 - Treino: #FF6B3D
-- Agua: #22D3EE
-- Alimentacao: #38D979
+- Água: #22D3EE
+- Alimentação: #38D979
 - Conquistas: #FACC15
 - Alerta: #FB923C
 - Erro: #F43F5E
@@ -86,7 +86,7 @@ Modo claro futuro:
 
 ## Tipografia recomendada
 
-Primaria:
+Primária:
 
 - Inter.
 
@@ -107,7 +107,7 @@ Uso:
 Regras:
 
 - Letter spacing 0.
-- Nao escalar fonte com viewport.
+- Não escalar fonte com viewport.
 - Evitar texto longo dentro de botoes pequenos.
 
 ## Sistema de espacamento
@@ -116,7 +116,7 @@ Escala baseada em 4px:
 
 - 4, 8, 12, 16, 20, 24, 32, 40, 48, 64.
 
-Recomendacao:
+Recomendação:
 
 - Padding de tela mobile: 16px.
 - Padding de tela desktop: 24px a 32px.
@@ -131,13 +131,13 @@ Mobile:
 - 1 coluna.
 - Bottom navigation fixa.
 - Dashboard vertical por prioridade.
-- Cards com altura estavel.
+- Cards com altura estável.
 
 Desktop:
 
 - Sidebar fixa de 248px.
 - Topbar compacta.
-- Conteudo com grid 12 colunas.
+- Conteúdo com grid 12 colunas.
 - Dashboard com coluna principal e lateral de progresso.
 
 Breakpoints Tailwind:
@@ -157,9 +157,9 @@ Primario:
 - Peso 800.
 - Altura 44px mobile, 40px desktop compacto.
 - Hover #D9FF8A.
-- Focus ring visivel.
+- Focus ring visível.
 
-Secundario:
+Secundário:
 
 - Fundo #151D26.
 - Borda #26313C.
@@ -169,7 +169,7 @@ Destrutivo:
 
 - Fundo transparente ou #2A1218.
 - Texto #FB7185.
-- Confirmacao para acoes criticas.
+- Confirmação para ações críticas.
 
 Icon buttons:
 
@@ -188,11 +188,11 @@ Cards devem ser polidos, densos e funcionais:
 - Sombra sutil.
 - Header curto.
 - Icone de categoria.
-- Progresso visivel.
+- Progresso visível.
 
-Nao usar cards dentro de cards.
+Não usar cards dentro de cards.
 
-## Icones
+## Ícones
 
 Biblioteca: Lucide Icons.
 
@@ -201,9 +201,9 @@ Estilo:
 - Stroke 2px.
 - Tamanho 18px a 22px.
 - Categoria por cor.
-- Icone + label apenas quando necessario.
+- Icone + label apenas quando necessário.
 
-Icones sugeridos:
+Ícones sugeridos:
 
 - Home, Dumbbell, Droplets, Apple, Trophy, User, Bell, Shield, Settings, Flame, Zap, CheckCircle, AlertTriangle.
 
@@ -212,9 +212,9 @@ Icones sugeridos:
 Tipos:
 
 - Conquista.
-- Nivel.
+- Nível.
 - Streak.
-- Missao especial.
+- Missão especial.
 - Retomada.
 
 Visual:
@@ -229,11 +229,11 @@ Visual:
 
 XP:
 
-- Barra horizontal com preenchimento verde-limao.
-- Marcador de nivel.
+- Barra horizontal com preenchimento verde-limão.
+- Marcador de nível.
 - Animacao de preenchimento curta.
 
-Agua:
+Água:
 
 - Azul ciano.
 - Pode usar contador em copos ou ml.
@@ -242,59 +242,59 @@ Treino:
 
 - Coral/laranja.
 
-Alimentacao:
+Alimentação:
 
 - Verde natural.
 
-## Graficos
+## Gráficos
 
 Usar Recharts ou Tremor/Recharts.
 
-Graficos:
+Gráficos:
 
 - Linha para medidas corporais.
 - Barras para treino semanal.
-- Anel para completude diaria.
-- Heatmap simples para consistencia.
+- Anel para completude diária.
+- Heatmap simples para consistência.
 
 Privacidade:
 
-- Nao exibir fotos ou medidas em areas de notificacao.
+- Não exibir fotos ou medidas em areas de notificação.
 - Medidas devem ficar em telas protegidas.
 
 ## Avatar ou mascote
 
-Direcao recomendada:
+Direção recomendada:
 
-- Mascote abstrato e esportivo, nao infantil.
-- Pode ser um "core" energetico, um pequeno personagem futurista ou avatar do usuario com equipamento evolutivo.
-- Evolui por nivel, consistencia e conquistas.
-- Nao deve zombar do usuario.
+- Mascote abstrato e esportivo, não infantil.
+- Pode ser um "core" energético, um pequeno personagem futurista ou avatar do usuário com equipamento evolutivo.
+- Evolui por nível, consistência e conquistas.
+- Não deve zombar do usuário.
 
 Estados:
 
 - Pronto para o dia.
-- Celebrando missao.
+- Celebrando missão.
 - Em modo retomada.
 - Descansando.
-- Nivel acima.
+- Nível acima.
 
-## Microinteracoes
+## Microinterações
 
 - XP sobe com contagem animada.
 - Streak pulsa quando salvo.
-- Missao concluida vira check com pequeno brilho.
-- Agua adicionada gera preenchimento liquido.
+- Missão concluída vira check com pequeno brilho.
+- Água adicionada gera preenchimento liquido.
 - Badge desbloqueado aparece em modal curto.
 - Erros usam shake leve apenas em campos.
 
-## Animacoes recomendadas
+## Animações recomendadas
 
 Usar Framer Motion:
 
 - `opacity + y` para entrada de cards.
 - `scale 0.98 -> 1` em conclusao.
-- `layout` para reordenacao de missoes.
+- `layout` para reordenacao de missões.
 - Duracao entre 150ms e 350ms.
 - Respeitar `prefers-reduced-motion`.
 
@@ -309,7 +309,7 @@ Sucesso:
 Alerta:
 
 - Laranja #FB923C.
-- Acao recomendada.
+- Ação recomendada.
 
 Erro:
 
@@ -317,21 +317,21 @@ Erro:
 - Linguagem clara.
 - Sem culpa.
 
-Missao concluida:
+Missão concluída:
 
 - Card reduz opacidade levemente.
 - Check persistente.
 - XP exibido.
 
-Missao perdida:
+Missão perdida:
 
 - Texto acolhedor.
-- Opcao de retomada.
+- Opção de retomada.
 - Sem vermelho agressivo.
 
 Streak salvo:
 
-- Chama/energia com verde-limao e dourado.
+- Chama/energia com verde-limão e dourado.
 - Feedback: "Streak salvo. Hoje contou."
 
 ## Telas principais
@@ -339,20 +339,20 @@ Streak salvo:
 Onboarding:
 
 - 3 a 5 passos.
-- Explica filosofia, objetivo, nivel e preferencias.
-- Consentimento para dados sensiveis.
+- Explica filosofia, objetivo, nível e preferências.
+- Consentimento para dados sensíveis.
 
 Cadastro/Login:
 
-- Simples, seguro, com validacao clara.
-- Mostrar beneficios da conta sem parecer campanha.
+- Simples, seguro, com validação clara.
+- Mostrar benefícios da conta sem parecer campanha.
 
-Dashboard diario:
+Dashboard diário:
 
-- Primeira tela apos login.
-- XP bar, streak, missoes, treino, agua, alimentacao.
+- Primeira tela após login.
+- XP bar, streak, missões, treino, água, alimentação.
 
-Missoes:
+Missões:
 
 - Lista com prioridade, XP e status.
 - Filtros por tipo.
@@ -360,58 +360,58 @@ Missoes:
 Treino:
 
 - Card do treino do dia.
-- Lista de exercicios.
+- Lista de exercícios.
 - Marcar series, repeticoes, carga, duracao.
 
-Alimentacao:
+Alimentação:
 
 - Checklist simples no MVP.
 - Metas futuras de macros/calorias com cuidado.
 
-Hidratacao:
+Hidratação:
 
 - Copos ou ml.
-- Meta diaria.
-- Historico simples.
+- Meta diária.
+- Histórico simples.
 
 Progresso corporal:
 
 - Medidas.
 - Fotos protegidas.
-- Tendencias, nao julgamento.
+- Tendências, não julgamento.
 
 Conquistas:
 
 - Galeria de badges.
-- Conquistas bloqueadas com dica saudavel.
+- Conquistas bloqueadas com dica saudável.
 
 Perfil:
 
 - Dados basicos.
-- Nivel, badges, preferencias.
+- Nível, badges, preferências.
 
-Configuracoes:
+Configurações:
 
 - Conta.
 - Privacidade.
-- Notificacoes.
+- Notificações.
 - Exportar/excluir dados.
 
-Notificacoes:
+Notificações:
 
 - Centro interno.
-- Filtros por nao lidas, conquistas, lembretes.
+- Filtros por não lidas, conquistas, lembretes.
 
 ## Acessibilidade visual
 
-- Contraste AA no minimo.
-- Foco visivel em todos os controles.
+- Contraste AA no mínimo.
+- Foco visível em todos os controles.
 - Componentes navegaveis por teclado.
 - `aria-label` em botoes de icone.
-- Nao depender apenas de cor.
+- Não depender apenas de cor.
 - Estados de erro com texto.
 - Suporte a reducao de movimento.
-- Tamanhos de toque de no minimo 44x44 no mobile.
+- Tamanhos de toque de no mínimo 44x44 no mobile.
 
 ## Design tokens Tailwind
 
@@ -445,17 +445,17 @@ export const levelFitTokens = {
 }
 ```
 
-## Recomendacoes para Next.js e Tailwind
+## Recomendações para Next.js e Tailwind
 
 - App Router.
 - Server Components para layouts e dados iniciais.
 - Client Components para interacao, animacao e forms.
 - shadcn/ui para Dialog, Tabs, Switch, Toast, Dropdown, Form.
-- Zod para validacao.
+- Zod para validação.
 - React Hook Form para formularios.
 - TanStack Query para API real no futuro.
 - Zustand apenas se o estado global crescer.
-- Recharts para graficos.
+- Recharts para gráficos.
 - Framer Motion com `prefers-reduced-motion`.
 
 ## Estrutura frontend sugerida

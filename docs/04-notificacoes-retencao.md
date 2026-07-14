@@ -1,84 +1,84 @@
-# LevelFit - Parte Notificacoes, E-mail, Web Push e Retencao
+# LevelFit - Parte Notificações, E-mail, Web Push e Retenção
 
 ## Papel solicitado
 
-Atuar como arquiteto de sistemas, especialista em notificacoes, e-mail transacional, Web Push, PWA, filas, jobs, retencao de usuarios e privacidade.
+Atuar como arquiteto de sistemas, especialista em notificações, e-mail transacional, Web Push, PWA, filas, jobs, retenção de usuários e privacidade.
 
 ## Contexto
 
-O LevelFit sera inicialmente um web app fitness gamificado para treino, alimentacao, hidratacao, XP, streaks e missoes diarias.
+O LevelFit será inicialmente um web app fitness gamificado para treino, alimentação, hidratação, XP, streaks e missões diárias.
 
-## Sistema de notificacoes em tres camadas
+## Sistema de notificações em três camadas
 
-1. Notificacoes internas no app.
+1. Notificações internas no app.
 2. E-mails.
 3. Web Push Notifications para fase futura com PWA.
 
-## Notificacoes internas
+## Notificações internas
 
-- Missoes pendentes.
+- Missões pendentes.
 - Treino do dia.
-- Meta de agua incompleta.
+- Meta de água incompleta.
 - Checklist alimentar incompleto.
 - Streak em risco.
 - Conquistas desbloqueadas.
-- Resumo diario.
+- Resumo diário.
 - Resumo semanal.
 
 ## E-mails no MVP
 
-- Confirmacao de conta.
-- Recuperacao de senha.
-- Alerta de seguranca.
-- Lembrete diario de treino.
+- Confirmação de conta.
+- Recuperação de senha.
+- Alerta de segurança.
+- Lembrete diário de treino.
 - Streak em risco.
 - Resumo semanal.
 - Conquista desbloqueada.
-- Reativacao de usuario inativo.
-- Missao pendente.
+- Reativação de usuário inativo.
+- Missão pendente.
 
 ## Push notifications futuras
 
-- Lembrete de agua.
-- Treino no horario preferido.
+- Lembrete de água.
+- Treino no horário preferido.
 - Streak em risco.
-- Missoes pendentes.
+- Missões pendentes.
 - Recompensas e conquistas.
-- Retorno ao app apos inatividade.
+- Retorno ao app após inatividade.
 
 ## Entregaveis solicitados
 
-1. Estrategia de notificacoes para MVP.
-2. Estrategia para PWA e push no futuro.
-3. Preferencias de notificacao do usuario.
-4. Regras de horario silencioso.
-5. Estrategia de timezone.
+1. Estratégia de notificações para MVP.
+2. Estratégia para PWA e push no futuro.
+3. Preferências de notificação do usuário.
+4. Regras de horário silencioso.
+5. Estratégia de timezone.
 6. Jobs e agendamento.
 7. Filas e workers.
 8. Retry com backoff.
-9. Idempotencia.
+9. Idempotência.
 10. Logs de envio.
-11. Rate limit por usuario.
+11. Rate limit por usuário.
 12. Rate limit por provedor.
-13. Cancelamento automatico quando missao ja foi concluida.
-14. Seguranca e privacidade.
+13. Cancelamento automático quando missão já foi concluída.
+14. Segurança e privacidade.
 15. Templates de e-mail.
-16. Metricas de notificacao.
+16. Métricas de notificação.
 
-## Preferencias do usuario
+## Preferências do usuário
 
 - Ativar/desativar e-mail.
 - Ativar/desativar push.
-- Ativar/desativar lembrete de agua.
+- Ativar/desativar lembrete de água.
 - Ativar/desativar lembrete de treino.
-- Ativar/desativar lembrete de alimentacao.
+- Ativar/desativar lembrete de alimentação.
 - Ativar/desativar lembrete de streak.
 - Ativar/desativar resumo semanal.
-- Horario preferido de treino.
-- Intervalo de lembrete de agua.
-- Horario limite para streak em risco.
+- Horário preferido de treino.
+- Intervalo de lembrete de água.
+- Horário limite para streak em risco.
 - Dias silenciosos.
-- Horario de silencio.
+- Horário de silencio.
 - Timezone.
 
 ## Tabelas de banco
@@ -125,15 +125,15 @@ O LevelFit sera inicialmente um web app fitness gamificado para treino, alimenta
 
 ## Regras de privacidade
 
-- Nao mostrar peso, medidas, fotos ou dados intimos em push.
-- Nao colocar dados sensiveis no assunto do e-mail.
-- Permitir opt-out facil.
+- Não mostrar peso, medidas, fotos ou dados intimos em push.
+- Não colocar dados sensíveis no assunto do e-mail.
+- Permitir opt-out fácil.
 - Respeitar consentimento.
-- Respeitar horario silencioso.
-- Links sensiveis devem usar tokens temporarios.
-- Logs nao devem guardar conteudo sensivel desnecessario.
+- Respeitar horário silencioso.
+- Links sensíveis devem usar tokens temporários.
+- Logs não devem guardar conteúdo sensível desnecessário.
 
 ## Entrega adicional
 
 - Arquitetura completa.
-- Recomendacao da melhor abordagem para MVP.
+- Recomendação da melhor abordagem para MVP.

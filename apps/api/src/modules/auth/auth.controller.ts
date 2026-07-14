@@ -31,7 +31,7 @@ export class AuthController {
   @Post("refresh")
   @HttpCode(200)
   async refresh(@Req() request: Request, @Headers("x-csrf-token") csrfHeader: string | undefined, @Res({ passthrough: true }) response: Response) {
-    if (!csrfHeader || csrfHeader !== request.cookies?.lf_csrf) throw new ForbiddenException({ code: "CSRF_VALIDATION_FAILED", message: "Validacao CSRF falhou." });
+    if (!csrfHeader || csrfHeader !== request.cookies?.lf_csrf) throw new ForbiddenException({ code: "CSRF_VALIDATION_FAILED", message: "Validação CSRF falhou." });
     const result = await this.auth.refresh(request.cookies?.lf_refresh);
     response.cookie("lf_refresh", result.refreshToken, refreshCookie);
     response.cookie("lf_csrf", result.csrfToken, csrfCookie);

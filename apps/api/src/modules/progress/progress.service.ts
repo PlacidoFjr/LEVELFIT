@@ -9,7 +9,7 @@ export class ProgressService {
 
   private async assertConsent(userId: string) {
     const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId }, select: { sensitiveDataConsentAt: true } });
-    if (!user.sensitiveDataConsentAt) throw new BadRequestException({ code: "CONSENT_REQUIRED", message: "Consentimento para dados sensiveis e obrigatorio." });
+    if (!user.sensitiveDataConsentAt) throw new BadRequestException({ code: "CONSENT_REQUIRED", message: "Consentimento para dados sensíveis e obrigatório." });
   }
 
   async measurements(userId: string) {
@@ -27,7 +27,7 @@ export class ProgressService {
 
   async createPhoto(userId: string, dto: CreateProgressPhotoDto) {
     await this.assertConsent(userId);
-    if (!(["image/jpeg", "image/png", "image/webp"].includes(dto.contentType))) throw new BadRequestException({ code: "UNSUPPORTED_MEDIA_TYPE", message: "Formato de imagem nao suportado." });
+    if (!(["image/jpeg", "image/png", "image/webp"].includes(dto.contentType))) throw new BadRequestException({ code: "UNSUPPORTED_MEDIA_TYPE", message: "Formato de imagem não suportado." });
     const photoId = randomUUID();
     const storageKey = `progress/${userId}/${photoId}`;
     const photo = await this.prisma.progressPhoto.create({ data: { id: photoId, userId, storageKey, contentType: dto.contentType, sizeBytes: dto.sizeBytes, pose: dto.pose, takenAt: dto.takenAt ? new Date(dto.takenAt) : new Date() } });

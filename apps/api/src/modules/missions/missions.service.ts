@@ -16,8 +16,8 @@ export class MissionsService {
 
   async complete(userId: string, missionId: string) {
     const mission = await this.prisma.userMission.findFirst({ where: { id: missionId, userId, deletedAt: null }, include: { dailyMission: true } });
-    if (!mission) throw new NotFoundException({ code: "MISSION_NOT_FOUND", message: "Missao nao encontrada." });
-    if (mission.status === "completed") throw new ConflictException({ code: "MISSION_ALREADY_RESOLVED", message: "Missao ja concluida." });
+    if (!mission) throw new NotFoundException({ code: "MISSION_NOT_FOUND", message: "Missão não encontrada." });
+    if (mission.status === "completed") throw new ConflictException({ code: "MISSION_ALREADY_RESOLVED", message: "Missão já concluída." });
     return this.prisma.$transaction(async (tx) => {
       const award = await this.game.awardXp(userId, mission.dailyMission.xpReward, "mission_completed", `user_mission:${mission.id}:completed`, "user_mission", mission.id, tx);
       const updated = await tx.userMission.update({ where: { id: mission.id }, data: { status: "completed", completedAt: new Date(), xpAwarded: mission.xpAwarded + award.awarded } });

@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "LevelFit",
-  description: "Sua evolucao, um passo de cada vez.",
+  description: "Sua evolução, um passo de cada vez.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

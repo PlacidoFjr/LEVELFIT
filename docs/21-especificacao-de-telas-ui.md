@@ -1,10 +1,10 @@
-# LevelFit - Especificacao de Telas UI/UX
+# LevelFit - Especificação de Telas UI/UX
 
 Este documento detalha as principais telas do LevelFit para orientar design, prototipacao e desenvolvimento frontend.
 
 ## Principio de experiencia
 
-A interface deve parecer um app real em uso desde o primeiro contato. O produto nao deve abrir em uma landing page, mas em uma experiencia funcional: apos login, o usuario chega diretamente ao dashboard diario.
+A interface deve parecer um app real em uso desde o primeiro contato. O produto não deve abrir em uma landing page, mas em uma experiencia funcional: após login, o usuário chega diretamente ao dashboard diário.
 
 ## Arquitetura de navegacao
 
@@ -13,62 +13,62 @@ A interface deve parecer um app real em uso desde o primeiro contato. O produto 
 Bottom navigation com 5 destinos principais:
 
 - Dashboard.
-- Missoes.
+- Missões.
 - Treino.
 - Progresso.
 - Perfil.
 
-Acoes secundarias ficam em:
+Ações secundarias ficam em:
 
-- Sino de notificacoes no topo.
-- Configuracoes dentro do perfil.
-- Alimentacao e hidratacao acessiveis pelo dashboard e por atalhos.
+- Sino de notificações no topo.
+- Configurações dentro do perfil.
+- Alimentação e hidratação acessiveis pelo dashboard e por atalhos.
 
 ### Desktop
 
 Sidebar fixa com:
 
 - Dashboard.
-- Missoes.
+- Missões.
 - Treino.
-- Alimentacao.
-- Hidratacao.
+- Alimentação.
+- Hidratação.
 - Progresso.
 - Conquistas.
 - Perfil.
-- Configuracoes.
+- Configurações.
 
 Topo compacto com:
 
 - XP atual.
 - Streak.
-- Sino de notificacoes.
+- Sino de notificações.
 - Avatar.
 
 ## 1. Onboarding
 
-Objetivo: configurar o primeiro plano sem friccao e comunicar a filosofia do produto.
+Objetivo: configurar o primeiro plano sem fricção e comunicar a filosofia do produto.
 
 Fluxo recomendado:
 
 1. Boas-vindas: "Evolua um pouco todos os dias."
 2. Objetivo principal:
-   - Criar consistencia.
+   - Criar consistência.
    - Ganhar condicionamento.
-   - Melhorar alimentacao.
-   - Beber mais agua.
+   - Melhorar alimentação.
+   - Beber mais água.
    - Acompanhar progresso corporal.
-3. Nivel atual:
-   - Comecando agora.
+3. Nível atual:
+   - Começando agora.
    - Retomando.
-   - Ja treino as vezes.
+   - Já treino as vezes.
    - Treino com frequencia.
 4. Ritmo desejado:
    - Leve.
    - Moderado.
-   - Intenso, com seguranca.
-5. Consentimento de dados sensiveis.
-6. Criacao das primeiras missoes.
+   - Intenso, com segurança.
+5. Consentimento de dados sensíveis.
+6. Criacao das primeiras missões.
 
 Componentes:
 
@@ -81,11 +81,11 @@ Estado visual:
 
 - Fundo escuro premium.
 - Cards com borda colorida ao selecionar.
-- Mascote discreto apresentando o proximo passo.
+- Mascote discreto apresentando o próximo passo.
 
 ## 2. Cadastro
 
-Objetivo: criar conta com seguranca e pouca friccao.
+Objetivo: criar conta com segurança e pouca fricção.
 
 Campos:
 
@@ -93,14 +93,14 @@ Campos:
 - E-mail.
 - Senha.
 - Aceite dos termos.
-- Consentimento separado para dados sensiveis.
+- Consentimento separado para dados sensíveis.
 
 Validacoes:
 
 - E-mail valido.
-- Senha minima de 10 caracteres.
-- Indicador de forca de senha.
-- Consentimento obrigatorio antes de coletar dados de saude.
+- Senha mínima de 10 caracteres.
+- Indicador de força de senha.
+- Consentimento obrigatório antes de coletar dados de saúde.
 
 Elementos:
 
@@ -111,35 +111,35 @@ Elementos:
 
 ## 3. Login
 
-Objetivo: retorno rapido ao dashboard.
+Objetivo: retorno rápido ao dashboard.
 
 Campos:
 
 - E-mail.
 - Senha.
 
-Acoes:
+Ações:
 
 - Entrar.
 - Esqueci minha senha.
 - Criar conta.
 
-Seguranca:
+Segurança:
 
-- Mensagens genericas para credenciais invalidas.
-- Rate limit visual apos multiplas tentativas.
-- Opcao futura de 2FA.
+- Mensagens genericas para credenciais inválidas.
+- Rate limit visual após múltiplas tentativas.
+- Opção futura de 2FA.
 
-## 4. Dashboard diario
+## 4. Dashboard diário
 
 Objetivo: mostrar o que importa hoje.
 
 Hierarquia:
 
 1. Saudacao curta.
-2. Nivel, XP e streak.
-3. Missao principal do dia.
-4. Cards de treino, agua e alimentacao.
+2. Nível, XP e streak.
+3. Missão principal do dia.
+4. Cards de treino, água e alimentação.
 5. Conquista ou insight recente.
 6. Resumo da semana.
 
@@ -164,33 +164,33 @@ Layout mobile:
 Layout desktop:
 
 - Grid de 12 colunas.
-- Coluna principal com missoes e treino.
-- Coluna lateral com streak, agua, conquistas e resumo.
+- Coluna principal com missões e treino.
+- Coluna lateral com streak, água, conquistas e resumo.
 
 Estados:
 
 - Loading com skeletons.
-- Estado vazio apos onboarding incompleto.
-- Estado de erro com acao "Tentar novamente".
+- Estado vazio após onboarding incompleto.
+- Estado de erro com ação "Tentar novamente".
 
-## 5. Missoes do dia
+## 5. Missões do dia
 
-Objetivo: organizar as tarefas saudaveis do dia.
+Objetivo: organizar as tarefas saudáveis do dia.
 
 Tipos:
 
 - Treino.
-- Agua.
-- Alimentacao.
+- Água.
+- Alimentação.
 - Habito.
 - Progresso.
 - Retomada.
 
-Cada missao deve mostrar:
+Cada missão deve mostrar:
 
 - Icone.
 - Titulo.
-- Descricao curta.
+- Descrição curta.
 - XP.
 - Categoria.
 - Status.
@@ -198,21 +198,21 @@ Cada missao deve mostrar:
 
 Regras de UX:
 
-- Missoes concluidas vao para o fim ou ficam compactas.
-- Missao perdida usa linguagem neutra.
-- Missao de retomada aparece apos inatividade.
+- Missões concluídas vao para o fim ou ficam compactas.
+- Missão perdida usa linguagem neutra.
+- Missão de retomada aparece após inatividade.
 
 ## 6. Treino do dia
 
 Objetivo: permitir iniciar e concluir um treino de forma simples.
 
-Conteudo:
+Conteúdo:
 
 - Nome do treino.
 - Duracao estimada.
-- Nivel.
+- Nível.
 - Grupos musculares.
-- Lista de exercicios.
+- Lista de exercícios.
 - Botao "Iniciar treino".
 
 Durante o treino:
@@ -229,12 +229,12 @@ Finalizacao:
 
 - Resumo.
 - XP ganho.
-- Missao concluida.
+- Missão concluída.
 - Feedback de esforco percebido.
 
-## 7. Tela de exercicios
+## 7. Tela de exercícios
 
-Objetivo: exibir instrucao suficiente sem excesso clinico.
+Objetivo: exibir instrucao suficiente sem excesso clínico.
 
 Campos:
 
@@ -244,7 +244,7 @@ Campos:
 - Instrucao curta.
 - Cuidados.
 - Series/repeticoes.
-- Historico recente.
+- Histórico recente.
 
 Futuro:
 
@@ -252,22 +252,22 @@ Futuro:
 - Animacao.
 - Alternativas por equipamento.
 
-## 8. Alimentacao
+## 8. Alimentação
 
 Objetivo MVP: checklist alimentar simples e seguro, sem dieta extrema.
 
 Checklists:
 
-- Comi uma refeicao com proteina.
+- Comi uma refeição com proteína.
 - Inclui fruta ou vegetal.
-- Evitei pular refeicoes importantes.
+- Evitei pular refeições importantes.
 - Fiz uma escolha consciente.
 
 Regras:
 
-- Nao sugerir restricao radical.
-- Nao usar linguagem de culpa.
-- Macros e calorias podem entrar depois com disclaimers e controle do usuario.
+- Não sugerir restricao radical.
+- Não usar linguagem de culpa.
+- Macros e calorias podem entrar depois com disclaimers e controle do usuário.
 
 Visual:
 
@@ -275,32 +275,32 @@ Visual:
 - Cards de checklist.
 - Barra de completude.
 
-## 9. Hidratacao
+## 9. Hidratação
 
-Objetivo: registrar agua rapidamente.
+Objetivo: registrar água rapidamente.
 
 Componentes:
 
-- Meta diaria.
+- Meta diária.
 - Total consumido.
 - Botoes rapidos: +200ml, +300ml, +500ml.
-- Historico do dia.
+- Histórico do dia.
 - Progresso circular ou barra.
 
 Microinteracao:
 
 - Preenchimento azul ciano.
-- Pequena animacao de confirmacao.
+- Pequena animacao de confirmação.
 
 ## 10. Progresso corporal
 
-Objetivo: acompanhar tendencia sem julgamento.
+Objetivo: acompanhar tendência sem julgamento.
 
 Abas:
 
 - Medidas.
 - Fotos.
-- Historico.
+- Histórico.
 
 Medidas:
 
@@ -320,19 +320,19 @@ Fotos:
 
 UX:
 
-- Mostrar tendencia, nao julgamento.
+- Mostrar tendência, não julgamento.
 - Evitar frases sobre "corpo ideal".
 
 ## 11. Conquistas
 
-Objetivo: dar recompensa visual por consistencia.
+Objetivo: dar recompensa visual por consistência.
 
 Categorias:
 
 - Primeiros passos.
-- Agua.
+- Água.
 - Treino.
-- Alimentacao.
+- Alimentação.
 - Streak.
 - Retomada.
 - Progresso.
@@ -341,7 +341,7 @@ Card de badge:
 
 - Icone.
 - Nome.
-- Descricao curta.
+- Descrição curta.
 - Data de desbloqueio.
 - Raridade.
 
@@ -353,31 +353,31 @@ Estados:
 
 ## 12. Perfil
 
-Objetivo: centralizar identidade, nivel e preferencias.
+Objetivo: centralizar identidade, nível e preferências.
 
-Conteudo:
+Conteúdo:
 
 - Avatar.
 - Nome.
-- Nivel.
+- Nível.
 - XP total.
 - Streak atual.
 - Conquistas principais.
 - Objetivo atual.
-- Atalho para configuracoes.
+- Atalho para configurações.
 
-## 13. Configuracoes
+## 13. Configurações
 
 Secoes:
 
 - Conta.
 - Privacidade.
-- Notificacoes.
-- Seguranca.
+- Notificações.
+- Segurança.
 - Dados.
-- Aparencia futura.
+- Aparência futura.
 
-Acoes criticas:
+Ações críticas:
 
 - Exportar dados.
 - Excluir conta.
@@ -385,37 +385,37 @@ Acoes criticas:
 
 Regras:
 
-- Confirmacao explicita para acoes destrutivas.
+- Confirmação explicita para ações destrutivas.
 - Linguagem clara.
 - Sem esconder opt-out.
 
-## 14. Notificacoes
+## 14. Notificações
 
 Objetivo: central interno de lembretes e eventos.
 
 Tipos:
 
-- Missao pendente.
+- Missão pendente.
 - Treino do dia.
-- Agua incompleta.
-- Alimentacao incompleta.
+- Água incompleta.
+- Alimentação incompleta.
 - Streak em risco.
 - Conquista desbloqueada.
-- Resumo diario.
+- Resumo diário.
 - Resumo semanal.
 
-Card de notificacao:
+Card de notificação:
 
 - Icone.
 - Titulo.
 - Texto curto.
 - Tempo relativo.
-- Estado lida/nao lida.
+- Estado lida/não lida.
 - CTA contextual.
 
 Privacidade:
 
-- Nao mostrar peso, medidas ou fotos no preview.
+- Não mostrar peso, medidas ou fotos no preview.
 
 ## Componentes principais
 
@@ -431,7 +431,7 @@ Props sugeridas:
 Comportamento:
 
 - Animar progresso ao ganhar XP.
-- Mostrar proximo nivel.
+- Mostrar próximo nível.
 
 ### StreakCounter
 
@@ -503,27 +503,27 @@ Loading:
 
 Vazio:
 
-- Explicar o proximo passo.
+- Explicar o próximo passo.
 - CTA unico.
 
 Erro:
 
 - Mensagem curta.
-- Acao de retry.
-- Nao expor detalhes tecnicos.
+- Ação de retry.
+- Não expor detalhes técnicos.
 
 Sucesso:
 
 - Toast curto.
 - Feedback visual no proprio componente.
 
-## Recomendacao de implementacao visual
+## Recomendação de implementação visual
 
 - Usar Tailwind com tokens definidos em `tailwind.config.ts`.
 - Criar componentes de UI atomicos primeiro.
 - Montar dashboard com dados mockados.
 - Validar responsividade em 375px, 768px, 1024px e 1440px.
 - Testar contraste no tema escuro.
-- Usar `prefers-reduced-motion` para animacoes.
+- Usar `prefers-reduced-motion` para animações.
 - Usar Lucide Icons em todos os botoes de icone.
 - Usar Framer Motion apenas em momentos de recompensa e transicao.

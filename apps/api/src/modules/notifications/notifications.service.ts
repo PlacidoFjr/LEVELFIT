@@ -32,7 +32,7 @@ export class NotificationsService {
       where: { id, userId, deletedAt: null },
       data: { readAt: new Date() },
     });
-    if (!updated.count) throw new NotFoundException({ code: "NOTIFICATION_NOT_FOUND", message: "Notificacao nao encontrada." });
+    if (!updated.count) throw new NotFoundException({ code: "NOTIFICATION_NOT_FOUND", message: "Notificação não encontrada." });
     return { id, read: true };
   }
 
@@ -64,7 +64,7 @@ export class NotificationsService {
     const endpointHash = hashToken(dto.endpoint, this.secret);
     const existing = await this.prisma.pushSubscription.findUnique({ where: { endpointHash }, select: { userId: true } });
     if (existing && existing.userId !== userId) {
-      throw new ConflictException({ code: "PUSH_SUBSCRIPTION_UNAVAILABLE", message: "Nao foi possivel registrar esta subscription." });
+      throw new ConflictException({ code: "PUSH_SUBSCRIPTION_UNAVAILABLE", message: "Não foi possível registrar esta subscription." });
     }
     return this.prisma.pushSubscription.upsert({
       where: { endpointHash },

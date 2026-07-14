@@ -24,9 +24,9 @@ export class AuthService {
   }
 
   async register(dto: RegisterDto) {
-    if (!dto.termsAccepted) throw new BadRequestException({ code: "TERMS_REQUIRED", message: "O aceite dos termos e obrigatorio." });
+    if (!dto.termsAccepted) throw new BadRequestException({ code: "TERMS_REQUIRED", message: "O aceite dos termos é obrigatório." });
     const exists = await this.prisma.user.findFirst({ where: { email: dto.email, deletedAt: null }, select: { id: true } });
-    if (exists) throw new ConflictException({ code: "EMAIL_UNAVAILABLE", message: "Nao foi possivel usar este e-mail." });
+    if (exists) throw new ConflictException({ code: "EMAIL_UNAVAILABLE", message: "Não foi possível usar este e-mail." });
 
     const now = new Date();
     const passwordHash = await argon2.hash(dto.password, { type: argon2.argon2id, memoryCost: 19456, timeCost: 3, parallelism: 1 });
@@ -86,10 +86,10 @@ export class AuthService {
   }
 
   async refresh(rawToken: string | undefined) {
-    if (!rawToken) throw new UnauthorizedException({ code: "INVALID_REFRESH_TOKEN", message: "Sessao expirada." });
+    if (!rawToken) throw new UnauthorizedException({ code: "INVALID_REFRESH_TOKEN", message: "Sessão expirada." });
     const tokenHash = hashToken(rawToken, this.tokenSecret);
     const stored = await this.prisma.refreshToken.findUnique({ where: { tokenHash }, include: { session: true, user: true } });
-    if (!stored || stored.expiresAt <= new Date() || stored.revokedAt || stored.session.revokedAt || stored.user.deletedAt || stored.user.status !== "active") throw new UnauthorizedException({ code: "INVALID_REFRESH_TOKEN", message: "Sessao expirada." });
+    if (!stored || stored.expiresAt <= new Date() || stored.revokedAt || stored.session.revokedAt || stored.user.deletedAt || stored.user.status !== "active") throw new UnauthorizedException({ code: "INVALID_REFRESH_TOKEN", message: "Sessão expirada." });
     if (stored.rotatedAt) return this.revokeReusedToken(stored.userId, stored.sessionId, stored.familyId);
 
     const nextRaw = randomToken();
@@ -116,7 +116,7 @@ export class AuthService {
       this.prisma.session.updateMany({ where: { id: sessionId, revokedAt: null }, data: { revokedAt: now } }),
       this.prisma.userSecurityEvent.create({ data: { userId, type: "suspicious_login", metadata: { reason: "refresh_token_reuse" } } }),
     ]);
-    throw new UnauthorizedException({ code: "TOKEN_REUSE_DETECTED", message: "Sessao encerrada por seguranca." });
+    throw new UnauthorizedException({ code: "TOKEN_REUSE_DETECTED", message: "Sessão encerrada por segurança." });
   }
 
   async logout(auth: AuthUser, allDevices: boolean) {
@@ -172,5 +172,5 @@ export class AuthService {
     ]);
   }
 
-  mfaNotEnabled(): never { throw new NotImplementedException({ code: "FEATURE_NOT_ENABLED", message: "MFA sera ativado em uma proxima fase." }); }
+  mfaNotEnabled(): never { throw new NotImplementedException({ code: "FEATURE_NOT_ENABLED", message: "MFA será ativado em uma próxima fase." }); }
 }

@@ -11,8 +11,8 @@ export class ApiExceptionFilter implements ExceptionFilter {
     const payload = exception instanceof HttpException ? exception.getResponse() : null;
     const objectPayload = typeof payload === "object" && payload !== null ? payload as Record<string, unknown> : {};
     const message = status >= 500
-      ? "Nao foi possivel concluir a solicitacao."
-      : Array.isArray(objectPayload.message) ? "Verifique os campos informados." : String(objectPayload.message ?? payload ?? "Solicitacao invalida.");
+      ? "Não foi possível concluir a solicitação."
+      : Array.isArray(objectPayload.message) ? "Verifique os campos informados." : String(objectPayload.message ?? payload ?? "Solicitação inválida.");
     const code = String(objectPayload.code ?? (status === 400 ? "VALIDATION_ERROR" : HttpStatus[status] ?? "REQUEST_ERROR"));
 
     response.status(status).json({
