@@ -3,12 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Activity, ArrowLeft, ArrowRight, Check, Dumbbell, Eye, EyeOff, HeartPulse, Salad, ShieldCheck, Sparkles, Target } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Dumbbell, Eye, EyeOff, HeartPulse, Salad, ShieldCheck, Sparkles, Target } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { activityOptions } from "@/lib/mock-data";
+import { LevelFitLogo } from "./level-fit-logo";
 
 function AuthBrand() {
-  return <Link href="/" className="inline-flex min-h-11 items-center gap-3 text-white" aria-label="LevelFit"><span className="grid size-9 place-items-center rounded-[7px] bg-[var(--lime)] text-[var(--lime-ink)]"><Activity size={21} strokeWidth={2.8} /></span><span className="text-lg font-black">LevelFit</span></Link>;
+  return <Link href="/" className="inline-flex min-h-11 items-center gap-3 text-white" aria-label="LevelFit"><LevelFitLogo className="text-lg" /></Link>;
 }
 
 function PasswordField({ id = "password", label = "Senha", placeholder = "Sua senha" }: { id?: string; label?: string; placeholder?: string }) {

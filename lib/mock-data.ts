@@ -77,6 +77,114 @@ export const nutritionItems = [
   { id: "mindful", label: "Uma refeição sem distrações", icon: HeartPulse, done: false },
 ];
 
+export const dailyNutritionPlans = [
+  {
+    id: "balanced-base",
+    title: "Base alimentar do dia",
+    description: "Pequenas escolhas para manter energia, sem regra rígida.",
+    items: [
+      { id: "breakfast", label: "Café da manhã equilibrado", icon: Apple, done: true },
+      { id: "vegetables", label: "Vegetais em duas refeições", icon: Salad, done: false },
+      { id: "protein", label: "Fonte de proteína", icon: BicepsFlexed, done: true },
+      { id: "mindful", label: "Uma refeição sem distrações", icon: HeartPulse, done: false },
+    ],
+  },
+  {
+    id: "color-day",
+    title: "Prato com mais cor",
+    description: "Hoje o foco é variedade, não perfeição.",
+    items: [
+      { id: "fruit", label: "Uma fruta no dia", icon: Apple, done: false },
+      { id: "colorful-plate", label: "Monte um prato colorido", icon: Salad, done: true },
+      { id: "hydrated-meal", label: "Água junto da refeição", icon: GlassWater, done: false },
+      { id: "slow-bites", label: "Coma sem pressa em uma refeição", icon: HeartPulse, done: false },
+    ],
+  },
+  {
+    id: "steady-energy",
+    title: "Energia estável",
+    description: "Evite longos períodos sem comer e cuide do básico.",
+    items: [
+      { id: "no-skip", label: "Não pular uma refeição importante", icon: CheckCircle2, done: true },
+      { id: "planned-snack", label: "Planejar um lanche simples", icon: Apple, done: false },
+      { id: "protein-choice", label: "Adicionar uma fonte de proteína", icon: BicepsFlexed, done: false },
+      { id: "pause-check", label: "Perceber fome e saciedade", icon: HeartPulse, done: false },
+    ],
+  },
+  {
+    id: "light-recovery",
+    title: "Dia leve de nutrição",
+    description: "Um checklist curto para dias corridos ou de retomada.",
+    items: [
+      { id: "water-first", label: "Começar com um copo de água", icon: GlassWater, done: true },
+      { id: "simple-meal", label: "Fazer uma refeição simples e completa", icon: Salad, done: false },
+      { id: "kind-choice", label: "Escolher sem culpa ou compensação", icon: HeartPulse, done: false },
+    ],
+  },
+  {
+    id: "home-plate",
+    title: "Prato caseiro",
+    description: "Priorize comida de verdade quando couber na rotina.",
+    items: [
+      { id: "home-meal", label: "Uma refeição caseira ou planejada", icon: Salad, done: false },
+      { id: "fiber", label: "Adicionar fibra: fruta, legume ou grão", icon: Apple, done: true },
+      { id: "protein-home", label: "Incluir proteína no prato", icon: BicepsFlexed, done: false },
+      { id: "calm-table", label: "Sentar para comer com calma", icon: HeartPulse, done: false },
+    ],
+  },
+];
+
+export function getTodaysNutritionPlan(date = new Date()) {
+  const daySeed = Math.floor(new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime() / 86_400_000);
+  return dailyNutritionPlans[daySeed % dailyNutritionPlans.length];
+}
+
+export const avatarStages = [
+  {
+    id: "pulse-spark",
+    name: "Pulse Spark",
+    levelRequired: 1,
+    image: "/assets/pulse-companion.png",
+    detail: "Primeira versão do companheiro, focada em criar rotina.",
+  },
+  {
+    id: "pulse-core",
+    name: "Pulse Core",
+    levelRequired: 5,
+    image: "/assets/pulse-companion.png",
+    detail: "Ganha mais energia visual quando a consistência aparece.",
+  },
+  {
+    id: "pulse-neo",
+    name: "Pulse Neo",
+    levelRequired: 10,
+    image: "/assets/pulse-evolved.png",
+    detail: "Armadura, luzes e postura mais fortes para quem já criou ritmo.",
+  },
+  {
+    id: "pulse-volt",
+    name: "Pulse Volt",
+    levelRequired: 15,
+    image: "/assets/pulse-evolved.png",
+    detail: "Upgrade futuro com acessórios de treino e efeitos de conquista.",
+  },
+  {
+    id: "pulse-prime",
+    name: "Pulse Prime",
+    levelRequired: 25,
+    image: "/assets/pulse-evolved.png",
+    detail: "Forma premium para ciclos longos de evolução saudável.",
+  },
+];
+
+export function getCurrentAvatarStage(level = user.level) {
+  return avatarStages.reduce((current, stage) => (level >= stage.levelRequired ? stage : current), avatarStages[0]);
+}
+
+export function getNextAvatarStage(level = user.level) {
+  return avatarStages.find((stage) => stage.levelRequired > level);
+}
+
 export const weeklyActivity = [
   { day: "Qua", xp: 80, minutes: 22 },
   { day: "Qui", xp: 130, minutes: 35 },

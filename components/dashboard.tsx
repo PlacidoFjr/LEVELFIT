@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from "recharts";
-import { missions, nutritionItems, user, weeklyActivity } from "@/lib/mock-data";
+import { getCurrentAvatarStage, getNextAvatarStage, getTodaysNutritionPlan, missions, user, weeklyActivity } from "@/lib/mock-data";
 import { PageHeader } from "./page-header";
 import { ProgressRing } from "./progress-ring";
 
@@ -29,14 +29,17 @@ const toneStyles: Record<string, { bg: string; color: string }> = {
 };
 
 export function Dashboard() {
+  const nutritionPlan = useMemo(() => getTodaysNutritionPlan(), []);
+  const avatarStage = getCurrentAvatarStage(user.level);
+  const nextAvatarStage = getNextAvatarStage(user.level);
   const [completed, setCompleted] = useState<string[]>(["recovery"]);
   const [water, setWater] = useState(1250);
-  const [foodDone, setFoodDone] = useState(() => nutritionItems.filter((item) => item.done).map((item) => item.id));
+  const [foodDone, setFoodDone] = useState(() => nutritionPlan.items.filter((item) => item.done).map((item) => item.id));
   const [toast, setToast] = useState<string | null>(null);
   const missionProgress = Math.round((completed.length / missions.length) * 100);
   const levelProgress = Math.round((user.currentXp / user.nextLevelXp) * 100);
   const waterProgress = Math.min(100, Math.round((water / 2000) * 100));
-  const nutritionProgress = Math.round((foodDone.length / nutritionItems.length) * 100);
+  const nutritionProgress = Math.round((foodDone.length / nutritionPlan.items.length) * 100);
 
   const earnedToday = useMemo(
     () => missions.filter((mission) => completed.includes(mission.id)).reduce((sum, mission) => sum + mission.xp, 0),
@@ -91,12 +94,12 @@ export function Dashboard() {
           </div>
         </div>
 
-        <div className="app-card relative min-h-[240px] overflow-hidden">
-          <Image src="/assets/pulse-companion.png" alt="Pulse, companheiro de treino do LevelFit" fill priority sizes="(max-width: 1280px) 100vw, 32vw" className="object-cover object-[center_22%] opacity-95" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#080b0f] via-[rgba(8,11,15,0.15)] to-transparent" />
+        <div className="app-card relative min-h-[240px] overflow-hidden bg-[#080d12]">
+          <Image src={avatarStage.image} alt={`${avatarStage.name}, companheiro de treino do LevelFit`} fill priority sizes="(max-width: 1280px) 100vw, 32vw" className="object-contain object-bottom p-3 opacity-95" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#080b0f] via-[rgba(8,11,15,0.08)] to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-5">
-            <span className="eyebrow text-[var(--cyan)]">Pulse percebeu</span>
-            <p className="mt-2 text-sm font-bold leading-5 text-white">Sua consistência subiu nesta semana. Hoje, mantenha leve.</p>
+            <span className="eyebrow text-[var(--cyan)]">{avatarStage.name}</span>
+            <p className="mt-2 text-sm font-bold leading-5 text-white">{nextAvatarStage ? `Próxima evolução no nível ${nextAvatarStage.levelRequired}.` : "Você chegou ao estágio máximo atual."}</p>
           </div>
         </div>
       </section>
@@ -151,9 +154,9 @@ export function Dashboard() {
         </div>
 
         <div className="app-card p-5">
-          <div className="mb-4 flex items-center justify-between"><div><p className="eyebrow text-[var(--green)]">Alimentação</p><h2 className="mt-2 text-lg font-black text-white">Checklist simples</h2></div><span className="text-sm font-black text-[var(--green)]">{nutritionProgress}%</span></div>
+          <div className="mb-4 flex items-center justify-between gap-3"><div className="min-w-0"><p className="eyebrow text-[var(--green)]">Alimentação</p><h2 className="mt-2 truncate text-lg font-black text-white">{nutritionPlan.title}</h2></div><span className="shrink-0 text-sm font-black text-[var(--green)]">{nutritionProgress}%</span></div>
           <div className="space-y-2">
-            {nutritionItems.map((item) => {
+            {nutritionPlan.items.map((item) => {
               const done = foodDone.includes(item.id);
               return <button key={item.id} onClick={() => setFoodDone((current) => done ? current.filter((id) => id !== item.id) : [...current, item.id])} className="flex min-h-10 w-full items-center gap-3 text-left text-sm"><span className={`grid size-6 shrink-0 place-items-center rounded-[5px] border ${done ? "border-[var(--green)] bg-[var(--green)] text-[#052313]" : "border-[var(--border-strong)] text-transparent"}`}><Check size={15} strokeWidth={3} /></span><span className={done ? "text-[var(--text-muted)]" : "text-white"}>{item.label}</span></button>;
             })}

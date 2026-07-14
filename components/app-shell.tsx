@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Activity,
   Apple,
   Award,
   Bell,
@@ -21,6 +20,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { user } from "@/lib/mock-data";
+import { LevelFitLogo } from "./level-fit-logo";
 
 const primaryNav = [
   { href: "/", label: "Hoje", icon: Gauge },
@@ -52,10 +52,7 @@ function isActive(pathname: string, href: string) {
 function Brand() {
   return (
     <Link href="/" className="flex min-h-11 items-center gap-3 text-white" aria-label="LevelFit - ir para hoje">
-      <span className="grid size-9 place-items-center rounded-[7px] bg-[var(--lime)] text-[var(--lime-ink)]">
-        <Activity size={21} strokeWidth={2.8} aria-hidden="true" />
-      </span>
-      <span className="text-[1.15rem] font-black">LevelFit</span>
+      <LevelFitLogo className="text-[1.15rem]" />
     </Link>
   );
 }
