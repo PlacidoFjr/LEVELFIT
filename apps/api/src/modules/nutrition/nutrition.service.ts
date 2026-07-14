@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { asUtcDate, utcDayRange } from "../../common/date";
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
 import { GamificationService } from "../gamification/gamification.service";
-import type { CreateFoodLogDto } from "./nutrition.dto";
+import type { CreateFoodLogDto, UpdateNutritionGoalDto } from "./nutrition.dto";
 
 @Injectable()
 export class NutritionService {
@@ -10,6 +10,25 @@ export class NutritionService {
 
   async goal(userId: string) {
     return this.prisma.nutritionGoal.findFirst({ where: { userId, startsOn: { lte: asUtcDate() }, OR: [{ endsOn: null }, { endsOn: { gte: asUtcDate() } }], deletedAt: null }, orderBy: { startsOn: "desc" } });
+  }
+
+  async updateGoal(userId: string, dto: UpdateNutritionGoalDto) {
+    const today = asUtcDate();
+    const current = await this.prisma.nutritionGoal.findFirst({
+      where: { userId, startsOn: { lte: today }, OR: [{ endsOn: null }, { endsOn: { gte: today } }], deletedAt: null },
+      orderBy: { startsOn: "desc" },
+      select: { id: true },
+    });
+    const data = {
+      ...(dto.dailyCalories !== undefined ? { dailyCalories: dto.dailyCalories } : {}),
+      ...(dto.proteinG !== undefined ? { proteinG: dto.proteinG } : {}),
+      ...(dto.carbsG !== undefined ? { carbsG: dto.carbsG } : {}),
+      ...(dto.fatG !== undefined ? { fatG: dto.fatG } : {}),
+      ...(dto.checklistGoalCount !== undefined ? { checklistGoalCount: dto.checklistGoalCount } : {}),
+    };
+
+    if (current) return this.prisma.nutritionGoal.update({ where: { id: current.id }, data });
+    return this.prisma.nutritionGoal.create({ data: { userId, startsOn: today, checklistGoalCount: dto.checklistGoalCount ?? 3, ...data } });
   }
 
   async today(userId: string) {
@@ -36,6 +55,17 @@ export class NutritionService {
       if (distinctChecks.size >= 3) {
         const award = await this.game.awardXp(userId, 30, "nutrition_checklist_completed", `nutrition_checklist:${userId}:${start.toISOString()}`, "food_log", log.id, tx);
         xpAwarded = award.awarded;
+        if (xpAwarded > 0) {
+          await tx.notification.create({
+            data: {
+              userId,
+              type: "daily_summary",
+              title: "Checklist alimentar concluído",
+              body: "Você completou escolhas importantes de alimentação hoje. Sem culpa, sem extremos.",
+              actionUrl: "/nutrition",
+            },
+          });
+        }
       }
       return { log, checklistCompleted: distinctChecks.size, xpAwarded };
     });

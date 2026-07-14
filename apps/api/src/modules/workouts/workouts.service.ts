@@ -45,6 +45,17 @@ export class WorkoutsService {
         const award = await this.game.awardXp(userId, 60, "workout_completed", `workout_session:${sessionId}:completed`, "workout_session", sessionId, tx);
         xpAwarded += award.awarded;
         await tx.streak.upsert({ where: { userId_type: { userId, type: "workout" } }, create: { userId, type: "workout", currentCount: 1, bestCount: 1, lastCountedDate: new Date() }, update: { currentCount: { increment: 1 }, lastCountedDate: new Date(), status: "active" } });
+        if (award.awarded > 0) {
+          await tx.notification.create({
+            data: {
+              userId,
+              type: "daily_summary",
+              title: "Treino salvo",
+              body: "Sessão concluída com segurança. O importante foi aparecer e respeitar seu ritmo.",
+              actionUrl: "/workouts",
+            },
+          });
+        }
       }
       return tx.workoutSession.update({ where: { id: sessionId }, data: { status: dto.status, completedAt: dto.status === "completed" ? (dto.completedAt ? new Date(dto.completedAt) : new Date()) : undefined, perceivedEffort: dto.perceivedEffort, notes: dto.notes, xpAwarded }, include: { workout: true, exercises: { include: { exercise: true } } } });
     });

@@ -14,3 +14,11 @@ export class CreateFoodLogDto {
   @IsOptional() @Type(() => Number) @IsNumber({ maxDecimalPlaces: 2 }) @Min(0) @Max(2000) carbsG?: number;
   @IsOptional() @Type(() => Number) @IsNumber({ maxDecimalPlaces: 2 }) @Min(0) @Max(1000) fatG?: number;
 }
+
+export class UpdateNutritionGoalDto {
+  @IsOptional() @IsInt() @Min(800) @Max(10000) dailyCalories?: number;
+  @IsOptional() @Type(() => Number) @IsNumber({ maxDecimalPlaces: 2 }) @Min(0) @Max(1000) proteinG?: number;
+  @IsOptional() @Type(() => Number) @IsNumber({ maxDecimalPlaces: 2 }) @Min(0) @Max(2000) carbsG?: number;
+  @IsOptional() @Type(() => Number) @IsNumber({ maxDecimalPlaces: 2 }) @Min(0) @Max(1000) fatG?: number;
+  @IsOptional() @IsInt() @Min(1) @Max(4) checklistGoalCount?: number;
+}

@@ -1,2 +1,2 @@
-import { SettingsPage } from "@/components/feature-pages";
-export default function Page() { return <SettingsPage />; }
+import { SettingsLivePage } from "@/components/live-pages";
+export default function Page() { return <SettingsLivePage />; }

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { asUtcDate, utcDayRange } from "../../common/date";
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
 import { GamificationService } from "../gamification/gamification.service";
-import type { CreateWaterLogDto } from "./hydration.dto";
+import type { CreateWaterLogDto, UpdateHydrationGoalDto } from "./hydration.dto";
 
 @Injectable()
 export class HydrationService {
@@ -34,8 +34,36 @@ export class HydrationService {
       if (consumedMl >= goalMl) {
         const award = await this.game.awardXp(userId, 25, "water_goal_completed", `water_goal:${userId}:${start.toISOString()}`, "water_log", log.id, tx);
         xpAwarded = award.awarded;
+        if (xpAwarded > 0) {
+          await tx.notification.create({
+            data: {
+              userId,
+              type: "daily_summary",
+              title: "Meta de água concluída",
+              body: "Você bateu sua meta de hidratação de hoje. Sem exagero, só consistência.",
+              actionUrl: "/hydration",
+            },
+          });
+        }
       }
       return { log, consumedMl, goalMl, xpAwarded };
     });
+  }
+
+  async updateGoal(userId: string, dto: UpdateHydrationGoalDto) {
+    const today = asUtcDate();
+    const current = await this.prisma.hydrationGoal.findFirst({
+      where: { userId, startsOn: { lte: today }, OR: [{ endsOn: null }, { endsOn: { gte: today } }], deletedAt: null },
+      orderBy: { startsOn: "desc" },
+      select: { id: true },
+    });
+
+    if (current) {
+      await this.prisma.hydrationGoal.update({ where: { id: current.id }, data: { dailyGoalMl: dto.dailyGoalMl } });
+    } else {
+      await this.prisma.hydrationGoal.create({ data: { userId, dailyGoalMl: dto.dailyGoalMl, startsOn: today } });
+    }
+
+    return this.today(userId);
   }
 }

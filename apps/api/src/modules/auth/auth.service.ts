@@ -49,6 +49,7 @@ export class AuthService {
         hydrationGoals: { create: { dailyGoalMl: 2000, startsOn } },
         level: { create: {} },
         streaks: { create: [{ type: "daily" }, { type: "workout" }, { type: "water" }, { type: "nutrition" }] },
+        notifications: { create: { type: "mission_pending", title: "Boas-vindas ao LevelFit", body: "Comece pequeno: uma missão, um copo de água ou um treino curto já contam.", actionUrl: "/" } },
         emailVerificationTokens: { create: { tokenHash: verificationHash, expiresAt } },
       },
       select: { id: true, email: true, emailVerifiedAt: true, createdAt: true },
@@ -114,6 +115,7 @@ export class AuthService {
           hydrationGoals: { create: { dailyGoalMl: 2000, startsOn } },
           level: { create: {} },
           streaks: { create: [{ type: "daily" }, { type: "workout" }, { type: "water" }, { type: "nutrition" }] },
+          notifications: { create: { type: "mission_pending", title: "Boas-vindas ao LevelFit", body: "Comece pequeno: uma missão, um copo de água ou um treino curto já contam.", actionUrl: "/" } },
         },
         select: { id: true, email: true, profile: { select: { displayName: true } } },
       });

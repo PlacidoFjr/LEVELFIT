@@ -18,6 +18,7 @@ import {
   CheckCircle2,
   ChevronRight,
   Clock3,
+  Download,
   Dumbbell,
   Flame,
   GlassWater,
@@ -25,6 +26,7 @@ import {
   Info,
   KeyRound,
   LockKeyhole,
+  LogOut,
   Mail,
   Medal,
   MoonStar,
@@ -43,16 +45,18 @@ import {
   Utensils,
   Zap,
 } from "lucide-react";
-import { ApiClientError, clearSession, useAuthSession } from "@/lib/auth-client";
+import { ApiClientError, clearSession, logoutUser, useAuthSession } from "@/lib/auth-client";
 import {
   addFoodLog,
   addMeasurement,
   addWaterLog,
   completeMission,
+  createProgressPhotoMetadata,
   finishWorkoutSession,
   formatExerciseTarget,
   getHydrationToday,
   getNotificationPreferences,
+  getNutritionGoal,
   getNutritionToday,
   getTodayWorkout,
   getWorkoutFromToday,
@@ -67,15 +71,19 @@ import {
   logoutAllDevices,
   markAllNotificationsRead,
   markNotificationRead,
+  requestDataExport,
   startWorkoutSession,
   timeValue,
+  updateHydrationGoal,
   updateNotificationPreferences,
+  updateNutritionGoal,
   updateMe,
   type Achievement,
   type BodyMeasurement,
   type HydrationToday,
   type NotificationItem,
   type NotificationPreferences,
+  type NutritionGoal,
   type NutritionToday,
   type RankingEntry,
   type TodayWorkout,
@@ -426,11 +434,17 @@ type FoodLogInput = {
   hasFruitOrVegetable?: boolean;
   avoidedSkippingMeal?: boolean;
   mindfulChoice?: boolean;
+  calories?: number;
+  proteinG?: number;
+  carbsG?: number;
+  fatG?: number;
 };
 
 export function NutritionLivePage() {
   const [data, setData] = useState<NutritionToday | null>(null);
+  const [goal, setGoal] = useState<NutritionGoal | null>(null);
   const [showAdd, setShowAdd] = useState(false);
+  const [showGoal, setShowGoal] = useState(false);
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState<string | null>(null);
@@ -440,7 +454,9 @@ export function NutritionLivePage() {
     setLoading(true);
     setError(null);
     try {
-      setData(await getNutritionToday());
+      const [todayData, goalData] = await Promise.all([getNutritionToday(), getNutritionGoal()]);
+      setData(todayData);
+      setGoal(goalData);
     } catch (err) {
       setError(errorMessage(err));
     } finally {
@@ -449,6 +465,13 @@ export function NutritionLivePage() {
   }
 
   useEffect(() => { const id = window.setTimeout(() => void load(), 0); return () => window.clearTimeout(id); }, []);
+
+  function optionalFormNumber(form: FormData, key: string) {
+    const raw = String(form.get(key) ?? "").trim();
+    if (!raw) return undefined;
+    const value = Number(raw);
+    return Number.isFinite(value) && value >= 0 ? value : undefined;
+  }
 
   async function saveFood(extra?: FoodLogInput) {
     setError(null);
@@ -463,6 +486,43 @@ export function NutritionLivePage() {
     }
   }
 
+  async function submitFood(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    await saveFood({
+      description: String(form.get("description") ?? "").trim() || "Refeição registrada",
+      hasProtein: form.get("hasProtein") === "on",
+      hasFruitOrVegetable: form.get("hasFruitOrVegetable") === "on",
+      avoidedSkippingMeal: form.get("avoidedSkippingMeal") === "on",
+      mindfulChoice: form.get("mindfulChoice") === "on",
+      calories: optionalFormNumber(form, "calories"),
+      proteinG: optionalFormNumber(form, "proteinG"),
+      carbsG: optionalFormNumber(form, "carbsG"),
+      fatG: optionalFormNumber(form, "fatG"),
+    });
+    event.currentTarget.reset();
+  }
+
+  async function submitGoal(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    setError(null);
+    try {
+      const saved = await updateNutritionGoal({
+        dailyCalories: optionalFormNumber(form, "dailyCalories"),
+        proteinG: optionalFormNumber(form, "proteinG"),
+        carbsG: optionalFormNumber(form, "carbsG"),
+        fatG: optionalFormNumber(form, "fatG"),
+        checklistGoalCount: optionalFormNumber(form, "checklistGoalCount"),
+      });
+      setGoal(saved);
+      setShowGoal(false);
+      setNotice("Metas alimentares salvas.");
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+
   const logs = data?.data ?? [];
   const doneChecks = new Set<string>();
   logs.forEach((item) => {
@@ -471,15 +531,18 @@ export function NutritionLivePage() {
     if (item.avoidedSkippingMeal) doneChecks.add("avoidedSkippingMeal");
     if (item.mindfulChoice) doneChecks.add("mindfulChoice");
   });
+  const targetChecks = goal?.checklistGoalCount ?? 3;
+  const checkPercent = Math.min(100, Math.round((doneChecks.size / Math.max(1, targetChecks)) * 100));
 
-  return <Screen title="Alimentação" description="Registre refeições sem transformar comida em prêmio ou culpa." action={<button onClick={() => setShowAdd(true)} className="primary-button"><Plus size={18} /> Registrar refeição</button>}>
+  return <Screen title="Alimentação" description="Registre refeições sem transformar comida em prêmio ou culpa." action={<div className="flex flex-wrap gap-2"><button onClick={() => setShowGoal(true)} className="secondary-button"><Target size={18} /> Editar metas</button><button onClick={() => setShowAdd(true)} className="primary-button"><Plus size={18} /> Registrar refeição</button></div>}>
     <Notice message={notice} />
     <Notice message={error} tone="danger" />
-    {showAdd && <div className="app-card mb-4 p-5"><div className="flex items-start justify-between gap-3"><div><p className="eyebrow text-[var(--green)]">Nova refeição</p><h2 className="mt-2 text-lg font-black text-white">O que você comeu?</h2></div><button onClick={() => setShowAdd(false)} className="ghost-button">Fechar</button></div><textarea className="field mt-4 min-h-24" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Descrição breve e opcional" /><button onClick={() => saveFood({ mindfulChoice: true })} className="primary-button mt-3 bg-[var(--green)] text-[#052313]">Salvar registro</button></div>}
+    {showGoal && <form onSubmit={submitGoal} className="app-card mb-4 p-5"><div className="flex items-start justify-between gap-3"><div><p className="eyebrow text-[var(--green)]">Metas flexíveis</p><h2 className="mt-2 text-lg font-black text-white">Ajuste sem dieta extrema</h2><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Use só o que fizer sentido. Checklist é mais importante que número perfeito.</p></div><button type="button" onClick={() => setShowGoal(false)} className="ghost-button">Fechar</button></div><div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5"><label className="text-xs font-bold text-[var(--text-muted)]">Calorias opcionais<input className="field mt-2" name="dailyCalories" type="number" min={800} max={10000} defaultValue={goal?.dailyCalories ?? ""} placeholder="Ex: 2200" /></label><label className="text-xs font-bold text-[var(--text-muted)]">Proteína g<input className="field mt-2" name="proteinG" type="number" min={0} max={1000} step="0.1" defaultValue={goal?.proteinG ? Number(goal.proteinG) : ""} placeholder="Opcional" /></label><label className="text-xs font-bold text-[var(--text-muted)]">Carboidratos g<input className="field mt-2" name="carbsG" type="number" min={0} max={2000} step="0.1" defaultValue={goal?.carbsG ? Number(goal.carbsG) : ""} placeholder="Opcional" /></label><label className="text-xs font-bold text-[var(--text-muted)]">Gorduras g<input className="field mt-2" name="fatG" type="number" min={0} max={1000} step="0.1" defaultValue={goal?.fatG ? Number(goal.fatG) : ""} placeholder="Opcional" /></label><label className="text-xs font-bold text-[var(--text-muted)]">Itens do checklist<input className="field mt-2" name="checklistGoalCount" type="number" min={1} max={4} defaultValue={targetChecks} /></label></div><button className="primary-button mt-4 bg-[var(--green)] text-[#052313]">Salvar metas</button></form>}
+    {showAdd && <form onSubmit={submitFood} className="app-card mb-4 p-5"><div className="flex items-start justify-between gap-3"><div><p className="eyebrow text-[var(--green)]">Nova refeição</p><h2 className="mt-2 text-lg font-black text-white">O que você quer registrar?</h2></div><button type="button" onClick={() => setShowAdd(false)} className="ghost-button">Fechar</button></div><textarea className="field mt-4 min-h-24 py-3" name="description" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Ex: almoço com arroz, feijão, frango e salada" /><div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{checklist.map((item) => <label key={item.id} className="flex min-h-12 items-center gap-3 rounded-[7px] border border-[var(--border)] bg-[var(--surface)] px-3 text-sm font-bold text-white"><input type="checkbox" name={item.id} className="size-4 accent-[var(--green)]" /> {item.label}</label>)}</div><div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><input className="field" name="calories" type="number" min={0} max={10000} placeholder="Calorias opcional" /><input className="field" name="proteinG" type="number" min={0} max={1000} step="0.1" placeholder="Proteína g" /><input className="field" name="carbsG" type="number" min={0} max={2000} step="0.1" placeholder="Carboidratos g" /><input className="field" name="fatG" type="number" min={0} max={1000} step="0.1" placeholder="Gorduras g" /></div><button className="primary-button mt-4 bg-[var(--green)] text-[#052313]">Salvar refeição</button></form>}
     {loading ? <LoadingCard /> : (
       <div className="grid gap-4 xl:grid-cols-[1fr_0.8fr]">
-        <section className="app-card p-5"><div className="mb-5 flex items-center justify-between gap-4"><div><p className="eyebrow text-[var(--green)]">Checklist de hoje</p><h2 className="mt-2 text-lg font-black text-white">Escolhas que sustentam energia</h2><p className="mt-1 max-w-md text-xs leading-5 text-[var(--text-muted)]">Cada item salvo cria um registro real no diário alimentar.</p></div><ProgressRing value={Math.round((doneChecks.size / checklist.length) * 100)} size={82} stroke={7} color="var(--green)" label="Checklist alimentar" /></div><div className="divide-y divide-[var(--border)]">{checklist.map((item) => { const Icon = item.icon; const done = doneChecks.has(item.id); return <button key={item.id} onClick={() => !done && saveFood({ [item.id]: true } as FoodLogInput)} disabled={done} className="flex min-h-[72px] w-full items-center gap-3 text-left disabled:cursor-default"><span className="grid size-10 place-items-center rounded-[7px] bg-[rgba(56,217,121,0.1)] text-[var(--green)]"><Icon size={20} /></span><span className={`flex-1 text-sm font-bold ${done ? "text-[var(--text-muted)]" : "text-white"}`}>{item.label}</span><span className={`grid size-8 place-items-center rounded-[6px] border ${done ? "border-[var(--green)] bg-[var(--green)] text-[#052313]" : "border-[var(--border-strong)] text-transparent"}`}><Check size={17} strokeWidth={3} /></span></button>; })}</div></section>
-        <section className="app-card p-5"><p className="eyebrow">Refeições registradas</p><div className="mt-4 divide-y divide-[var(--border)]">{logs.length ? logs.map((item) => <div key={item.id} className="flex min-h-[84px] items-center gap-3"><span className="grid size-10 place-items-center rounded-[7px] bg-[var(--surface-soft)] text-[var(--green)]"><Utensils size={20} /></span><div className="min-w-0 flex-1"><p className="text-sm font-black text-white">{item.meal?.name ?? "Registro alimentar"}</p><p className="mt-1 truncate text-xs text-[var(--text-muted)]">{item.description || "Checklist salvo"}</p></div><span className="text-xs font-bold text-[var(--text-dim)]">{new Date(item.loggedAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span></div>) : <p className="py-8 text-sm text-[var(--text-muted)]">Nenhuma refeição registrada hoje.</p>}</div><div className="mt-4 border-l-2 border-[var(--green)] bg-[rgba(56,217,121,0.06)] p-4"><p className="text-sm font-bold text-white">Sem contagem obrigatória</p><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Calorias e macros continuam opcionais. O foco é regularidade e bem-estar.</p></div></section>
+        <section className="app-card p-5"><div className="mb-5 flex items-center justify-between gap-4"><div><p className="eyebrow text-[var(--green)]">Checklist de hoje</p><h2 className="mt-2 text-lg font-black text-white">Escolhas que sustentam energia</h2><p className="mt-1 max-w-md text-xs leading-5 text-[var(--text-muted)]">{doneChecks.size} de {targetChecks} itens para concluir sua meta flexível.</p></div><ProgressRing value={checkPercent} size={82} stroke={7} color="var(--green)" label="Checklist alimentar" /></div><div className="divide-y divide-[var(--border)]">{checklist.map((item) => { const Icon = item.icon; const done = doneChecks.has(item.id); return <button key={item.id} onClick={() => !done && saveFood({ [item.id]: true } as FoodLogInput)} disabled={done} className="flex min-h-[72px] w-full items-center gap-3 text-left disabled:cursor-default"><span className="grid size-10 place-items-center rounded-[7px] bg-[rgba(56,217,121,0.1)] text-[var(--green)]"><Icon size={20} /></span><span className={`flex-1 text-sm font-bold ${done ? "text-[var(--text-muted)]" : "text-white"}`}>{item.label}</span><span className={`grid size-8 place-items-center rounded-[6px] border ${done ? "border-[var(--green)] bg-[var(--green)] text-[#052313]" : "border-[var(--border-strong)] text-transparent"}`}><Check size={17} strokeWidth={3} /></span></button>; })}</div></section>
+        <section className="app-card p-5"><p className="eyebrow">Refeições registradas</p><div className="mt-4 divide-y divide-[var(--border)]">{logs.length ? logs.map((item) => <div key={item.id} className="flex min-h-[84px] items-center gap-3"><span className="grid size-10 place-items-center rounded-[7px] bg-[var(--surface-soft)] text-[var(--green)]"><Utensils size={20} /></span><div className="min-w-0 flex-1"><p className="text-sm font-black text-white">{item.meal?.name ?? "Registro alimentar"}</p><p className="mt-1 truncate text-xs text-[var(--text-muted)]">{item.description || "Checklist salvo"}</p>{item.calories ? <p className="mt-1 text-xs font-bold text-[var(--green)]">{item.calories} kcal{item.proteinG ? ` · ${item.proteinG}g proteína` : ""}</p> : null}</div><span className="text-xs font-bold text-[var(--text-dim)]">{new Date(item.loggedAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span></div>) : <p className="py-8 text-sm text-[var(--text-muted)]">Nenhuma refeição registrada hoje.</p>}</div><div className="mt-4 border-l-2 border-[var(--green)] bg-[rgba(56,217,121,0.06)] p-4"><p className="text-sm font-bold text-white">Sem contagem obrigatória</p><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Calorias e macros continuam opcionais. O foco é regularidade e bem-estar.</p></div></section>
       </div>
     )}
   </Screen>;
@@ -487,6 +550,8 @@ export function NutritionLivePage() {
 
 export function HydrationLivePage() {
   const [data, setData] = useState<HydrationToday | null>(null);
+  const [showGoal, setShowGoal] = useState(false);
+  const [customAmount, setCustomAmount] = useState("");
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -516,19 +581,91 @@ export function HydrationLivePage() {
     }
   }
 
+  async function saveGoal(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const goalMl = Number(form.get("dailyGoalMl"));
+    if (!Number.isFinite(goalMl)) return;
+    setError(null);
+    try {
+      setData(await updateHydrationGoal(goalMl));
+      setShowGoal(false);
+      setNotice("Meta de água atualizada.");
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+
+  async function addCustom() {
+    const amount = Number(customAmount);
+    if (!Number.isFinite(amount) || amount < 25) {
+      setError("Informe pelo menos 25 ml.");
+      return;
+    }
+    await add(amount);
+    setCustomAmount("");
+  }
+
   const consumed = data?.consumedMl ?? 0;
   const goal = data?.goalMl ?? 2000;
   const percent = data?.percentage ?? 0;
 
-  return <Screen title="Hidratação" description="Pequenas pausas ao longo do dia, sem transformar a meta em obrigação." action={<Link href="/settings/notifications" className="secondary-button"><Bell size={18} /> Lembretes</Link>}>
+  return <Screen title="Hidratação" description="Pequenas pausas ao longo do dia, sem transformar a meta em obrigação." action={<div className="flex flex-wrap gap-2"><button onClick={() => setShowGoal(true)} className="secondary-button"><Target size={18} /> Editar meta</button><Link href="/settings/notifications" className="secondary-button"><Bell size={18} /> Lembretes</Link></div>}>
     <Notice message={notice} />
     <Notice message={error} tone="danger" />
+    {showGoal && <form onSubmit={saveGoal} className="app-card mb-4 p-5"><div className="flex items-start justify-between gap-3"><div><p className="eyebrow text-[var(--cyan)]">Meta diária</p><h2 className="mt-2 text-lg font-black text-white">Ajuste para sua rotina</h2><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Use uma referência confortável. A meta não deve substituir orientação profissional.</p></div><button type="button" onClick={() => setShowGoal(false)} className="ghost-button">Fechar</button></div><div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]"><input className="field" name="dailyGoalMl" type="number" min={500} max={6000} step={50} defaultValue={goal} aria-label="Meta diária em ml" /><button className="primary-button">Salvar meta</button></div></form>}
     {loading ? <LoadingCard /> : (
       <div className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
-        <section className="app-card flex min-h-[360px] flex-col items-center justify-center p-6 text-center"><ProgressRing value={percent} size={164} stroke={13} color="var(--cyan)" label="Meta de hidratação" /><h2 className="mt-6 text-2xl font-black text-white">{consumed.toLocaleString("pt-BR")} <span className="text-base text-[var(--text-muted)]">/ {goal.toLocaleString("pt-BR")} ml</span></h2><p className="mt-2 text-sm text-[var(--text-muted)]">{percent >= 100 ? "Meta alcançada. Continue ouvindo seu corpo." : `Faltam ${Math.max(0, goal - consumed).toLocaleString("pt-BR")} ml, no seu ritmo.`}</p><div className="mt-6 grid w-full max-w-sm grid-cols-3 gap-2">{[250, 350, 500].map((amount) => <button key={amount} onClick={() => add(amount)} className="secondary-button px-2"><Plus size={16} /> {amount}</button>)}</div></section>
-        <section className="app-card p-5"><div className="flex items-center justify-between"><div><p className="eyebrow text-[var(--cyan)]">Hoje</p><h2 className="mt-2 text-lg font-black text-white">Registros de água</h2></div><Pill tone="cyan"><GlassWater size={14} /> {data?.logs.length ?? 0} REGISTROS</Pill></div><div className="mt-5 divide-y divide-[var(--border)]">{data?.logs.length ? data.logs.map((item) => <div key={item.id} className="flex min-h-[68px] items-center gap-3"><span className="grid size-9 place-items-center rounded-[7px] bg-[rgba(34,211,238,0.1)] text-[var(--cyan)]"><GlassWater size={18} /></span><div className="flex-1"><p className="text-sm font-black text-white">{item.amountMl} ml</p><p className="mt-0.5 text-xs text-[var(--text-muted)]">Copo de água</p></div><span className="text-xs font-bold text-[var(--text-dim)]">{new Date(item.loggedAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span></div>) : <p className="py-8 text-sm text-[var(--text-muted)]">Nenhum copo registrado hoje.</p>}</div><div className="mt-5 bg-[var(--surface-elevated)] p-4"><div className="flex items-center gap-2 text-sm font-bold text-white"><Info size={17} className="text-[var(--cyan)]" /> Lembretes ficam nas preferências</div><p className="mt-1.5 text-xs text-[var(--text-muted)]">Respeitamos horário silencioso e opt-out.</p></div></section>
+        <section className="app-card flex min-h-[360px] flex-col items-center justify-center p-6 text-center"><ProgressRing value={percent} size={164} stroke={13} color="var(--cyan)" label="Meta de hidratação" /><h2 className="mt-6 text-2xl font-black text-white">{consumed.toLocaleString("pt-BR")} <span className="text-base text-[var(--text-muted)]">/ {goal.toLocaleString("pt-BR")} ml</span></h2><p className="mt-2 text-sm text-[var(--text-muted)]">{percent >= 100 ? "Meta alcançada. Continue ouvindo seu corpo." : `Faltam ${Math.max(0, goal - consumed).toLocaleString("pt-BR")} ml, no seu ritmo.`}</p><div className="mt-6 grid w-full max-w-sm grid-cols-3 gap-2">{[250, 350, 500].map((amount) => <button key={amount} onClick={() => add(amount)} className="secondary-button px-2"><Plus size={16} /> {amount}</button>)}</div><div className="mt-3 flex w-full max-w-sm gap-2"><input className="field min-w-0" value={customAmount} onChange={(event) => setCustomAmount(event.target.value)} inputMode="numeric" placeholder="Outro valor ml" /><button onClick={addCustom} className="secondary-button shrink-0">Adicionar</button></div></section>
+        <section className="app-card p-5"><div className="flex items-center justify-between"><div><p className="eyebrow text-[var(--cyan)]">Hoje</p><h2 className="mt-2 text-lg font-black text-white">Registros de água</h2></div><Pill tone="cyan"><GlassWater size={14} /> {data?.logs.length ?? 0} REGISTROS</Pill></div><div className="mt-5 divide-y divide-[var(--border)]">{data?.logs.length ? data.logs.map((item) => <div key={item.id} className="flex min-h-[68px] items-center gap-3"><span className="grid size-9 place-items-center rounded-[7px] bg-[rgba(34,211,238,0.1)] text-[var(--cyan)]"><GlassWater size={18} /></span><div className="flex-1"><p className="text-sm font-black text-white">{item.amountMl} ml</p><p className="mt-0.5 text-xs text-[var(--text-muted)]">Registro de água</p></div><span className="text-xs font-bold text-[var(--text-dim)]">{new Date(item.loggedAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</span></div>) : <p className="py-8 text-sm text-[var(--text-muted)]">Nenhum copo registrado hoje.</p>}</div><div className="mt-5 bg-[var(--surface-elevated)] p-4"><div className="flex items-center gap-2 text-sm font-bold text-white"><Info size={17} className="text-[var(--cyan)]" /> Lembretes ficam nas preferências</div><p className="mt-1.5 text-xs text-[var(--text-muted)]">Respeitamos horário silencioso e opt-out.</p></div></section>
       </div>
     )}
+  </Screen>;
+}
+
+function SettingsRow({ href, icon: Icon, title, detail, color = "var(--text-muted)" }: { href: string; icon: LucideIcon; title: string; detail: string; color?: string }) {
+  return <Link href={href} className="flex min-h-[78px] items-center gap-4 border-b border-[var(--border)] py-3 last:border-0"><span className="grid size-10 shrink-0 place-items-center rounded-[7px] bg-[var(--surface-soft)]" style={{ color }}><Icon size={20} /></span><span className="min-w-0 flex-1"><strong className="block text-sm text-white">{title}</strong><span className="mt-1 block truncate text-xs text-[var(--text-muted)]">{detail}</span></span><ChevronRight size={18} className="text-[var(--text-dim)]" /></Link>;
+}
+
+export function SettingsLivePage() {
+  const router = useRouter();
+  const [notice, setNotice] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function signOut() {
+    await logoutUser();
+    router.push("/login");
+  }
+
+  async function exportData() {
+    setError(null);
+    try {
+      const result = await requestDataExport(false);
+      setNotice(`Exportação solicitada. Protocolo: ${result.exportRequestId.slice(0, 8)}.`);
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+
+  return <Screen title="Configurações" description="Controle sua conta, privacidade, metas e notificações.">
+    <Notice message={notice} />
+    <Notice message={error} tone="danger" />
+    <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-2">
+      <section className="app-card min-w-0 px-5">
+        <SettingsRow href="/profile" icon={UserRound} title="Perfil e objetivos" detail="Nome, gênero opcional, avatar e ranking" />
+        <SettingsRow href="/settings/security" icon={ShieldCheck} title="Segurança da conta" detail="Sessão atual, eventos e logout global" color="var(--cyan)" />
+        <SettingsRow href="/settings/notifications" icon={Bell} title="Notificações" detail="E-mail, lembretes e horário silencioso" color="var(--gold)" />
+      </section>
+      <section className="app-card min-w-0 px-5">
+        <SettingsRow href="/hydration" icon={GlassWater} title="Meta de água" detail="Editar meta diária e registrar consumo" color="var(--cyan)" />
+        <SettingsRow href="/nutrition" icon={Salad} title="Metas alimentares" detail="Checklist, calorias e macros opcionais" color="var(--green)" />
+        <SettingsRow href="/progress" icon={Activity} title="Progresso privado" detail="Medidas opcionais e fotos pendentes de storage" color="var(--coral)" />
+      </section>
+    </div>
+    <section className="mt-4 grid gap-4 lg:grid-cols-2">
+      <div className="app-card p-5"><p className="eyebrow">Dados e privacidade</p><h2 className="mt-2 text-lg font-black text-white">Exportação de dados</h2><p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">Gera uma solicitação auditada. Fotos ficam fora do banco quando o storage seguro for ativado.</p><button onClick={exportData} className="secondary-button mt-4"><Download size={18} /> Solicitar exportação</button></div>
+      <div className="app-card p-5"><p className="eyebrow text-[var(--danger)]">Sessão</p><h2 className="mt-2 text-lg font-black text-white">Encerrar acesso neste navegador</h2><p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">Você pode entrar novamente quando quiser.</p><button onClick={signOut} className="secondary-button mt-4"><LogOut size={18} /> Sair</button></div>
+    </section>
   </Screen>;
 }
 
@@ -776,13 +913,27 @@ export function ProgressLivePage() {
     }
   }
 
+  async function preparePhoto(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setError(null);
+    try {
+      const result = await createProgressPhotoMetadata({ contentType: file.type, sizeBytes: file.size, pose: "check-in" });
+      setNotice(result.upload.url ? "Foto pronta para envio seguro." : result.upload.note ?? "Metadados da foto salvos. Falta ativar storage seguro.");
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      event.target.value = "";
+    }
+  }
+
   const latest = items[0];
 
   return <Screen title="Seu progresso" description="Observe tendências amplas. Um número isolado nunca define sua evolução." action={<button onClick={() => setShowForm(true)} className="secondary-button"><Plus size={18} /> Novo check-in</button>}>
     <Notice message={notice} />
     <Notice message={error} tone="danger" />
     {showForm && <form onSubmit={submit} className="app-card mb-4 p-5"><div className="flex items-start justify-between gap-3"><div><p className="eyebrow">Check-in privado</p><h2 className="mt-2 text-lg font-black text-white">Registre somente o que fizer sentido</h2></div><button type="button" onClick={() => setShowForm(false)} className="ghost-button">Fechar</button></div><div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><input className="field" name="weightKg" type="number" step="0.1" placeholder="Peso kg" /><input className="field" name="waistCm" type="number" step="0.1" placeholder="Cintura cm" /><input className="field" name="hipCm" type="number" step="0.1" placeholder="Quadril cm" /><input className="field" name="chestCm" type="number" step="0.1" placeholder="Peito cm" /></div><textarea className="field mt-3 min-h-20" name="notes" placeholder="Notas opcionais" /><button className="primary-button mt-3">Salvar check-in</button></form>}
-    {loading ? <LoadingCard /> : <div className="grid gap-4 lg:grid-cols-2"><section className="app-card p-5"><div className="flex items-center justify-between"><div><p className="eyebrow">Medidas privadas</p><h2 className="mt-2 text-lg font-black text-white">Último check-in</h2></div><LockKeyhole size={20} className="text-[var(--text-dim)]" /></div>{latest ? <div className="mt-5 grid grid-cols-2 gap-3">{[{ label: "Peso", value: latest.weightKg ? `${latest.weightKg} kg` : "-" }, { label: "Cintura", value: latest.waistCm ? `${latest.waistCm} cm` : "-" }, { label: "Quadril", value: latest.hipCm ? `${latest.hipCm} cm` : "-" }, { label: "Peito", value: latest.chestCm ? `${latest.chestCm} cm` : "-" }].map((item) => <div key={item.label} className="subtle-card p-4"><p className="text-xs font-bold text-[var(--text-muted)]">{item.label}</p><p className="mt-2 font-black text-white">{item.value}</p></div>)}</div> : <p className="mt-5 text-sm text-[var(--text-muted)]">Nenhum check-in registrado ainda.</p>}<p className="mt-4 text-xs leading-5 text-[var(--text-dim)]">Visível somente para você. Medidas são opcionais e não afetam XP.</p></section><section className="app-card p-5"><div className="flex items-center justify-between"><div><p className="eyebrow">Fotos de progresso</p><h2 className="mt-2 text-lg font-black text-white">Registro visual privado</h2></div><Camera size={20} className="text-[var(--text-dim)]" /></div><div className="mt-5 grid min-h-[180px] place-items-center border border-dashed border-[var(--border-strong)] bg-[var(--surface)] p-6 text-center"><div><Camera className="mx-auto text-[var(--text-dim)]" size={30} /><p className="mt-3 text-sm font-bold text-white">Upload seguro pendente de storage</p><p className="mt-1 text-xs text-[var(--text-muted)]">A API já registra metadados; falta configurar S3/R2 para URL assinada.</p></div></div></section></div>}
+    {loading ? <LoadingCard /> : <div className="grid gap-4 lg:grid-cols-2"><section className="app-card p-5"><div className="flex items-center justify-between"><div><p className="eyebrow">Medidas privadas</p><h2 className="mt-2 text-lg font-black text-white">Último check-in</h2></div><LockKeyhole size={20} className="text-[var(--text-dim)]" /></div>{latest ? <div className="mt-5 grid grid-cols-2 gap-3">{[{ label: "Peso", value: latest.weightKg ? `${latest.weightKg} kg` : "-" }, { label: "Cintura", value: latest.waistCm ? `${latest.waistCm} cm` : "-" }, { label: "Quadril", value: latest.hipCm ? `${latest.hipCm} cm` : "-" }, { label: "Peito", value: latest.chestCm ? `${latest.chestCm} cm` : "-" }].map((item) => <div key={item.label} className="subtle-card p-4"><p className="text-xs font-bold text-[var(--text-muted)]">{item.label}</p><p className="mt-2 font-black text-white">{item.value}</p></div>)}</div> : <p className="mt-5 text-sm text-[var(--text-muted)]">Nenhum check-in registrado ainda.</p>}<p className="mt-4 text-xs leading-5 text-[var(--text-dim)]">Visível somente para você. Medidas são opcionais e não afetam XP.</p></section><section className="app-card p-5"><div className="flex items-center justify-between"><div><p className="eyebrow">Fotos de progresso</p><h2 className="mt-2 text-lg font-black text-white">Registro visual privado</h2></div><Camera size={20} className="text-[var(--text-dim)]" /></div><label className="mt-5 grid min-h-[180px] cursor-pointer place-items-center border border-dashed border-[var(--border-strong)] bg-[var(--surface)] p-6 text-center transition-colors hover:border-[var(--cyan)]"><input className="screen-reader-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={preparePhoto} /><span><Camera className="mx-auto text-[var(--text-dim)]" size={30} /><span className="mt-3 block text-sm font-bold text-white">Selecionar foto privada</span><span className="mt-1 block text-xs leading-5 text-[var(--text-muted)]">Hoje o app registra metadados seguros. O envio final será ativado quando o storage S3/R2 estiver configurado.</span></span></label></section></div>}
   </Screen>;
 }
 
@@ -846,6 +997,9 @@ export function ProfileLivePage() {
       await updateMe({
         displayName: String(form.get("displayName") ?? displayName),
         gender: (String(form.get("gender") || "") || null) as "female" | "male" | "non_binary" | null,
+        fitnessGoal: String(form.get("fitnessGoal") || "consistency"),
+        activityLevel: String(form.get("activityLevel") || "beginner"),
+        heightCm: Number(form.get("heightCm")) || undefined,
       });
       setEditing(false);
       setNotice("Perfil salvo. Recarregue a página se quiser ver o nome atualizado imediatamente.");
@@ -857,7 +1011,7 @@ export function ProfileLivePage() {
   return <Screen title="Perfil" description="Sua identidade e preferências principais no LevelFit." action={<button onClick={() => setEditing(true)} className="secondary-button"><Pencil size={18} /> Editar perfil</button>}>
     <Notice message={notice} />
     <Notice message={error} tone="danger" />
-    {editing && <form onSubmit={submit} className="app-card mb-4 p-5"><div className="flex items-start justify-between gap-3"><div><p className="eyebrow">Perfil</p><h2 className="mt-2 text-lg font-black text-white">Atualize seus dados básicos</h2></div><button type="button" onClick={() => setEditing(false)} className="ghost-button">Fechar</button></div><div className="mt-4 grid gap-3 sm:grid-cols-2"><input className="field" name="displayName" defaultValue={displayName} minLength={2} maxLength={80} /><select className="field" name="gender" defaultValue=""><option value="">Prefiro não informar</option><option value="female">Feminino</option><option value="male">Masculino</option><option value="non_binary">Não binário</option></select></div><button className="primary-button mt-3">Salvar perfil</button></form>}
+    {editing && <form onSubmit={submit} className="app-card mb-4 p-5"><div className="flex items-start justify-between gap-3"><div><p className="eyebrow">Perfil</p><h2 className="mt-2 text-lg font-black text-white">Atualize seus dados básicos</h2><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Esses dados ajudam a personalizar o app, mas nada disso aparece no ranking.</p></div><button type="button" onClick={() => setEditing(false)} className="ghost-button">Fechar</button></div><div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5"><input className="field" name="displayName" defaultValue={displayName} minLength={2} maxLength={80} aria-label="Nome de exibição" /><select className="field" name="gender" defaultValue="" aria-label="Gênero"><option value="">Prefiro não informar</option><option value="female">Feminino</option><option value="male">Masculino</option><option value="non_binary">Não binário</option></select><select className="field" name="fitnessGoal" defaultValue="consistency" aria-label="Objetivo"><option value="consistency">Consistência</option><option value="strength">Força</option><option value="conditioning">Condicionamento</option><option value="weight_management">Controle de peso</option><option value="hydration">Hidratação</option><option value="nutrition">Alimentação</option></select><select className="field" name="activityLevel" defaultValue="beginner" aria-label="Nível de atividade"><option value="beginner">Começando</option><option value="returning">Voltando</option><option value="occasional">Às vezes</option><option value="active">Ativo</option></select><input className="field" name="heightCm" type="number" min={80} max={250} step="0.1" placeholder="Altura cm" aria-label="Altura em centímetros" /></div><button className="primary-button mt-3">Salvar perfil</button></form>}
     <section className="app-card overflow-hidden"><div className="grid md:grid-cols-[280px_1fr]"><PulseAvatar stage={avatarStage} alt={`${avatarStage.name}, avatar atual`} className="min-h-[320px]" imageClassName="p-4" /><div className="p-5 sm:p-7"><div className="flex flex-wrap items-center gap-2"><Pill><Zap size={14} /> NÍVEL {progress.level}</Pill><Pill tone="gold"><Flame size={14} /> {progress.streak} DIAS</Pill><Pill tone="cyan"><Sparkles size={14} /> {avatarStage.name}</Pill></div><h2 className="mt-5 text-2xl font-black text-white">{displayName}</h2><p className="mt-1 text-sm text-[var(--text-muted)]">{email}</p><p className="mt-5 max-w-xl text-sm leading-6 text-[var(--text-muted)]">Construindo força e consistência com uma rotina flexível. O Pulse evolui com XP, missões concluídas e retomadas saudáveis.</p><div className="mt-7 grid gap-3 sm:grid-cols-3"><div className="subtle-card p-4"><p className="eyebrow">XP total</p><p className="mt-2 text-lg font-black text-white">{progress.totalXp.toLocaleString("pt-BR")}</p></div><div className="subtle-card p-4"><p className="eyebrow">Nível</p><p className="mt-2 text-lg font-black text-white">{progress.level}</p></div><div className="subtle-card p-4"><p className="eyebrow">Streak</p><p className="mt-2 text-lg font-black text-white">{progress.streak}</p></div></div></div></div></section>
     <section className="mt-4 app-card p-5"><div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div><p className="eyebrow text-[var(--cyan)]">Evolução do Pulse</p><h2 className="mt-2 text-lg font-black text-white">Seu companheiro melhora com o tempo</h2><p className="mt-1 max-w-2xl text-xs leading-5 text-[var(--text-muted)]">Pausas não removem upgrades. Elas só adiam o próximo desbloqueio até você voltar para o seu ritmo.</p></div>{nextAvatarStage && <Pill tone="gold"><Sparkles size={14} /> PRÓXIMO: NÍVEL {nextAvatarStage.levelRequired}</Pill>}</div><div className="mt-5 grid gap-3 md:grid-cols-5">{avatarStages.map((stage) => { const unlocked = progress.level >= stage.levelRequired; const current = avatarStage.id === stage.id; return <article key={stage.id} className={`subtle-card min-h-[250px] overflow-hidden p-4 ${unlocked ? "" : "opacity-55"}`}><div className="flex items-center justify-between gap-2"><span className={`grid size-9 place-items-center rounded-[7px] ${current ? "bg-[var(--lime)] text-[var(--lime-ink)]" : "bg-[var(--surface-soft)] text-[var(--text-muted)]"}`}>{unlocked ? <Check size={17} strokeWidth={3} /> : <LockKeyhole size={16} />}</span><span className="text-xs font-black text-[var(--text-dim)]">NÍVEL {stage.levelRequired}</span></div><PulseAvatar stage={stage} alt={`${stage.name}, estágio do Pulse`} locked={!unlocked} className="mt-4 h-[104px] rounded-[7px] border border-[var(--border)]" imageClassName="p-2" /><h3 className="mt-4 text-sm font-black text-white">{stage.name}</h3><p className="mt-1 text-xs font-bold" style={{ color: stage.accent }}>{stage.personality}</p><p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{stage.activeBenefit}</p>{current && <p className="mt-3 text-xs font-black text-[var(--lime)]">ATUAL</p>}</article>; })}</div></section>
     <div className="mt-4 grid gap-4 lg:grid-cols-2"><section className="app-card p-5"><p className="eyebrow">Objetivos atuais</p><div className="mt-4 flex flex-wrap gap-2"><Pill><Target size={14} /> CONSISTÊNCIA</Pill><Pill tone="coral"><Dumbbell size={14} /> FORÇA</Pill><Pill tone="cyan"><GlassWater size={14} /> HIDRATAÇÃO</Pill></div></section><section className="app-card p-5"><p className="eyebrow">Privacidade social</p><div className="mt-4 flex items-center justify-between gap-4"><div><p className="text-sm font-bold text-white">Ranking opt-in</p><p className="mt-1 text-xs text-[var(--text-muted)]">Você decide aparecer ou não no ranking público.</p></div><Link href="/ranking" className="secondary-button"><UserRound size={18} /> Ver ranking</Link></div></section></div>

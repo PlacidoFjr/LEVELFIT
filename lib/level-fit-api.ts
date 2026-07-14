@@ -95,12 +95,26 @@ export type FoodLog = {
   avoidedSkippingMeal?: boolean | null;
   mindfulChoice?: boolean | null;
   calories?: number | null;
+  proteinG?: string | number | null;
+  carbsG?: string | number | null;
+  fatG?: string | number | null;
   meal?: { id: string; name: string } | null;
 };
 
 export type NutritionToday = {
   data: FoodLog[];
   checklistCompleted: number;
+};
+
+export type NutritionGoal = {
+  id: string;
+  dailyCalories?: number | null;
+  proteinG?: string | number | null;
+  carbsG?: string | number | null;
+  fatG?: string | number | null;
+  checklistGoalCount: number;
+  startsOn: string;
+  endsOn?: string | null;
 };
 
 export type NotificationItem = {
@@ -267,8 +281,32 @@ export function addWaterLog(amountMl: number) {
   });
 }
 
+export function updateHydrationGoal(dailyGoalMl: number) {
+  return apiRequest<HydrationToday>("/hydration/goals", {
+    method: "PATCH",
+    body: JSON.stringify({ dailyGoalMl }),
+  });
+}
+
 export function getNutritionToday() {
   return apiRequest<NutritionToday>("/food-logs/today");
+}
+
+export function getNutritionGoal() {
+  return apiRequest<NutritionGoal | null>("/nutrition/goals");
+}
+
+export function updateNutritionGoal(input: {
+  dailyCalories?: number;
+  proteinG?: number;
+  carbsG?: number;
+  fatG?: number;
+  checklistGoalCount?: number;
+}) {
+  return apiRequest<NutritionGoal>("/nutrition/goals", {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  });
 }
 
 export function addFoodLog(input: {
@@ -278,6 +316,10 @@ export function addFoodLog(input: {
   hasFruitOrVegetable?: boolean;
   avoidedSkippingMeal?: boolean;
   mindfulChoice?: boolean;
+  calories?: number;
+  proteinG?: number;
+  carbsG?: number;
+  fatG?: number;
 }) {
   return apiRequest<{ log: FoodLog; checklistCompleted: number; xpAwarded: number }>("/food-logs", {
     method: "POST",
@@ -299,6 +341,18 @@ export function addMeasurement(input: {
   notes?: string;
 }) {
   return apiRequest<BodyMeasurement>("/body-measurements", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export function createProgressPhotoMetadata(input: {
+  contentType: string;
+  sizeBytes: number;
+  pose?: string;
+  takenAt?: string;
+}) {
+  return apiRequest<{ photo: { id: string; storageKey: string; contentType: string; sizeBytes: number }; upload: { required: boolean; url: string | null; note?: string } }>("/progress-photos", {
     method: "POST",
     body: JSON.stringify(input),
   });
