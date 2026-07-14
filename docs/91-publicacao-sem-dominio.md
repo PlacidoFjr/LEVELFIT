@@ -31,6 +31,8 @@ Regras:
 
 ## Fase 2 - API
 
+O repositorio inclui `render.yaml` para criar a API no Render como Blueprint. Os segredos estao com `sync: false`, entao o Render vai pedir esses valores no painel sem gravar no Git.
+
 Variaveis obrigatorias da API:
 
 ```env
@@ -57,6 +59,12 @@ npm run build:api
 npm run db:migrate:deploy
 npm run start -w @levelfit/api
 ```
+
+Se usar Render Blueprint, voce nao precisa digitar os comandos manualmente. O Render usa:
+
+- Build: `npm ci && npm run db:generate && npm run build:api`
+- Start: `npm run db:migrate:deploy && npm run start -w @levelfit/api`
+- Health check: `/v1/health`
 
 Checklist:
 

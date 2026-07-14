@@ -21,7 +21,7 @@ export function validateEnvironment(env: Environment) {
   const tokenSecret = required(env, "TOKEN_HASH_SECRET", 32);
   const nodeEnv = env.NODE_ENV ?? "development";
   const webOrigin = env.WEB_ORIGIN ?? "http://127.0.0.1:3000";
-  const apiPort = Number(env.API_PORT ?? 3001);
+  const apiPort = Number(env.API_PORT ?? env.PORT ?? 3001);
   const swaggerEnabled = parseBoolean(env.SWAGGER_ENABLED, nodeEnv !== "production");
 
   if (!Number.isInteger(apiPort) || apiPort < 1 || apiPort > 65535) throw new Error("API_PORT invalida.");

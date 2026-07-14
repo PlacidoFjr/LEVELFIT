@@ -12,6 +12,10 @@ describe("environment security validation", () => {
     expect(validateEnvironment(base).API_PORT).toBe(3001);
   });
 
+  it("accepts provider PORT when API_PORT is not set", () => {
+    expect(validateEnvironment({ ...base, PORT: "10000" }).API_PORT).toBe(10000);
+  });
+
   it("rejects reuse of the same cryptographic secret", () => {
     expect(() => validateEnvironment({ ...base, TOKEN_HASH_SECRET: base.JWT_ACCESS_SECRET })).toThrow(/devem ser diferentes/);
   });
