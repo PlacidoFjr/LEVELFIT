@@ -6,6 +6,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001/v
 const ACCESS_TOKEN_KEY = "levelfit.accessToken";
 const CSRF_TOKEN_KEY = "levelfit.csrfToken";
 const USER_KEY = "levelfit.user";
+const REQUEST_TIMEOUT_MS = 20000;
 
 let memoryAccessToken: string | null = null;
 let memoryCsrfToken: string | null = null;
@@ -59,6 +60,10 @@ export class ApiClientError extends Error {
     this.status = status;
     this.fields = fields;
   }
+}
+
+function timeoutError() {
+  return new ApiClientError("A API demorou para responder. Aguarde alguns segundos e tente novamente.", "REQUEST_TIMEOUT", 408);
 }
 
 function readStoredUser(): AuthUser | null {
@@ -160,11 +165,23 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}, retry 
   if (token) headers.set("Authorization", `Bearer ${token}`);
   if (init.body && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...init,
-    headers,
-    credentials: "include",
-  });
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...init,
+      headers,
+      credentials: "include",
+      signal: init.signal ?? controller.signal,
+    });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") throw timeoutError();
+    throw new ApiClientError("Não foi possível conectar à API agora. Tente novamente em instantes.", "NETWORK_ERROR", 0);
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
 
   if (response.status === 401 && retry && path !== "/auth/login" && path !== "/auth/refresh") {
     const refreshed = await refreshSession();
