@@ -79,6 +79,12 @@ Variaveis obrigatorias do frontend:
 
 ```env
 NEXT_PUBLIC_API_URL=https://<sua-api>/v1
+NEXT_PUBLIC_FIREBASE_API_KEY=<firebase-web-api-key>
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=<firebase-project>.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=<firebase-project-id>
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=<firebase-project>.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=<firebase-sender-id>
+NEXT_PUBLIC_FIREBASE_APP_ID=<firebase-web-app-id>
 ```
 
 Comandos:
@@ -95,16 +101,25 @@ Checklist:
 - Dashboard carrega dados reais da API.
 - Missoes, treino, agua, alimentacao, perfil, ranking, conquistas e configuracoes nao quebram.
 
-## Fase 4 - E-mail real
+## Fase 4 - Auth com Firebase
 
-Antes de abrir para usuarios reais, substituir o token de verificacao exibido em desenvolvimento por envio real.
+Sem dominio proprio, o Firebase Auth fica responsavel por login com Google, e-mail/senha, verificacao de e-mail e recuperacao de senha.
 
-Recomendacao:
+Variaveis obrigatorias da API no Render:
 
-- Provedor inicial: Resend.
-- E-mails obrigatorios: verificacao de conta, recuperacao de senha e alerta de seguranca.
-- Assuntos sem dados sensiveis.
-- Links com token temporario.
+```env
+FIREBASE_PROJECT_ID=<firebase-project-id>
+FIREBASE_CLIENT_EMAIL=<service-account-email>
+FIREBASE_PRIVATE_KEY=<private-key-com-\n-escapado>
+```
+
+No Firebase Console:
+
+- Authentication > Sign-in method: ativar Google.
+- Authentication > Sign-in method: ativar E-mail/senha.
+- Project settings > Service accounts: gerar uma private key para a API.
+
+No Render, o valor de `FIREBASE_PRIVATE_KEY` deve manter as quebras como `\n`.
 
 ## Fase 5 - Pronto para usuarios
 

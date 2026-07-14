@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createFirebaseUser, firebaseIdToken, signInFirebaseWithEmail, signInFirebaseWithGoogle } from "./firebase-client";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001/v1";
 const ACCESS_TOKEN_KEY = "levelfit.accessToken";
@@ -46,6 +47,15 @@ type RegisterResponse = {
     email: string;
     emailVerified: boolean;
   };
+};
+
+type FirebaseLoginInput = {
+  idToken: string;
+  displayName?: string | null;
+  gender?: string;
+  timezone?: string;
+  termsAccepted?: boolean;
+  sensitiveDataConsent?: boolean;
 };
 
 export class ApiClientError extends Error {
@@ -130,6 +140,15 @@ function saveSession(response: LoginResponse) {
   window.dispatchEvent(new Event("levelfit:auth"));
 }
 
+function firebaseError(error: unknown) {
+  const code = typeof error === "object" && error && "code" in error ? String((error as { code?: unknown }).code) : "";
+  if (code.includes("auth/email-already-in-use")) return new ApiClientError("Este e-mail já está cadastrado. Entre com ele ou recupere sua senha.", "EMAIL_UNAVAILABLE", 409);
+  if (code.includes("auth/invalid-credential") || code.includes("auth/user-not-found") || code.includes("auth/wrong-password")) return new ApiClientError("E-mail ou senha inválidos.", "INVALID_CREDENTIALS", 401);
+  if (code.includes("auth/popup-closed-by-user")) return new ApiClientError("Login com Google cancelado.", "LOGIN_CANCELLED", 400);
+  if (code.includes("auth/configuration-not-found")) return new ApiClientError("Firebase Auth ainda não está configurado para este domínio.", "FIREBASE_CONFIG_ERROR", 503);
+  return new ApiClientError("Não foi possível concluir a autenticação agora.", "FIREBASE_AUTH_ERROR", 503);
+}
+
 export function clearSession() {
   if (typeof window === "undefined") return;
   memoryAccessToken = null;
@@ -194,6 +213,41 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}, retry 
 }
 
 export async function loginUser(email: string, password: string) {
+  try {
+    const firebaseUser = await signInFirebaseWithEmail(email, password);
+    if (!firebaseUser.emailVerified) {
+      throw new ApiClientError("Confirme seu e-mail antes de entrar. Se necessário, abra sua caixa de entrada e use o link enviado pelo Firebase.", "EMAIL_VERIFICATION_REQUIRED", 403);
+    }
+    return loginWithFirebaseToken({ idToken: await firebaseIdToken(firebaseUser), displayName: firebaseUser.displayName });
+  } catch (error) {
+    if (error instanceof ApiClientError) throw error;
+    throw firebaseError(error);
+  }
+}
+
+async function loginWithFirebaseToken(input: FirebaseLoginInput) {
+  const response = await apiRequest<LoginResponse>("/auth/firebase", {
+    method: "POST",
+    body: JSON.stringify({
+      ...input,
+      deviceName: "LevelFit Web",
+    }),
+  }, false);
+  saveSession(response);
+  return response.user;
+}
+
+export async function loginWithGoogle() {
+  try {
+    const firebaseUser = await signInFirebaseWithGoogle();
+    return loginWithFirebaseToken({ idToken: await firebaseIdToken(firebaseUser), displayName: firebaseUser.displayName });
+  } catch (error) {
+    if (error instanceof ApiClientError) throw error;
+    throw firebaseError(error);
+  }
+}
+
+export async function legacyLoginUser(email: string, password: string) {
   const response = await apiRequest<LoginResponse>("/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password, deviceName: "LevelFit Web" }),
@@ -203,6 +257,15 @@ export async function loginUser(email: string, password: string) {
 }
 
 export async function registerUser(input: { displayName: string; email: string; password: string; gender?: string }) {
+  try {
+    await createFirebaseUser({ email: input.email, password: input.password, displayName: input.displayName });
+    return null;
+  } catch (error) {
+    throw firebaseError(error);
+  }
+}
+
+export async function legacyRegisterUser(input: { displayName: string; email: string; password: string; gender?: string }) {
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Sao_Paulo";
   const registration = await apiRequest<RegisterResponse>("/auth/register", {
     method: "POST",

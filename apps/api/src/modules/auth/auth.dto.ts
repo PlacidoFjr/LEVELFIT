@@ -46,6 +46,38 @@ export class LoginDto {
   deviceName?: string;
 }
 
+export class FirebaseLoginDto {
+  @IsString()
+  @MinLength(20)
+  idToken: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(160)
+  deviceName?: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(2, 80)
+  displayName?: string;
+
+  @IsOptional()
+  @IsIn(["female", "male", "non_binary"])
+  gender?: string;
+
+  @IsOptional()
+  @IsTimeZone()
+  timezone?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  termsAccepted?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  sensitiveDataConsent?: boolean;
+}
+
 export class EmailDto {
   @Transform(({ value }) => typeof value === "string" ? value.trim().toLowerCase() : value)
   @IsEmail()

@@ -4,7 +4,7 @@ import type { Request, Response } from "express";
 import { CurrentUser } from "../../common/current-user.decorator";
 import type { AuthUser } from "../../common/auth-user";
 import { AuthService } from "./auth.service";
-import { EmailDto, LoginDto, LogoutDto, RegisterDto, ResetPasswordDto, TokenDto } from "./auth.dto";
+import { EmailDto, FirebaseLoginDto, LoginDto, LogoutDto, RegisterDto, ResetPasswordDto, TokenDto } from "./auth.dto";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 
 const refreshCookie = { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict" as const, priority: "high" as const, path: "/v1/auth", maxAge: 30 * 24 * 60 * 60 * 1000 };
@@ -34,6 +34,17 @@ export class AuthController {
   @Throttle({ default: { limit: isProduction ? 5 : 60, ttl: isProduction ? minutes(15) : seconds(60) } })
   async login(@Body() dto: LoginDto, @Ip() ip: string, @Req() request: Request, @Res({ passthrough: true }) response: Response) {
     const result = await this.auth.login(dto, { ip, userAgent: request.header("user-agent") });
+    response.clearCookie("lf_csrf", { path: "/v1/auth" });
+    response.cookie("lf_refresh", result.refreshToken, refreshCookie);
+    response.cookie("lf_csrf", result.csrfToken, csrfCookie);
+    return { accessToken: result.accessToken, expiresIn: result.expiresIn, csrfToken: result.csrfToken, user: result.user };
+  }
+
+  @Post("firebase")
+  @HttpCode(200)
+  @Throttle({ default: { limit: isProduction ? 20 : 80, ttl: isProduction ? minutes(15) : seconds(60) } })
+  async firebaseLogin(@Body() dto: FirebaseLoginDto, @Ip() ip: string, @Req() request: Request, @Res({ passthrough: true }) response: Response) {
+    const result = await this.auth.loginWithFirebase(dto, { ip, userAgent: request.header("user-agent") });
     response.clearCookie("lf_csrf", { path: "/v1/auth" });
     response.cookie("lf_refresh", result.refreshToken, refreshCookie);
     response.cookie("lf_csrf", result.csrfToken, csrfCookie);

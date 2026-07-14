@@ -7,7 +7,8 @@ import { asUtcDate } from "../../common/date";
 import { hashContext, hashToken, randomToken } from "../../common/crypto";
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
 import type { AuthUser } from "../../common/auth-user";
-import type { LoginDto, RegisterDto, ResetPasswordDto } from "./auth.dto";
+import type { FirebaseLoginDto, LoginDto, RegisterDto, ResetPasswordDto } from "./auth.dto";
+import { FirebaseAdminService } from "./firebase-admin.service";
 
 type RequestContext = { ip?: string; userAgent?: string };
 
@@ -17,7 +18,7 @@ export class AuthService {
   private readonly refreshDays: number;
   private readonly isProduction: boolean;
 
-  constructor(private readonly prisma: PrismaService, private readonly jwt: JwtService, private readonly config: ConfigService) {
+  constructor(private readonly prisma: PrismaService, private readonly jwt: JwtService, private readonly config: ConfigService, private readonly firebase: FirebaseAdminService) {
     this.tokenSecret = config.getOrThrow("TOKEN_HASH_SECRET");
     this.refreshDays = config.get<number>("REFRESH_TOKEN_TTL_DAYS", 30);
     this.isProduction = config.get("NODE_ENV") === "production";
@@ -70,6 +71,58 @@ export class AuthService {
     await this.prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
     await this.prisma.userSecurityEvent.create({ data: { userId: user.id, type: "login_success", ipHash: hashContext(context.ip, this.tokenSecret), userAgentHash: hashContext(context.userAgent, this.tokenSecret) } });
     return { ...issued, user: { id: user.id, email: user.email, displayName: user.profile?.displayName } };
+  }
+
+  async loginWithFirebase(dto: FirebaseLoginDto, context: RequestContext) {
+    const decoded = await this.firebase.verifyIdToken(dto.idToken);
+    const email = decoded.email?.trim().toLowerCase();
+    if (!email) throw new UnauthorizedException({ code: "FIREBASE_EMAIL_REQUIRED", message: "Conta Firebase sem e-mail valido." });
+    if (!decoded.email_verified) throw new ForbiddenException({ code: "EMAIL_VERIFICATION_REQUIRED", message: "Confirme seu e-mail antes de entrar." });
+
+    const now = new Date();
+    const startsOn = asUtcDate(now);
+    const displayName = dto.displayName?.trim() || decoded.name || email.split("@")[0] || "LevelFit";
+    const timezone = dto.timezone || "America/Sao_Paulo";
+
+    const user = await this.prisma.$transaction(async (tx) => {
+      const existing = await tx.user.findFirst({
+        where: { email, deletedAt: null },
+        select: { id: true, email: true, status: true, emailVerifiedAt: true, profile: { select: { displayName: true } } },
+      });
+
+      if (existing) {
+        await tx.user.update({
+          where: { id: existing.id },
+          data: { status: existing.status === "deleted" ? existing.status : "active", emailVerifiedAt: existing.emailVerifiedAt ?? now, lastLoginAt: now },
+        });
+        if (!existing.profile) {
+          await tx.userProfile.create({ data: { userId: existing.id, displayName, gender: dto.gender, timezone } });
+        }
+        return { id: existing.id, email: existing.email, displayName: existing.profile?.displayName ?? displayName };
+      }
+
+      const created = await tx.user.create({
+        data: {
+          email,
+          status: "active",
+          emailVerifiedAt: now,
+          termsAcceptedAt: dto.termsAccepted ? now : null,
+          sensitiveDataConsentAt: dto.sensitiveDataConsent ? now : null,
+          profile: { create: { displayName, gender: dto.gender, timezone } },
+          preferences: { create: {} },
+          notificationPreference: { create: { timezone, waterRemindersEnabled: false, nutritionRemindersEnabled: false, workoutRemindersEnabled: false, streakRemindersEnabled: false, weeklySummaryEnabled: false } },
+          hydrationGoals: { create: { dailyGoalMl: 2000, startsOn } },
+          level: { create: {} },
+          streaks: { create: [{ type: "daily" }, { type: "workout" }, { type: "water" }, { type: "nutrition" }] },
+        },
+        select: { id: true, email: true, profile: { select: { displayName: true } } },
+      });
+      return { id: created.id, email: created.email, displayName: created.profile?.displayName ?? displayName };
+    });
+
+    const issued = await this.createSession(user.id, dto.deviceName, context);
+    await this.prisma.userSecurityEvent.create({ data: { userId: user.id, type: "login_success", ipHash: hashContext(context.ip, this.tokenSecret), userAgentHash: hashContext(context.userAgent, this.tokenSecret), metadata: { provider: "firebase" } } });
+    return { ...issued, user };
   }
 
   private async createSession(userId: string, deviceName: string | undefined, context: RequestContext) {
