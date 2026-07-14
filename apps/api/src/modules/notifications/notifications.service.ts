@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Prisma } from "@prisma/client";
 import { encryptSecret, hashContext, hashToken } from "../../common/crypto";
@@ -60,8 +60,12 @@ export class NotificationsService {
     });
   }
 
-  subscribe(userId: string, dto: SubscribePushDto, userAgent?: string) {
+  async subscribe(userId: string, dto: SubscribePushDto, userAgent?: string) {
     const endpointHash = hashToken(dto.endpoint, this.secret);
+    const existing = await this.prisma.pushSubscription.findUnique({ where: { endpointHash }, select: { userId: true } });
+    if (existing && existing.userId !== userId) {
+      throw new ConflictException({ code: "PUSH_SUBSCRIPTION_UNAVAILABLE", message: "Nao foi possivel registrar esta subscription." });
+    }
     return this.prisma.pushSubscription.upsert({
       where: { endpointHash },
       create: {
@@ -73,7 +77,6 @@ export class NotificationsService {
         userAgentHash: hashContext(userAgent, this.secret),
       },
       update: {
-        userId,
         endpointEncrypted: encryptSecret(dto.endpoint, this.secret),
         p256dhEncrypted: encryptSecret(dto.keys.p256dh, this.secret),
         authEncrypted: encryptSecret(dto.keys.auth, this.secret),

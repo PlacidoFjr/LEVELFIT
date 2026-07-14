@@ -14,6 +14,7 @@ O produto deve motivar sem pressao toxica. Recaidas sao tratadas como parte natu
 - `docs/50-notificacoes-jobs-retencao.md`: notificacoes internas, e-mails, filas, agendamentos, preferencias e Web Push futuro.
 - `docs/60-frontend-nextjs-implementado.md`: rotas, componentes, mocks, tokens e validacao do frontend funcional.
 - `docs/70-backend-nestjs-implementado.md`: API implementada, seguranca, endpoints, setup local e limites atuais do MVP.
+- `docs/80-auditoria-seguranca.md`: controles verificados, testes de abuso e bloqueadores antes da producao.
 - `prisma/schema.prisma`: schema inicial Prisma para PostgreSQL.
 - `prisma.config.ts`: configuracao Prisma 7 para migrations e datasource.
 
