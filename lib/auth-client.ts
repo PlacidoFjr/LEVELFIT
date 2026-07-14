@@ -144,8 +144,13 @@ function firebaseError(error: unknown) {
   const code = typeof error === "object" && error && "code" in error ? String((error as { code?: unknown }).code) : "";
   if (code.includes("auth/email-already-in-use")) return new ApiClientError("Este e-mail já está cadastrado. Entre com ele ou recupere sua senha.", "EMAIL_UNAVAILABLE", 409);
   if (code.includes("auth/invalid-credential") || code.includes("auth/user-not-found") || code.includes("auth/wrong-password")) return new ApiClientError("E-mail ou senha inválidos.", "INVALID_CREDENTIALS", 401);
+  if (code.includes("auth/unauthorized-domain")) return new ApiClientError("Este domínio ainda não está autorizado no Firebase Authentication.", "FIREBASE_UNAUTHORIZED_DOMAIN", 403);
+  if (code.includes("auth/popup-blocked")) return new ApiClientError("O navegador bloqueou a janela do Google. Permita pop-ups para este site e tente novamente.", "FIREBASE_POPUP_BLOCKED", 400);
   if (code.includes("auth/popup-closed-by-user")) return new ApiClientError("Login com Google cancelado.", "LOGIN_CANCELLED", 400);
   if (code.includes("auth/configuration-not-found")) return new ApiClientError("Firebase Auth ainda não está configurado para este domínio.", "FIREBASE_CONFIG_ERROR", 503);
+  if (code.includes("auth/operation-not-allowed")) return new ApiClientError("Este método de login ainda não está ativado no Firebase.", "FIREBASE_PROVIDER_DISABLED", 503);
+  if (code.includes("auth/network-request-failed")) return new ApiClientError("Falha de rede ao falar com o Firebase. Verifique a conexão e tente novamente.", "FIREBASE_NETWORK_ERROR", 503);
+  if (code.includes("auth/too-many-requests")) return new ApiClientError("Muitas tentativas em pouco tempo. Aguarde um instante e tente novamente.", "RATE_LIMITED", 429);
   return new ApiClientError("Não foi possível concluir a autenticação agora.", "FIREBASE_AUTH_ERROR", 503);
 }
 
