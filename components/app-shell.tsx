@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Apple,
   Award,
@@ -20,6 +20,8 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import { useEffect } from "react";
+import { useAuthSession } from "@/lib/auth-client";
 import { user } from "@/lib/mock-data";
 import { LevelFitLogo } from "./level-fit-logo";
 
@@ -81,7 +83,24 @@ function NavLink({ href, label, icon: Icon, pathname, onClick }: (typeof primary
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const session = useAuthSession();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!session.loading && !session.authenticated) router.replace("/login");
+  }, [router, session.authenticated, session.loading]);
+
+  if (session.loading || !session.authenticated) {
+    return (
+      <main className="grid min-h-screen place-items-center px-4 text-center">
+        <div>
+          <LevelFitLogo className="justify-center text-xl" />
+          <p className="mt-5 text-sm font-bold text-[var(--text-muted)]">Verificando sua sessão...</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <div className="min-h-screen">

@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from "recharts";
+import { useAuthSession } from "@/lib/auth-client";
 import { getCurrentAvatarStage, getNextAvatarStage, getTodaysNutritionPlan, missions, user, weeklyActivity } from "@/lib/mock-data";
 import { PageHeader } from "./page-header";
 import { ProgressRing } from "./progress-ring";
@@ -29,9 +30,11 @@ const toneStyles: Record<string, { bg: string; color: string }> = {
 };
 
 export function Dashboard() {
+  const session = useAuthSession();
   const nutritionPlan = useMemo(() => getTodaysNutritionPlan(), []);
   const avatarStage = getCurrentAvatarStage(user.level);
   const nextAvatarStage = getNextAvatarStage(user.level);
+  const displayName = session.user?.displayName || user.name;
   const [completed, setCompleted] = useState<string[]>(["recovery"]);
   const [water, setWater] = useState(1250);
   const [foodDone, setFoodDone] = useState(() => nutritionPlan.items.filter((item) => item.done).map((item) => item.id));
@@ -61,7 +64,7 @@ export function Dashboard() {
 
   return (
     <div className="mx-auto w-full max-w-[1480px] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
-      <PageHeader title={`Bom dia, ${user.name}`} description="Seu plano está equilibrado. Escolha uma ação pequena e deixe o resto para depois." />
+      <PageHeader title={`Bom dia, ${displayName}`} description="Seu plano está equilibrado. Escolha uma ação pequena e deixe o resto para depois." />
 
       <AnimatePresence>
         {toast && (

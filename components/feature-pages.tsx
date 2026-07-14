@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -49,6 +50,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { logoutUser, useAuthSession } from "@/lib/auth-client";
 import { achievements, avatarStages, getCurrentAvatarStage, getNextAvatarStage, getTodaysNutritionPlan, leaderboard, missions, notifications as initialNotifications, progressData, user, workoutExercises } from "@/lib/mock-data";
 import { PageHeader } from "./page-header";
 import { ProgressRing } from "./progress-ring";
@@ -206,11 +208,14 @@ export function RankingPage() {
 }
 
 export function ProfilePage() {
+  const session = useAuthSession();
   const avatarStage = getCurrentAvatarStage(user.level);
   const nextAvatarStage = getNextAvatarStage(user.level);
+  const displayName = session.user?.displayName || user.name;
+  const email = session.user?.email || user.email;
 
   return <Screen title="Perfil" description="Sua identidade e preferências principais no LevelFit." action={<button className="secondary-button"><Pencil size={18} /> Editar perfil</button>}>
-    <section className="app-card overflow-hidden"><div className="grid md:grid-cols-[280px_1fr]"><div className="relative min-h-[320px] bg-[#080d12]"><Image src={avatarStage.image} alt={`${avatarStage.name}, avatar atual`} fill priority sizes="280px" className="object-contain object-bottom p-4" /></div><div className="p-5 sm:p-7"><div className="flex flex-wrap items-center gap-2"><Pill><Zap size={14} /> NÍVEL {user.level}</Pill><Pill tone="gold"><Flame size={14} /> {user.streak} DIAS</Pill><Pill tone="cyan"><Sparkles size={14} /> {avatarStage.name}</Pill></div><h2 className="mt-5 text-2xl font-black text-white">{user.name}</h2><p className="mt-1 text-sm text-[var(--text-muted)]">{user.email}</p><p className="mt-5 max-w-xl text-sm leading-6 text-[var(--text-muted)]">Construindo força e consistência com uma rotina flexível. O Pulse evolui com XP, missões concluídas e retomadas saudáveis.</p><div className="mt-5 border-l-2 border-[var(--cyan)] bg-[rgba(34,211,238,0.06)] p-4"><p className="text-sm font-black text-white">{avatarStage.personality}</p><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{avatarStage.activeBenefit}</p><div className="mt-3 flex flex-wrap gap-2">{avatarStage.perks.map((perk) => <span key={perk} className="rounded-[5px] bg-[rgba(183,255,42,0.1)] px-2 py-1 text-[0.68rem] font-black text-[var(--lime)]">{perk}</span>)}</div></div><div className="mt-7 grid gap-3 sm:grid-cols-3"><div className="subtle-card p-4"><p className="eyebrow">XP total</p><p className="mt-2 text-lg font-black text-white">8.640</p></div><div className="subtle-card p-4"><p className="eyebrow">Treinos</p><p className="mt-2 text-lg font-black text-white">46</p></div><div className="subtle-card p-4"><p className="eyebrow">Conquistas</p><p className="mt-2 text-lg font-black text-white">4</p></div></div></div></div></section>
+    <section className="app-card overflow-hidden"><div className="grid md:grid-cols-[280px_1fr]"><div className="relative min-h-[320px] bg-[#080d12]"><Image src={avatarStage.image} alt={`${avatarStage.name}, avatar atual`} fill priority sizes="280px" className="object-contain object-bottom p-4" /></div><div className="p-5 sm:p-7"><div className="flex flex-wrap items-center gap-2"><Pill><Zap size={14} /> NÍVEL {user.level}</Pill><Pill tone="gold"><Flame size={14} /> {user.streak} DIAS</Pill><Pill tone="cyan"><Sparkles size={14} /> {avatarStage.name}</Pill></div><h2 className="mt-5 text-2xl font-black text-white">{displayName}</h2><p className="mt-1 text-sm text-[var(--text-muted)]">{email}</p><p className="mt-5 max-w-xl text-sm leading-6 text-[var(--text-muted)]">Construindo força e consistência com uma rotina flexível. O Pulse evolui com XP, missões concluídas e retomadas saudáveis.</p><div className="mt-5 border-l-2 border-[var(--cyan)] bg-[rgba(34,211,238,0.06)] p-4"><p className="text-sm font-black text-white">{avatarStage.personality}</p><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{avatarStage.activeBenefit}</p><div className="mt-3 flex flex-wrap gap-2">{avatarStage.perks.map((perk) => <span key={perk} className="rounded-[5px] bg-[rgba(183,255,42,0.1)] px-2 py-1 text-[0.68rem] font-black text-[var(--lime)]">{perk}</span>)}</div></div><div className="mt-7 grid gap-3 sm:grid-cols-3"><div className="subtle-card p-4"><p className="eyebrow">XP total</p><p className="mt-2 text-lg font-black text-white">8.640</p></div><div className="subtle-card p-4"><p className="eyebrow">Treinos</p><p className="mt-2 text-lg font-black text-white">46</p></div><div className="subtle-card p-4"><p className="eyebrow">Conquistas</p><p className="mt-2 text-lg font-black text-white">4</p></div></div></div></div></section>
 
     <section className="mt-4 app-card p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div><p className="eyebrow text-[var(--cyan)]">Evolução do Pulse</p><h2 className="mt-2 text-lg font-black text-white">Seu companheiro melhora com o tempo</h2><p className="mt-1 max-w-2xl text-xs leading-5 text-[var(--text-muted)]">Pausas não removem upgrades. Elas só adiam o próximo desbloqueio até você voltar para o seu ritmo.</p></div>{nextAvatarStage && <Pill tone="gold"><Sparkles size={14} /> PRÓXIMO: NÍVEL {nextAvatarStage.levelRequired}</Pill>}</div>
@@ -232,9 +237,16 @@ function SettingsRow({ href, icon: Icon, title, detail, color = "var(--text-mute
 }
 
 export function SettingsPage() {
+  const router = useRouter();
+
+  async function signOut() {
+    await logoutUser();
+    router.push("/login");
+  }
+
   return <Screen title="Configurações" description="Controle sua conta, privacidade, unidades e comunicacoes.">
     <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-2"><section className="app-card min-w-0 px-5"><SettingsRow href="/profile" icon={UserRound} title="Perfil e objetivos" detail="Nome, metas, nível de atividade e avatar" /><SettingsRow href="/settings/security" icon={ShieldCheck} title="Segurança da conta" detail="Senha, sessoes e eventos de segurança" color="var(--cyan)" /><SettingsRow href="/settings/notifications" icon={Bell} title="Notificações" detail="Lembretes, resumo semanal e horário silencioso" color="var(--gold)" /></section><section className="app-card min-w-0 px-5"><SettingsRow href="#appearance" icon={Sparkles} title="Aparência" detail="Tema escuro e contraste" color="var(--violet)" /><SettingsRow href="#units" icon={Activity} title="Unidades e idioma" detail="Sistema metrico e portugues do Brasil" color="var(--green)" /><SettingsRow href="#data" icon={Download} title="Dados e privacidade" detail="Exportar dados ou excluir a conta" color="var(--coral)" /></section></div>
-    <section className="mt-4 app-card p-5"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-black text-white">Encerrar sessão</p><p className="mt-1 text-sm text-[var(--text-muted)]">Você podera entrar novamente quando quiser.</p></div><Link href="/login" className="secondary-button"><LogOut size={18} /> Sair</Link></div></section>
+    <section className="mt-4 app-card p-5"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-black text-white">Encerrar sessão</p><p className="mt-1 text-sm text-[var(--text-muted)]">Você podera entrar novamente quando quiser.</p></div><button onClick={signOut} className="secondary-button"><LogOut size={18} /> Sair</button></div></section>
   </Screen>;
 }
 
