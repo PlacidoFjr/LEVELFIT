@@ -4,10 +4,8 @@ import { initializeApp, getApps } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
   getAuth,
-  GoogleAuthProvider,
   sendEmailVerification,
   signInWithEmailAndPassword,
-  signInWithPopup,
   updateProfile,
   type User,
 } from "firebase/auth";
@@ -28,7 +26,9 @@ export function isFirebaseConfigured() {
 function requireFirebaseAuth() {
   if (!isFirebaseConfigured()) throw new Error("Firebase Auth nao configurado.");
   const app = getApps()[0] ?? initializeApp(firebaseConfig);
-  return getAuth(app);
+  const auth = getAuth(app);
+  auth.languageCode = "pt-BR";
+  return auth;
 }
 
 export async function signInFirebaseWithEmail(email: string, password: string) {
@@ -41,15 +41,10 @@ export async function createFirebaseUser(input: { email: string; password: strin
   const auth = requireFirebaseAuth();
   const credential = await createUserWithEmailAndPassword(auth, input.email, input.password);
   await updateProfile(credential.user, { displayName: input.displayName });
-  await sendEmailVerification(credential.user);
-  return credential.user;
-}
-
-export async function signInFirebaseWithGoogle() {
-  const auth = requireFirebaseAuth();
-  const provider = new GoogleAuthProvider();
-  provider.setCustomParameters({ prompt: "select_account" });
-  const credential = await signInWithPopup(auth, provider);
+  await sendEmailVerification(credential.user, {
+    url: `${window.location.origin}/login?emailVerified=1`,
+    handleCodeInApp: false,
+  });
   return credential.user;
 }
 

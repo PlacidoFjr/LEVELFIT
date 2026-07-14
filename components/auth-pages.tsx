@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, Dumbbell, Eye, EyeOff, HeartPulse, Salad, ShieldCheck, Sparkles, Target } from "lucide-react";
 import { FormEvent, useState } from "react";
-import { ApiClientError, loginUser, loginWithGoogle, registerUser } from "@/lib/auth-client";
+import { ApiClientError, loginUser, registerUser } from "@/lib/auth-client";
 import { activityOptions } from "@/lib/mock-data";
 import { LevelFitLogo } from "./level-fit-logo";
 
@@ -59,13 +59,9 @@ function AuthFrame({ eyebrow, title, description, children }: { eyebrow: string;
 }
 
 function formError(error: unknown) {
-  if (error instanceof ApiClientError && error.code === "EMAIL_VERIFICATION_REQUIRED") return "Confirme seu e-mail antes de entrar. O Firebase enviou um link de verificacao para sua caixa de entrada.";
+  if (error instanceof ApiClientError && error.code === "EMAIL_VERIFICATION_REQUIRED") return "Confirme seu e-mail antes de entrar. Se não encontrar o link em alguns minutos, confira também Spam, Lixo eletrônico e Promoções.";
   if (error instanceof ApiClientError) return error.message;
   return "Não foi possível concluir agora. Verifique a API e tente novamente.";
-}
-
-function GoogleIcon() {
-  return <span className="text-lg font-black text-white" aria-hidden="true">G</span>;
 }
 
 export function LoginPage() {
@@ -88,24 +84,8 @@ export function LoginPage() {
     }
   }
 
-  async function googleLogin() {
-    setError(null);
-    setLoading(true);
-    try {
-      await loginWithGoogle();
-      window.location.assign("/");
-    } catch (err) {
-      setError(formError(err));
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
     <AuthFrame eyebrow="Que bom te ver de volta" title="Entre no seu ritmo" description="Acesse seu plano de hoje e continue de onde parou.">
-      <button type="button" onClick={googleLogin} disabled={loading} className="secondary-button mb-5 w-full justify-center disabled:cursor-not-allowed disabled:opacity-60">
-        <GoogleIcon /> Entrar com Google
-      </button>
       <form onSubmit={submit} className="space-y-5">
         <label htmlFor="email" className="block text-sm font-bold text-[var(--text-muted)]">
           E-mail
@@ -155,7 +135,7 @@ export function RegisterPage() {
         return;
       }
 
-      setMessage("Conta criada. Confira o e-mail enviado pelo Firebase para confirmar o acesso antes de entrar.");
+      setMessage("Conta criada. Confira sua caixa de entrada para confirmar o acesso. Se não aparecer em alguns minutos, olhe também Spam, Lixo eletrônico e Promoções.");
     } catch (err) {
       if (err instanceof ApiClientError && err.code === "EMAIL_UNAVAILABLE") {
         setError("Este e-mail já está cadastrado no LevelFit. Entre com ele ou recupere sua senha.");
@@ -169,28 +149,10 @@ export function RegisterPage() {
     }
   }
 
-  async function googleLogin() {
-    setError(null);
-    setErrorCode(null);
-    setMessage(null);
-    setLoading(true);
-    try {
-      await loginWithGoogle();
-      router.replace("/onboarding");
-    } catch (err) {
-      setError(formError(err));
-      setErrorCode(err instanceof ApiClientError ? err.code : null);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   return (
     <AuthFrame eyebrow="Comece com leveza" title="Crie sua conta" description="Leva menos de dois minutos. Suas preferências podem mudar depois.">
       <form onSubmit={submit} className="space-y-5">
-        <button type="button" onClick={googleLogin} disabled={loading} className="secondary-button w-full justify-center disabled:cursor-not-allowed disabled:opacity-60">
-          <GoogleIcon /> Continuar com Google
-        </button>
         <label htmlFor="name" className="block text-sm font-bold text-[var(--text-muted)]">
           Como quer que a gente te chame?
           <input id="name" name="displayName" className="field mt-2" placeholder="Seu nome" required autoComplete="name" />

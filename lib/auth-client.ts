@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createFirebaseUser, firebaseIdToken, signInFirebaseWithEmail, signInFirebaseWithGoogle } from "./firebase-client";
+import { createFirebaseUser, firebaseIdToken, signInFirebaseWithEmail } from "./firebase-client";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001/v1";
 const ACCESS_TOKEN_KEY = "levelfit.accessToken";
@@ -221,7 +221,7 @@ export async function loginUser(email: string, password: string) {
   try {
     const firebaseUser = await signInFirebaseWithEmail(email, password);
     if (!firebaseUser.emailVerified) {
-      throw new ApiClientError("Confirme seu e-mail antes de entrar. Se necessário, abra sua caixa de entrada e use o link enviado pelo Firebase.", "EMAIL_VERIFICATION_REQUIRED", 403);
+      throw new ApiClientError("Confirme seu e-mail antes de entrar. Se não encontrar o link em alguns minutos, confira também Spam, Lixo eletrônico e Promoções.", "EMAIL_VERIFICATION_REQUIRED", 403);
     }
     return loginWithFirebaseToken({ idToken: await firebaseIdToken(firebaseUser), displayName: firebaseUser.displayName });
   } catch (error) {
@@ -240,16 +240,6 @@ async function loginWithFirebaseToken(input: FirebaseLoginInput) {
   }, false);
   saveSession(response);
   return response.user;
-}
-
-export async function loginWithGoogle() {
-  try {
-    const firebaseUser = await signInFirebaseWithGoogle();
-    return loginWithFirebaseToken({ idToken: await firebaseIdToken(firebaseUser), displayName: firebaseUser.displayName });
-  } catch (error) {
-    if (error instanceof ApiClientError) throw error;
-    throw firebaseError(error);
-  }
 }
 
 export async function legacyLoginUser(email: string, password: string) {
