@@ -145,6 +145,8 @@ export const avatarStages = [
     name: "Pulse Spark",
     levelRequired: 1,
     image: "/assets/pulse-companion.png",
+    accent: "var(--lime)",
+    visualStyle: "spark",
     detail: "Primeira versão do companheiro, focada em criar rotina.",
     personality: "Gentil e simples",
     activeBenefit: "Celebra pequenas ações sem cobrar perfeição.",
@@ -155,6 +157,8 @@ export const avatarStages = [
     name: "Pulse Core",
     levelRequired: 5,
     image: "/assets/pulse-companion.png",
+    accent: "var(--cyan)",
+    visualStyle: "core",
     detail: "Ganha mais energia visual quando a consistência aparece.",
     personality: "Mais atento ao ritmo",
     activeBenefit: "Destaca o caminho mais curto para manter o dia ativo.",
@@ -165,6 +169,8 @@ export const avatarStages = [
     name: "Pulse Neo",
     levelRequired: 10,
     image: "/assets/pulse-evolved.png",
+    accent: "var(--lime)",
+    visualStyle: "neo",
     detail: "Armadura, luzes e postura mais fortes para quem já criou ritmo.",
     personality: "Confiante, calmo e protetor",
     activeBenefit: "Ativa recomendações inteligentes para manter consistência sem exagero.",
@@ -175,6 +181,8 @@ export const avatarStages = [
     name: "Pulse Volt",
     levelRequired: 15,
     image: "/assets/pulse-evolved.png",
+    accent: "var(--coral)",
+    visualStyle: "volt",
     detail: "Upgrade futuro com acessórios de treino e efeitos de conquista.",
     personality: "Energético e estratégico",
     activeBenefit: "Ajuda a planejar a semana com treinos, água e recuperação.",
@@ -185,6 +193,8 @@ export const avatarStages = [
     name: "Pulse Prime",
     levelRequired: 25,
     image: "/assets/pulse-evolved.png",
+    accent: "var(--gold)",
+    visualStyle: "prime",
     detail: "Forma premium para ciclos longos de evolução saudável.",
     personality: "Mentor premium",
     activeBenefit: "Transforma ciclos longos em metas visuais e revisões de progresso.",
@@ -192,11 +202,11 @@ export const avatarStages = [
   },
 ];
 
-export function getCurrentAvatarStage(level = user.level) {
+export function getCurrentAvatarStage(level = 1) {
   return avatarStages.reduce((current, stage) => (level >= stage.levelRequired ? stage : current), avatarStages[0]);
 }
 
-export function getNextAvatarStage(level = user.level) {
+export function getNextAvatarStage(level = 1) {
   return avatarStages.find((stage) => stage.levelRequired > level);
 }
 

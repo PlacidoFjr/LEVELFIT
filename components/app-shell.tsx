@@ -22,7 +22,7 @@ import {
 import { useState } from "react";
 import { useEffect } from "react";
 import { useAuthSession } from "@/lib/auth-client";
-import { user } from "@/lib/mock-data";
+import { getUserProgress } from "@/lib/user-progress";
 import { LevelFitLogo } from "./level-fit-logo";
 
 const primaryNav = [
@@ -86,6 +86,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const session = useAuthSession();
   const [menuOpen, setMenuOpen] = useState(false);
+  const progress = getUserProgress(session.user);
 
   useEffect(() => {
     if (!session.loading && !session.authenticated) router.replace("/login");
@@ -116,13 +117,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="mt-auto">
           <div className="mb-4 rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-3">
             <div className="mb-2 flex items-center justify-between text-xs font-bold text-[var(--text-muted)]">
-              <span>Nível {user.level}</span>
-              <span>{user.currentXp} XP</span>
+              <span>Nível {progress.level}</span>
+              <span>{progress.currentXp} XP</span>
             </div>
-            <div className="progress-track" aria-label={`${user.currentXp} de ${user.nextLevelXp} pontos de experiencia`}>
-              <div className="progress-fill bg-[var(--lime)]" style={{ width: `${(user.currentXp / user.nextLevelXp) * 100}%` }} />
+            <div className="progress-track" aria-label={`${progress.currentXp} de ${progress.nextLevelXp} pontos de experiencia`}>
+              <div className="progress-fill bg-[var(--lime)]" style={{ width: `${(progress.currentXp / progress.nextLevelXp) * 100}%` }} />
             </div>
-            <p className="mt-2 text-xs text-[var(--text-dim)]">{user.nextLevelXp - user.currentXp} XP para o próximo nível</p>
+            <p className="mt-2 text-xs text-[var(--text-dim)]">{progress.nextLevelXp - progress.currentXp} XP para o próximo nível</p>
           </div>
           <nav className="flex flex-col gap-1" aria-label="Conta">
             {secondaryNav.map((item) => <NavLink key={item.href} {...item} pathname={pathname} />)}

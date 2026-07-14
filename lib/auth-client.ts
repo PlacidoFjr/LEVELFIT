@@ -11,6 +11,17 @@ export type AuthUser = {
   id: string;
   email: string;
   displayName?: string | null;
+  level?: {
+    level: number;
+    totalXp: number;
+    currentLevelXp: number;
+    nextLevelXp: number;
+  } | null;
+  streaks?: Array<{
+    type: string;
+    currentCount: number;
+    bestCount: number;
+  }>;
 };
 
 type LoginResponse = {
@@ -166,7 +177,7 @@ export async function refreshSession() {
 }
 
 export async function fetchMe() {
-  return request<AuthUser & { profile?: { displayName?: string | null } }>("/me");
+  return request<AuthUser & { profile?: { displayName?: string | null }; level?: AuthUser["level"]; streaks?: AuthUser["streaks"] }>("/me");
 }
 
 export async function logoutUser() {
@@ -203,6 +214,8 @@ export function useAuthSession() {
           id: me.id,
           email: me.email,
           displayName: me.profile?.displayName ?? me.displayName,
+          level: me.level ?? null,
+          streaks: me.streaks ?? [],
         };
         window.localStorage.setItem(USER_KEY, JSON.stringify(nextUser));
         if (active) setUser(nextUser);

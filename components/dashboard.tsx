@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -19,7 +18,9 @@ import { useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import { useAuthSession } from "@/lib/auth-client";
 import { getCurrentAvatarStage, getNextAvatarStage, getTodaysNutritionPlan, missions, user, weeklyActivity } from "@/lib/mock-data";
+import { getUserProgress } from "@/lib/user-progress";
 import { PageHeader } from "./page-header";
+import { PulseAvatar } from "./pulse-avatar";
 import { ProgressRing } from "./progress-ring";
 
 const toneStyles: Record<string, { bg: string; color: string }> = {
@@ -32,15 +33,16 @@ const toneStyles: Record<string, { bg: string; color: string }> = {
 export function Dashboard() {
   const session = useAuthSession();
   const nutritionPlan = useMemo(() => getTodaysNutritionPlan(), []);
-  const avatarStage = getCurrentAvatarStage(user.level);
-  const nextAvatarStage = getNextAvatarStage(user.level);
+  const progress = getUserProgress(session.user);
+  const avatarStage = getCurrentAvatarStage(progress.level);
+  const nextAvatarStage = getNextAvatarStage(progress.level);
   const displayName = session.user?.displayName || user.name;
   const [completed, setCompleted] = useState<string[]>(["recovery"]);
   const [water, setWater] = useState(1250);
   const [foodDone, setFoodDone] = useState(() => nutritionPlan.items.filter((item) => item.done).map((item) => item.id));
   const [toast, setToast] = useState<string | null>(null);
   const missionProgress = Math.round((completed.length / missions.length) * 100);
-  const levelProgress = Math.round((user.currentXp / user.nextLevelXp) * 100);
+  const levelProgress = Math.round((progress.currentXp / progress.nextLevelXp) * 100);
   const waterProgress = Math.min(100, Math.round((water / 2000) * 100));
   const nutritionProgress = Math.round((foodDone.length / nutritionPlan.items.length) * 100);
 
@@ -80,13 +82,13 @@ export function Dashboard() {
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
               <div className="mb-3 flex flex-wrap items-center gap-2">
-                <span className="inline-flex min-h-7 items-center gap-1.5 rounded-[6px] bg-[rgba(183,255,42,0.12)] px-2.5 text-xs font-black text-[var(--lime)]"><Zap size={14} fill="currentColor" /> NIVEL {user.level}</span>
-                <span className="inline-flex min-h-7 items-center gap-1.5 rounded-[6px] bg-[rgba(250,204,21,0.1)] px-2.5 text-xs font-black text-[var(--gold)]"><Flame size={14} fill="currentColor" /> {user.streak} DIAS</span>
+                <span className="inline-flex min-h-7 items-center gap-1.5 rounded-[6px] bg-[rgba(183,255,42,0.12)] px-2.5 text-xs font-black text-[var(--lime)]"><Zap size={14} fill="currentColor" /> NIVEL {progress.level}</span>
+                <span className="inline-flex min-h-7 items-center gap-1.5 rounded-[6px] bg-[rgba(250,204,21,0.1)] px-2.5 text-xs font-black text-[var(--gold)]"><Flame size={14} fill="currentColor" /> {progress.streak} DIAS</span>
               </div>
               <h2 className="text-xl font-black text-white sm:text-2xl">Ritmo forte, sem exagero.</h2>
               <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--text-muted)]">Você já ganhou <strong className="text-white">{earnedToday} XP</strong> hoje. Um treino curto ou mais um copo de água já deixa o dia completo.</p>
               <div className="mt-5 max-w-xl">
-                <div className="mb-2 flex justify-between text-xs font-bold text-[var(--text-muted)]"><span>{user.levelName}</span><span>{user.currentXp} / {user.nextLevelXp} XP</span></div>
+                <div className="mb-2 flex justify-between text-xs font-bold text-[var(--text-muted)]"><span>{progress.levelName}</span><span>{progress.currentXp} / {progress.nextLevelXp} XP</span></div>
                 <div className="progress-track h-2.5"><motion.div className="progress-fill bg-[var(--lime)]" initial={{ width: 0 }} animate={{ width: `${levelProgress}%` }} /></div>
               </div>
             </div>
@@ -98,7 +100,7 @@ export function Dashboard() {
         </div>
 
         <div className="app-card relative min-h-[240px] overflow-hidden bg-[#080d12]">
-          <Image src={avatarStage.image} alt={`${avatarStage.name}, companheiro de treino do LevelFit`} fill priority sizes="(max-width: 1280px) 100vw, 32vw" className="object-contain object-bottom p-3 opacity-95" />
+          <PulseAvatar stage={avatarStage} alt={`${avatarStage.name}, companheiro de treino do LevelFit`} className="absolute inset-0" imageClassName="p-3" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#080b0f] via-[rgba(8,11,15,0.08)] to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-5">
             <div className="flex flex-wrap items-center gap-2">

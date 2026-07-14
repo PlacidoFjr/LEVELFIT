@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -52,7 +51,9 @@ import { useEffect, useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { logoutUser, useAuthSession } from "@/lib/auth-client";
 import { achievements, avatarStages, getCurrentAvatarStage, getNextAvatarStage, getTodaysNutritionPlan, leaderboard, missions, notifications as initialNotifications, progressData, user, workoutExercises } from "@/lib/mock-data";
+import { getUserProgress } from "@/lib/user-progress";
 import { PageHeader } from "./page-header";
+import { PulseAvatar } from "./pulse-avatar";
 import { ProgressRing } from "./progress-ring";
 
 function Screen({ title, description, action, children }: { title: string; description?: string; action?: React.ReactNode; children: React.ReactNode }) {
@@ -69,12 +70,14 @@ function Stat({ label, value, detail, icon: Icon, color = "var(--lime)" }: { lab
 }
 
 export function MissionsPage() {
+  const session = useAuthSession();
+  const progress = getUserProgress(session.user);
   const [done, setDone] = useState<string[]>(["recovery"]);
   return <Screen title="Missões do dia" description="Quatro oportunidades de cuidar de você. Complete o que fizer sentido; pausar também conta.">
     <div className="mb-4 grid gap-4 sm:grid-cols-3">
       <Stat label="Concluídas" value={`${done.length} de ${missions.length}`} detail="O dia não precisa ser perfeito." icon={CheckCircle2} />
       <Stat label="XP possível" value={`${missions.filter((m) => !done.includes(m.id)).reduce((sum, m) => sum + m.xp, 0)} XP`} detail="Sem XP negativo ou punição." icon={Zap} color="var(--gold)" />
-      <Stat label="Sequência" value={`${user.streak} dias`} detail="Um dia leve pode salvar seu ritmo." icon={Flame} color="var(--coral)" />
+      <Stat label="Sequência" value={`${progress.streak} dias`} detail="Um dia leve pode salvar seu ritmo." icon={Flame} color="var(--coral)" />
     </div>
     <section className="app-card p-4 sm:p-5">
       <div className="divide-y divide-[var(--border)]">
@@ -209,21 +212,22 @@ export function RankingPage() {
 
 export function ProfilePage() {
   const session = useAuthSession();
-  const avatarStage = getCurrentAvatarStage(user.level);
-  const nextAvatarStage = getNextAvatarStage(user.level);
+  const progress = getUserProgress(session.user);
+  const avatarStage = getCurrentAvatarStage(progress.level);
+  const nextAvatarStage = getNextAvatarStage(progress.level);
   const displayName = session.user?.displayName || user.name;
   const email = session.user?.email || user.email;
 
   return <Screen title="Perfil" description="Sua identidade e preferências principais no LevelFit." action={<button className="secondary-button"><Pencil size={18} /> Editar perfil</button>}>
-    <section className="app-card overflow-hidden"><div className="grid md:grid-cols-[280px_1fr]"><div className="relative min-h-[320px] bg-[#080d12]"><Image src={avatarStage.image} alt={`${avatarStage.name}, avatar atual`} fill priority sizes="280px" className="object-contain object-bottom p-4" /></div><div className="p-5 sm:p-7"><div className="flex flex-wrap items-center gap-2"><Pill><Zap size={14} /> NÍVEL {user.level}</Pill><Pill tone="gold"><Flame size={14} /> {user.streak} DIAS</Pill><Pill tone="cyan"><Sparkles size={14} /> {avatarStage.name}</Pill></div><h2 className="mt-5 text-2xl font-black text-white">{displayName}</h2><p className="mt-1 text-sm text-[var(--text-muted)]">{email}</p><p className="mt-5 max-w-xl text-sm leading-6 text-[var(--text-muted)]">Construindo força e consistência com uma rotina flexível. O Pulse evolui com XP, missões concluídas e retomadas saudáveis.</p><div className="mt-5 border-l-2 border-[var(--cyan)] bg-[rgba(34,211,238,0.06)] p-4"><p className="text-sm font-black text-white">{avatarStage.personality}</p><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{avatarStage.activeBenefit}</p><div className="mt-3 flex flex-wrap gap-2">{avatarStage.perks.map((perk) => <span key={perk} className="rounded-[5px] bg-[rgba(183,255,42,0.1)] px-2 py-1 text-[0.68rem] font-black text-[var(--lime)]">{perk}</span>)}</div></div><div className="mt-7 grid gap-3 sm:grid-cols-3"><div className="subtle-card p-4"><p className="eyebrow">XP total</p><p className="mt-2 text-lg font-black text-white">8.640</p></div><div className="subtle-card p-4"><p className="eyebrow">Treinos</p><p className="mt-2 text-lg font-black text-white">46</p></div><div className="subtle-card p-4"><p className="eyebrow">Conquistas</p><p className="mt-2 text-lg font-black text-white">4</p></div></div></div></div></section>
+    <section className="app-card overflow-hidden"><div className="grid md:grid-cols-[280px_1fr]"><PulseAvatar stage={avatarStage} alt={`${avatarStage.name}, avatar atual`} className="min-h-[320px]" imageClassName="p-4" /><div className="p-5 sm:p-7"><div className="flex flex-wrap items-center gap-2"><Pill><Zap size={14} /> NÍVEL {progress.level}</Pill><Pill tone="gold"><Flame size={14} /> {progress.streak} DIAS</Pill><Pill tone="cyan"><Sparkles size={14} /> {avatarStage.name}</Pill></div><h2 className="mt-5 text-2xl font-black text-white">{displayName}</h2><p className="mt-1 text-sm text-[var(--text-muted)]">{email}</p><p className="mt-5 max-w-xl text-sm leading-6 text-[var(--text-muted)]">Construindo força e consistência com uma rotina flexível. O Pulse evolui com XP, missões concluídas e retomadas saudáveis.</p><div className="mt-5 border-l-2 border-[var(--cyan)] bg-[rgba(34,211,238,0.06)] p-4"><p className="text-sm font-black text-white">{avatarStage.personality}</p><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{avatarStage.activeBenefit}</p><div className="mt-3 flex flex-wrap gap-2">{avatarStage.perks.map((perk) => <span key={perk} className="rounded-[5px] bg-[rgba(183,255,42,0.1)] px-2 py-1 text-[0.68rem] font-black text-[var(--lime)]">{perk}</span>)}</div></div><div className="mt-7 grid gap-3 sm:grid-cols-3"><div className="subtle-card p-4"><p className="eyebrow">XP total</p><p className="mt-2 text-lg font-black text-white">{progress.totalXp.toLocaleString("pt-BR")}</p></div><div className="subtle-card p-4"><p className="eyebrow">Treinos</p><p className="mt-2 text-lg font-black text-white">0</p></div><div className="subtle-card p-4"><p className="eyebrow">Conquistas</p><p className="mt-2 text-lg font-black text-white">0</p></div></div></div></div></section>
 
     <section className="mt-4 app-card p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div><p className="eyebrow text-[var(--cyan)]">Evolução do Pulse</p><h2 className="mt-2 text-lg font-black text-white">Seu companheiro melhora com o tempo</h2><p className="mt-1 max-w-2xl text-xs leading-5 text-[var(--text-muted)]">Pausas não removem upgrades. Elas só adiam o próximo desbloqueio até você voltar para o seu ritmo.</p></div>{nextAvatarStage && <Pill tone="gold"><Sparkles size={14} /> PRÓXIMO: NÍVEL {nextAvatarStage.levelRequired}</Pill>}</div>
       <div className="mt-5 grid gap-3 md:grid-cols-5">
         {avatarStages.map((stage) => {
-          const unlocked = user.level >= stage.levelRequired;
+          const unlocked = progress.level >= stage.levelRequired;
           const current = avatarStage.id === stage.id;
-          return <article key={stage.id} className={`subtle-card min-h-[180px] p-4 ${unlocked ? "" : "opacity-55"}`}><div className="flex items-center justify-between gap-2"><span className={`grid size-9 place-items-center rounded-[7px] ${current ? "bg-[var(--lime)] text-[var(--lime-ink)]" : "bg-[var(--surface-soft)] text-[var(--text-muted)]"}`}>{unlocked ? <Check size={17} strokeWidth={3} /> : <LockKeyhole size={16} />}</span><span className="text-xs font-black text-[var(--text-dim)]">NÍVEL {stage.levelRequired}</span></div><h3 className="mt-4 text-sm font-black text-white">{stage.name}</h3><p className="mt-1 text-xs font-bold text-[var(--cyan)]">{stage.personality}</p><p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{stage.activeBenefit}</p>{current && <p className="mt-3 text-xs font-black text-[var(--lime)]">ATUAL</p>}</article>;
+          return <article key={stage.id} className={`subtle-card min-h-[250px] overflow-hidden p-4 ${unlocked ? "" : "opacity-55"}`}><div className="flex items-center justify-between gap-2"><span className={`grid size-9 place-items-center rounded-[7px] ${current ? "bg-[var(--lime)] text-[var(--lime-ink)]" : "bg-[var(--surface-soft)] text-[var(--text-muted)]"}`}>{unlocked ? <Check size={17} strokeWidth={3} /> : <LockKeyhole size={16} />}</span><span className="text-xs font-black text-[var(--text-dim)]">NÍVEL {stage.levelRequired}</span></div><PulseAvatar stage={stage} alt={`${stage.name}, estágio do Pulse`} locked={!unlocked} className="mt-4 h-[104px] rounded-[7px] border border-[var(--border)]" imageClassName="p-2" /><h3 className="mt-4 text-sm font-black text-white">{stage.name}</h3><p className="mt-1 text-xs font-bold" style={{ color: stage.accent }}>{stage.personality}</p><p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{stage.activeBenefit}</p>{current && <p className="mt-3 text-xs font-black text-[var(--lime)]">ATUAL</p>}</article>;
         })}
       </div>
     </section>

@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { Bell, Flame, Search } from "lucide-react";
-import { user } from "@/lib/mock-data";
+import { useAuthSession } from "@/lib/auth-client";
+import { getUserProgress } from "@/lib/user-progress";
 
 export function PageHeader({ title, description, action }: { title: string; description?: string; action?: React.ReactNode }) {
+  const session = useAuthSession();
+  const progress = getUserProgress(session.user);
+
   return (
     <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
@@ -13,7 +17,7 @@ export function PageHeader({ title, description, action }: { title: string; desc
       <div className="flex items-center gap-2">
         {action}
         <div className="hidden h-11 items-center gap-2 rounded-[7px] border border-[rgba(250,204,21,0.25)] bg-[rgba(250,204,21,0.08)] px-3 text-sm font-black text-[var(--gold)] sm:flex" title="Sequência atual">
-          <Flame size={18} fill="currentColor" aria-hidden="true" /> {user.streak} dias
+          <Flame size={18} fill="currentColor" aria-hidden="true" /> {progress.streak} dias
         </div>
         <span className="hidden sm:inline-flex">
           <button className="icon-button" aria-label="Buscar" title="Buscar">
