@@ -16,6 +16,7 @@ import {
   Sparkles,
   Target,
   TrendingUp,
+  Trophy,
   X,
 } from "lucide-react";
 import { useState } from "react";
@@ -29,6 +30,7 @@ const primaryNav = [
   { href: "/nutrition", label: "Alimentação", icon: Apple },
   { href: "/hydration", label: "Hidratação", icon: GlassWater },
   { href: "/progress", label: "Progresso", icon: TrendingUp },
+  { href: "/ranking", label: "Ranking", icon: Trophy },
   { href: "/achievements", label: "Conquistas", icon: Award },
 ];
 

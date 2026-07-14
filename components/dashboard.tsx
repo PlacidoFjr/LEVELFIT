@@ -98,8 +98,15 @@ export function Dashboard() {
           <Image src={avatarStage.image} alt={`${avatarStage.name}, companheiro de treino do LevelFit`} fill priority sizes="(max-width: 1280px) 100vw, 32vw" className="object-contain object-bottom p-3 opacity-95" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#080b0f] via-[rgba(8,11,15,0.08)] to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-5">
-            <span className="eyebrow text-[var(--cyan)]">{avatarStage.name}</span>
-            <p className="mt-2 text-sm font-bold leading-5 text-white">{nextAvatarStage ? `Próxima evolução no nível ${nextAvatarStage.levelRequired}.` : "Você chegou ao estágio máximo atual."}</p>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="eyebrow text-[var(--cyan)]">{avatarStage.name}</span>
+              <span className="rounded-[5px] bg-[rgba(34,211,238,0.12)] px-2 py-1 text-[0.68rem] font-black text-[var(--cyan)]">{avatarStage.personality}</span>
+            </div>
+            <p className="mt-2 max-w-md text-sm font-bold leading-5 text-white">{avatarStage.activeBenefit}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {avatarStage.perks.slice(0, 2).map((perk) => <span key={perk} className="rounded-[5px] bg-[rgba(183,255,42,0.1)] px-2 py-1 text-[0.68rem] font-black text-[var(--lime)]">{perk}</span>)}
+            </div>
+            {nextAvatarStage && <p className="mt-3 text-xs font-bold text-[var(--text-muted)]">Próxima evolução no nível {nextAvatarStage.levelRequired}.</p>}
           </div>
         </div>
       </section>

@@ -146,6 +146,9 @@ export const avatarStages = [
     levelRequired: 1,
     image: "/assets/pulse-companion.png",
     detail: "Primeira versão do companheiro, focada em criar rotina.",
+    personality: "Gentil e simples",
+    activeBenefit: "Celebra pequenas ações sem cobrar perfeição.",
+    perks: ["Boas-vindas guiadas", "Missões iniciais", "Lembretes gentis"],
   },
   {
     id: "pulse-core",
@@ -153,6 +156,9 @@ export const avatarStages = [
     levelRequired: 5,
     image: "/assets/pulse-companion.png",
     detail: "Ganha mais energia visual quando a consistência aparece.",
+    personality: "Mais atento ao ritmo",
+    activeBenefit: "Destaca o caminho mais curto para manter o dia ativo.",
+    perks: ["Sugestão de missão fácil", "Resumo do ritmo", "Modo retomada"],
   },
   {
     id: "pulse-neo",
@@ -160,6 +166,9 @@ export const avatarStages = [
     levelRequired: 10,
     image: "/assets/pulse-evolved.png",
     detail: "Armadura, luzes e postura mais fortes para quem já criou ritmo.",
+    personality: "Confiante, calmo e protetor",
+    activeBenefit: "Ativa recomendações inteligentes para manter consistência sem exagero.",
+    perks: ["Missão recomendada", "Modo leve inteligente", "Comemoração aprimorada"],
   },
   {
     id: "pulse-volt",
@@ -167,6 +176,9 @@ export const avatarStages = [
     levelRequired: 15,
     image: "/assets/pulse-evolved.png",
     detail: "Upgrade futuro com acessórios de treino e efeitos de conquista.",
+    personality: "Energético e estratégico",
+    activeBenefit: "Ajuda a planejar a semana com treinos, água e recuperação.",
+    perks: ["Plano semanal", "Efeitos de conquista", "Checklist adaptativo"],
   },
   {
     id: "pulse-prime",
@@ -174,6 +186,9 @@ export const avatarStages = [
     levelRequired: 25,
     image: "/assets/pulse-evolved.png",
     detail: "Forma premium para ciclos longos de evolução saudável.",
+    personality: "Mentor premium",
+    activeBenefit: "Transforma ciclos longos em metas visuais e revisões de progresso.",
+    perks: ["Revisão mensal", "Avatar premium", "Metas avançadas"],
   },
 ];
 
@@ -211,6 +226,15 @@ export const achievements = [
   { title: "Força crescente", detail: "Completou 20 treinos", icon: Dumbbell, tone: "coral", unlocked: true },
   { title: "Ritmo gentil", detail: "Fez 5 dias de recuperação", icon: HeartPulse, tone: "green", unlocked: false },
   { title: "Nível 15", detail: "Alcance o nível Explorador", icon: Award, tone: "violet", unlocked: false },
+];
+
+export const leaderboard = [
+  { rank: 1, name: "Ana L.", level: 18, xp: 12480, streak: 42, badge: "Pulse Volt" },
+  { rank: 2, name: "Rafa M.", level: 17, xp: 11920, streak: 31, badge: "Pulse Volt" },
+  { rank: 3, name: "Bia S.", level: 16, xp: 11240, streak: 28, badge: "Pulse Volt" },
+  { rank: 4, name: "Caio R.", level: 14, xp: 9820, streak: 22, badge: "Pulse Neo" },
+  { rank: 5, name: "Luna P.", level: 13, xp: 9340, streak: 19, badge: "Pulse Neo" },
+  { rank: 6, name: "Theo A.", level: 12, xp: 8870, streak: 16, badge: "Pulse Neo" },
 ];
 
 export const notifications = [
