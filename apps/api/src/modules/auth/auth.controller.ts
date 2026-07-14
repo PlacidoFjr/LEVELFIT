@@ -7,8 +7,8 @@ import { AuthService } from "./auth.service";
 import { EmailDto, LoginDto, LogoutDto, RegisterDto, ResetPasswordDto, TokenDto } from "./auth.dto";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 
-const refreshCookie = { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" as const, path: "/v1/auth", maxAge: 30 * 24 * 60 * 60 * 1000 };
-const csrfCookie = { httpOnly: false, secure: process.env.NODE_ENV === "production", sameSite: "lax" as const, path: "/v1/auth", maxAge: 30 * 24 * 60 * 60 * 1000 };
+const refreshCookie = { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict" as const, priority: "high" as const, path: "/v1/auth", maxAge: 30 * 24 * 60 * 60 * 1000 };
+const csrfCookie = { httpOnly: false, secure: process.env.NODE_ENV === "production", sameSite: "strict" as const, priority: "high" as const, path: "/v1/auth", maxAge: 30 * 24 * 60 * 60 * 1000 };
 
 @Controller("auth")
 export class AuthController {

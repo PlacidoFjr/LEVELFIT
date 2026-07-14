@@ -90,24 +90,33 @@ export class AuthService {
     const tokenHash = hashToken(rawToken, this.tokenSecret);
     const stored = await this.prisma.refreshToken.findUnique({ where: { tokenHash }, include: { session: true, user: true } });
     if (!stored || stored.expiresAt <= new Date() || stored.revokedAt || stored.session.revokedAt || stored.user.deletedAt || stored.user.status !== "active") throw new UnauthorizedException({ code: "INVALID_REFRESH_TOKEN", message: "Sessao expirada." });
-    if (stored.rotatedAt) {
-      await this.prisma.$transaction([
-        this.prisma.refreshToken.updateMany({ where: { familyId: stored.familyId }, data: { revokedAt: new Date() } }),
-        this.prisma.session.update({ where: { id: stored.sessionId }, data: { revokedAt: new Date() } }),
-        this.prisma.userSecurityEvent.create({ data: { userId: stored.userId, type: "suspicious_login", metadata: { reason: "refresh_token_reuse" } } }),
-      ]);
-      throw new UnauthorizedException({ code: "TOKEN_REUSE_DETECTED", message: "Sessao encerrada por seguranca." });
-    }
+    if (stored.rotatedAt) return this.revokeReusedToken(stored.userId, stored.sessionId, stored.familyId);
 
     const nextRaw = randomToken();
     const nextHash = hashToken(nextRaw, this.tokenSecret);
     const expiresAt = new Date(Date.now() + this.refreshDays * 24 * 60 * 60 * 1000);
-    await this.prisma.$transaction([
-      this.prisma.refreshToken.update({ where: { id: stored.id }, data: { rotatedAt: new Date() } }),
-      this.prisma.refreshToken.create({ data: { userId: stored.userId, sessionId: stored.sessionId, familyId: stored.familyId, tokenHash: nextHash, expiresAt } }),
-      this.prisma.session.update({ where: { id: stored.sessionId }, data: { lastSeenAt: new Date() } }),
-    ]);
+    const claimed = await this.prisma.$transaction(async (tx) => {
+      const result = await tx.refreshToken.updateMany({
+        where: { id: stored.id, rotatedAt: null, revokedAt: null },
+        data: { rotatedAt: new Date() },
+      });
+      if (result.count !== 1) return false;
+      await tx.refreshToken.create({ data: { userId: stored.userId, sessionId: stored.sessionId, familyId: stored.familyId, tokenHash: nextHash, expiresAt } });
+      await tx.session.update({ where: { id: stored.sessionId }, data: { lastSeenAt: new Date() } });
+      return true;
+    });
+    if (!claimed) return this.revokeReusedToken(stored.userId, stored.sessionId, stored.familyId);
     return this.tokenResponse(stored.userId, stored.sessionId, nextRaw);
+  }
+
+  private async revokeReusedToken(userId: string, sessionId: string, familyId: string): Promise<never> {
+    const now = new Date();
+    await this.prisma.$transaction([
+      this.prisma.refreshToken.updateMany({ where: { familyId }, data: { revokedAt: now } }),
+      this.prisma.session.updateMany({ where: { id: sessionId, revokedAt: null }, data: { revokedAt: now } }),
+      this.prisma.userSecurityEvent.create({ data: { userId, type: "suspicious_login", metadata: { reason: "refresh_token_reuse" } } }),
+    ]);
+    throw new UnauthorizedException({ code: "TOKEN_REUSE_DETECTED", message: "Sessao encerrada por seguranca." });
   }
 
   async logout(auth: AuthUser, allDevices: boolean) {
@@ -131,7 +140,7 @@ export class AuthService {
     const stored = await this.prisma.emailVerificationToken.findUnique({ where: { tokenHash } });
     if (!stored || stored.usedAt || stored.expiresAt <= new Date()) throw new BadRequestException({ code: "INVALID_OR_EXPIRED_TOKEN", message: "Token invalido ou expirado." });
     await this.prisma.$transaction([
-      this.prisma.emailVerificationToken.update({ where: { id: stored.id }, data: { usedAt: new Date() } }),
+      this.prisma.emailVerificationToken.updateMany({ where: { userId: stored.userId, usedAt: null }, data: { usedAt: new Date() } }),
       this.prisma.user.update({ where: { id: stored.userId }, data: { emailVerifiedAt: new Date(), status: "active" } }),
     ]);
     return { emailVerified: true };
@@ -155,7 +164,7 @@ export class AuthService {
     const passwordHash = await argon2.hash(dto.newPassword, { type: argon2.argon2id, memoryCost: 19456, timeCost: 3, parallelism: 1 });
     const now = new Date();
     await this.prisma.$transaction([
-      this.prisma.passwordResetToken.update({ where: { id: stored.id }, data: { usedAt: now } }),
+      this.prisma.passwordResetToken.updateMany({ where: { userId: stored.userId, usedAt: null }, data: { usedAt: now } }),
       this.prisma.user.update({ where: { id: stored.userId }, data: { passwordHash } }),
       this.prisma.session.updateMany({ where: { userId: stored.userId, revokedAt: null }, data: { revokedAt: now } }),
       this.prisma.refreshToken.updateMany({ where: { userId: stored.userId, revokedAt: null }, data: { revokedAt: now } }),

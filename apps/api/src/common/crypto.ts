@@ -4,7 +4,7 @@ export function randomToken(bytes = 32) { return randomBytes(bytes).toString("ba
 export function hashToken(token: string, secret: string) { return createHmac("sha256", secret).update(token).digest("hex"); }
 export function hashContext(value: string | undefined, secret: string) {
   if (!value) return undefined;
-  return createHash("sha256").update(`${secret}:${value}`).digest("hex");
+  return createHmac("sha256", secret).update(value).digest("hex");
 }
 
 export function encryptSecret(value: string, secret: string) {

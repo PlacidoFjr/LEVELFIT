@@ -37,14 +37,16 @@ async function bootstrap() {
   app.useGlobalFilters(new ApiExceptionFilter());
   app.useGlobalInterceptors(new RequestContextInterceptor());
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle("LevelFit API")
-    .setDescription("API REST do MVP LevelFit")
-    .setVersion("1.0")
-    .addBearerAuth()
-    .addCookieAuth("lf_refresh")
-    .build();
-  SwaggerModule.setup("docs", app, () => SwaggerModule.createDocument(app, swaggerConfig));
+  if (config.get<boolean>("SWAGGER_ENABLED", config.get("NODE_ENV") !== "production")) {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle("LevelFit API")
+      .setDescription("API REST do MVP LevelFit")
+      .setVersion("1.0")
+      .addBearerAuth()
+      .addCookieAuth("lf_refresh")
+      .build();
+    SwaggerModule.setup("docs", app, () => SwaggerModule.createDocument(app, swaggerConfig));
+  }
 
   const port = config.get<number>("API_PORT", 3001);
   await app.listen(port, config.get<string>("API_HOST", "127.0.0.1"));
