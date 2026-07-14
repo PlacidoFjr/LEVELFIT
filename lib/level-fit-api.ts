@@ -170,6 +170,26 @@ export type RankingEntry = {
   streak: number;
 };
 
+export type XpEvent = {
+  id: string;
+  amount: number;
+  reason: string;
+  sourceRefType?: string | null;
+  sourceRefId?: string | null;
+  createdAt: string;
+};
+
+export type XpSummary = {
+  level: {
+    level: number;
+    totalXp: number;
+    currentLevelXp: number;
+    nextLevelXp: number;
+  } | null;
+  events: XpEvent[];
+  page: { nextCursor: string | null; hasMore: boolean };
+};
+
 export function isWorkoutSession(value: TodayWorkout): value is WorkoutSession {
   return Boolean(value && "workout" in value && "status" in value);
 }
@@ -286,6 +306,10 @@ export function addMeasurement(input: {
 
 export function listAchievements() {
   return apiRequest<{ data: Achievement[] }>("/achievements");
+}
+
+export function getXpSummary() {
+  return apiRequest<XpSummary>("/xp");
 }
 
 export function listRanking() {

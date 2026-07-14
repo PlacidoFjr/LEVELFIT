@@ -29,10 +29,12 @@ import {
   getNutritionToday,
   getTodayWorkout,
   getWorkoutFromToday,
+  getXpSummary,
   listMissions,
+  type XpEvent,
   type UserMission,
 } from "@/lib/level-fit-api";
-import { getCurrentAvatarStage, getNextAvatarStage, missions as fallbackMissions, user, weeklyActivity } from "@/lib/mock-data";
+import { getCurrentAvatarStage, getNextAvatarStage, missions as fallbackMissions, user } from "@/lib/mock-data";
 import { getUserProgress } from "@/lib/user-progress";
 import { PageHeader } from "./page-header";
 import { PulseAvatar } from "./pulse-avatar";
@@ -64,6 +66,40 @@ const nutritionChecks = [
 ] as const;
 
 type NutritionCheckId = (typeof nutritionChecks)[number]["id"];
+type WeeklyXpPoint = { day: string; xp: number };
+
+const weekdayLabels = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+function dayKey(date: Date) {
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+}
+
+function buildWeeklyXp(events: XpEvent[] = [], referenceDate = new Date()): WeeklyXpPoint[] {
+  const today = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate());
+  const totals = new Map<string, number>();
+
+  events.forEach((event) => {
+    const createdAt = new Date(event.createdAt);
+    if (Number.isNaN(createdAt.getTime())) return;
+
+    const localDay = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
+    const diffDays = Math.floor((today.getTime() - localDay.getTime()) / 86400000);
+    if (diffDays < 0 || diffDays > 6) return;
+
+    totals.set(dayKey(localDay), (totals.get(dayKey(localDay)) ?? 0) + event.amount);
+  });
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const offset = 6 - index;
+    const date = new Date(today);
+    date.setDate(today.getDate() - offset);
+
+    return {
+      day: offset === 0 ? "Hoje" : weekdayLabels[date.getDay()],
+      xp: totals.get(dayKey(date)) ?? 0,
+    };
+  });
+}
 
 function difficultyLabel(value?: string) {
   if (value === "easy") return "leve";
@@ -98,6 +134,7 @@ export function Dashboard() {
   const [waterGoal, setWaterGoal] = useState(2000);
   const [foodDone, setFoodDone] = useState<NutritionCheckId[]>([]);
   const [workoutSummary, setWorkoutSummary] = useState({ title: "Treino do dia", minutes: 20, difficulty: "ajustável", exerciseCount: 1 });
+  const [weeklyXp, setWeeklyXp] = useState<WeeklyXpPoint[]>(() => buildWeeklyXp());
   const [toast, setToast] = useState<string | null>(null);
 
   const dashboardMissions = liveMissions.length
@@ -116,21 +153,24 @@ export function Dashboard() {
   const levelProgress = Math.round((progress.currentXp / progress.nextLevelXp) * 100);
   const waterProgress = Math.min(100, Math.round((water / waterGoal) * 100));
   const nutritionProgress = Math.round((foodDone.length / nutritionChecks.length) * 100);
+  const weeklyXpTotal = weeklyXp.reduce((sum, item) => sum + item.xp, 0);
 
   useEffect(() => {
     const timer = window.setTimeout(async () => {
       try {
-        const [missionsData, hydrationData, nutritionData, todayWorkout] = await Promise.all([
+        const [missionsData, hydrationData, nutritionData, todayWorkout, xpSummary] = await Promise.all([
           listMissions(),
           getHydrationToday(),
           getNutritionToday(),
           getTodayWorkout(),
+          getXpSummary(),
         ]);
 
         setLiveMissions(missionsData);
         setCompleted(missionsData.filter((mission) => mission.status === "completed").map((mission) => mission.id));
         setWater(hydrationData.consumedMl);
         setWaterGoal(hydrationData.goalMl);
+        setWeeklyXp(buildWeeklyXp(xpSummary.events));
 
         const doneChecks = new Set<NutritionCheckId>();
         nutritionData.data.forEach((item) => {
@@ -163,6 +203,11 @@ export function Dashboard() {
     window.setTimeout(() => setToast(null), duration);
   }
 
+  function addXpToToday(amount: number) {
+    if (amount <= 0) return;
+    setWeeklyXp((points) => points.map((point, index) => index === points.length - 1 ? { ...point, xp: point.xp + amount } : point));
+  }
+
   async function completeMission(id: string, title: string) {
     if (completed.includes(id)) return;
     const previous = completed;
@@ -172,6 +217,7 @@ export function Dashboard() {
       if (liveMissions.some((mission) => mission.id === id)) {
         const result = await completeMissionApi(id);
         setLiveMissions((items) => items.map((mission) => mission.id === id ? { ...mission, ...result.mission, dailyMission: mission.dailyMission } : mission));
+        addXpToToday(result.xpAwarded);
         showToast(result.xpAwarded ? `${title} concluída. +${result.xpAwarded} XP salvos.` : `${title} concluída.`);
       } else {
         showToast(`${title} concluída. Bom trabalho.`);
@@ -189,6 +235,7 @@ export function Dashboard() {
       const result = await addWaterLog(amount);
       setWater(result.consumedMl);
       setWaterGoal(result.goalMl);
+      addXpToToday(result.xpAwarded);
       showToast(result.xpAwarded ? `${amount} ml registrados. +${result.xpAwarded} XP.` : `${amount} ml registrados.`);
     } catch {
       setWater(previous);
@@ -202,6 +249,7 @@ export function Dashboard() {
     setFoodDone((current) => [...current, id]);
     try {
       const result = await addFoodLog({ description: "Checklist alimentar", [id]: true });
+      addXpToToday(result.xpAwarded);
       showToast(result.xpAwarded ? `Checklist salvo. +${result.xpAwarded} XP.` : "Checklist salvo.");
     } catch {
       setFoodDone(previous);
@@ -314,10 +362,18 @@ export function Dashboard() {
         </div>
 
         <div className="app-card min-h-[300px] p-5 xl:col-span-2">
-          <div className="mb-4 flex items-start justify-between"><div><p className="eyebrow">Ritmo semanal</p><h2 className="mt-2 text-lg font-black text-white">XP conquistado</h2></div><span className="inline-flex items-center gap-1.5 text-sm font-black text-[var(--lime)]"><Sparkles size={16} /> +14%</span></div>
-          <div className="h-[215px] w-full">
+          <div className="mb-4 flex items-start justify-between"><div><p className="eyebrow">Ritmo semanal</p><h2 className="mt-2 text-lg font-black text-white">XP conquistado</h2></div><span className="inline-flex items-center gap-1.5 text-sm font-black text-[var(--lime)]"><Sparkles size={16} /> {weeklyXpTotal.toLocaleString("pt-BR")} XP</span></div>
+          <div className="relative h-[215px] w-full">
+            {weeklyXpTotal === 0 && (
+              <div className="pointer-events-none absolute inset-0 z-10 grid place-items-center text-center">
+                <div>
+                  <p className="text-sm font-black text-white">Sem XP registrado ainda</p>
+                  <p className="mt-1 text-xs font-bold text-[var(--text-muted)]">Complete sua primeira ação para iniciar a trilha.</p>
+                </div>
+              </div>
+            )}
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={weeklyActivity} margin={{ top: 8, right: 8, left: -28, bottom: 0 }}>
+              <AreaChart data={weeklyXp} margin={{ top: 8, right: 8, left: -28, bottom: 0 }}>
                 <defs><linearGradient id="xpArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#b7ff2a" stopOpacity={0.35} /><stop offset="100%" stopColor="#b7ff2a" stopOpacity={0} /></linearGradient></defs>
                 <CartesianGrid vertical={false} stroke="#26313c" strokeDasharray="3 6" />
                 <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: "#748291", fontSize: 11, fontWeight: 700 }} />

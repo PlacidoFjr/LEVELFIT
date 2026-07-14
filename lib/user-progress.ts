@@ -1,12 +1,10 @@
 import type { AuthUser } from "./auth-client";
-import { user as mockUser } from "./mock-data";
-
 export function getUserProgress(sessionUser?: AuthUser | null) {
-  const level = sessionUser?.level?.level ?? mockUser.level;
-  const currentXp = sessionUser?.level?.currentLevelXp ?? mockUser.currentXp;
-  const nextLevelXp = sessionUser?.level?.nextLevelXp ?? mockUser.nextLevelXp;
-  const totalXp = sessionUser?.level?.totalXp ?? 8640;
-  const dailyStreak = sessionUser?.streaks?.find((streak) => streak.type === "daily")?.currentCount ?? mockUser.streak;
+  const level = sessionUser?.level?.level ?? 1;
+  const currentXp = sessionUser?.level?.currentLevelXp ?? 0;
+  const nextLevelXp = sessionUser?.level?.nextLevelXp ?? 100;
+  const totalXp = sessionUser?.level?.totalXp ?? 0;
+  const dailyStreak = sessionUser?.streaks?.find((streak) => streak.type === "daily")?.currentCount ?? 0;
 
   return {
     level,
@@ -14,6 +12,6 @@ export function getUserProgress(sessionUser?: AuthUser | null) {
     nextLevelXp,
     totalXp,
     streak: dailyStreak,
-    levelName: level <= 1 ? "Primeiro passo" : level < 5 ? "Ritmo inicial" : level < 10 ? "Ritmo crescente" : mockUser.levelName,
+    levelName: level <= 1 ? "Primeiro passo" : level < 5 ? "Ritmo inicial" : level < 10 ? "Ritmo crescente" : "Ritmo forte",
   };
 }
