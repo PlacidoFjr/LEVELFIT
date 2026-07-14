@@ -7,7 +7,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001/v
 const ACCESS_TOKEN_KEY = "levelfit.accessToken";
 const CSRF_TOKEN_KEY = "levelfit.csrfToken";
 const USER_KEY = "levelfit.user";
-const REQUEST_TIMEOUT_MS = 20000;
+const REQUEST_TIMEOUT_MS = 60000;
 
 let memoryAccessToken: string | null = null;
 let memoryCsrfToken: string | null = null;
@@ -73,7 +73,7 @@ export class ApiClientError extends Error {
 }
 
 function timeoutError() {
-  return new ApiClientError("A API demorou para responder. Aguarde alguns segundos e tente novamente.", "REQUEST_TIMEOUT", 408);
+  return new ApiClientError("A API ainda está acordando. Aguarde alguns segundos e tente novamente.", "REQUEST_TIMEOUT", 408);
 }
 
 function readStoredUser(): AuthUser | null {
