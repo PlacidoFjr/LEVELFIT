@@ -1,0 +1,3 @@
+export default function Loading() {
+  return <div className="min-h-screen bg-[var(--bg)] p-5 lg:ml-[248px] lg:p-8" role="status" aria-label="Carregando"><div className="mx-auto max-w-[1480px] animate-pulse"><div className="h-4 w-32 rounded bg-[var(--surface-soft)]" /><div className="mt-3 h-9 w-64 rounded bg-[var(--surface-soft)]" /><div className="mt-8 grid gap-4 xl:grid-cols-3"><div className="h-64 rounded-[8px] bg-[var(--surface)] xl:col-span-2" /><div className="h-64 rounded-[8px] bg-[var(--surface)]" /><div className="h-80 rounded-[8px] bg-[var(--surface)] xl:col-span-2" /><div className="h-80 rounded-[8px] bg-[var(--surface)]" /></div></div></div>;
+}

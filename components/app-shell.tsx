@@ -1,0 +1,168 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  Activity,
+  Apple,
+  Award,
+  Bell,
+  ChevronRight,
+  CircleUserRound,
+  Dumbbell,
+  Gauge,
+  GlassWater,
+  Menu,
+  Settings,
+  Sparkles,
+  Target,
+  TrendingUp,
+  X,
+} from "lucide-react";
+import { useState } from "react";
+import { user } from "@/lib/mock-data";
+
+const primaryNav = [
+  { href: "/", label: "Hoje", icon: Gauge },
+  { href: "/missions", label: "Missoes", icon: Target },
+  { href: "/workouts", label: "Treinos", icon: Dumbbell },
+  { href: "/nutrition", label: "Alimentacao", icon: Apple },
+  { href: "/hydration", label: "Hidratacao", icon: GlassWater },
+  { href: "/progress", label: "Progresso", icon: TrendingUp },
+  { href: "/achievements", label: "Conquistas", icon: Award },
+];
+
+const secondaryNav = [
+  { href: "/profile", label: "Perfil", icon: CircleUserRound },
+  { href: "/settings", label: "Configuracoes", icon: Settings },
+];
+
+const mobileNav = [
+  { href: "/", label: "Hoje", icon: Gauge },
+  { href: "/missions", label: "Missoes", icon: Target },
+  { href: "/workouts", label: "Treino", icon: Dumbbell },
+  { href: "/progress", label: "Progresso", icon: TrendingUp },
+];
+
+function isActive(pathname: string, href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname.startsWith(href);
+}
+
+function Brand() {
+  return (
+    <Link href="/" className="flex min-h-11 items-center gap-3 text-white" aria-label="LevelFit - ir para hoje">
+      <span className="grid size-9 place-items-center rounded-[7px] bg-[var(--lime)] text-[var(--lime-ink)]">
+        <Activity size={21} strokeWidth={2.8} aria-hidden="true" />
+      </span>
+      <span className="text-[1.15rem] font-black">LevelFit</span>
+    </Link>
+  );
+}
+
+function NavLink({ href, label, icon: Icon, pathname, onClick }: (typeof primaryNav)[number] & { pathname: string; onClick?: () => void }) {
+  const active = isActive(pathname, href);
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      aria-current={active ? "page" : undefined}
+      className={`flex min-h-11 items-center gap-3 rounded-[7px] px-3 text-sm font-bold transition-colors ${
+        active
+          ? "bg-[rgba(183,255,42,0.12)] text-[var(--lime)]"
+          : "text-[var(--text-muted)] hover:bg-[var(--surface-soft)] hover:text-white"
+      }`}
+    >
+      <Icon size={19} strokeWidth={active ? 2.5 : 2} aria-hidden="true" />
+      <span>{label}</span>
+      {active && <span className="ml-auto size-1.5 rounded-full bg-[var(--lime)]" aria-hidden="true" />}
+    </Link>
+  );
+}
+
+export function AppShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  return (
+    <div className="min-h-screen">
+      <a href="#main-content" className="screen-reader-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:h-auto focus:w-auto focus:clip-auto focus:rounded focus:bg-[var(--lime)] focus:px-4 focus:py-3 focus:text-[var(--lime-ink)]">
+        Pular para o conteudo
+      </a>
+
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[248px] border-r border-[var(--border)] bg-[rgba(8,11,15,0.96)] px-4 py-5 backdrop-blur lg:flex lg:flex-col">
+        <div className="px-2"><Brand /></div>
+        <nav className="mt-8 flex flex-col gap-1" aria-label="Navegacao principal">
+          {primaryNav.map((item) => <NavLink key={item.href} {...item} pathname={pathname} />)}
+        </nav>
+        <div className="mt-auto">
+          <div className="mb-4 rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-3">
+            <div className="mb-2 flex items-center justify-between text-xs font-bold text-[var(--text-muted)]">
+              <span>Nivel {user.level}</span>
+              <span>{user.currentXp} XP</span>
+            </div>
+            <div className="progress-track" aria-label={`${user.currentXp} de ${user.nextLevelXp} pontos de experiencia`}>
+              <div className="progress-fill bg-[var(--lime)]" style={{ width: `${(user.currentXp / user.nextLevelXp) * 100}%` }} />
+            </div>
+            <p className="mt-2 text-xs text-[var(--text-dim)]">{user.nextLevelXp - user.currentXp} XP para o proximo nivel</p>
+          </div>
+          <nav className="flex flex-col gap-1" aria-label="Conta">
+            {secondaryNav.map((item) => <NavLink key={item.href} {...item} pathname={pathname} />)}
+          </nav>
+        </div>
+      </aside>
+
+      <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-[var(--border)] bg-[rgba(8,11,15,0.92)] px-4 backdrop-blur lg:hidden">
+        <Brand />
+        <div className="flex items-center gap-2">
+          <Link href="/notifications" className="icon-button relative" aria-label="Abrir notificacoes" title="Notificacoes">
+            <Bell size={19} />
+            <span className="absolute right-2 top-2 size-2 rounded-full bg-[var(--coral)]" aria-hidden="true" />
+          </Link>
+          <button className="icon-button" onClick={() => setMenuOpen(true)} aria-label="Abrir menu" title="Menu">
+            <Menu size={20} />
+          </button>
+        </div>
+      </header>
+
+      {menuOpen && (
+        <div className="fixed inset-0 z-50 bg-[rgba(0,0,0,0.7)] backdrop-blur-sm lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
+          <div className="ml-auto flex h-full w-[min(86vw,340px)] flex-col border-l border-[var(--border)] bg-[var(--bg)] p-4">
+            <div className="flex items-center justify-between">
+              <Brand />
+              <button className="icon-button" onClick={() => setMenuOpen(false)} aria-label="Fechar menu" title="Fechar">
+                <X size={20} />
+              </button>
+            </div>
+            <nav className="mt-8 flex flex-col gap-1" aria-label="Menu completo">
+              {[...primaryNav, ...secondaryNav].map((item) => <NavLink key={item.href} {...item} pathname={pathname} onClick={() => setMenuOpen(false)} />)}
+            </nav>
+            <Link href="/onboarding" onClick={() => setMenuOpen(false)} className="mt-auto flex items-center gap-3 rounded-[7px] border border-[var(--border)] p-3 text-sm font-bold text-[var(--text-muted)]">
+              <Sparkles size={18} /> Rever objetivos <ChevronRight className="ml-auto" size={18} />
+            </Link>
+          </div>
+        </div>
+      )}
+
+      <main id="main-content" className="pb-24 lg:ml-[248px] lg:pb-8">
+        {children}
+      </main>
+
+      <nav className="fixed inset-x-0 bottom-0 z-40 grid h-[72px] grid-cols-5 border-t border-[var(--border)] bg-[rgba(8,11,15,0.96)] px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden" aria-label="Navegacao inferior">
+        {mobileNav.map(({ href, label, icon: Icon }) => {
+          const active = isActive(pathname, href);
+          return (
+            <Link key={href} href={href} aria-current={active ? "page" : undefined} className={`flex min-w-0 flex-col items-center justify-center gap-1 text-[0.68rem] font-bold ${active ? "text-[var(--lime)]" : "text-[var(--text-dim)]"}`}>
+              <Icon size={21} strokeWidth={active ? 2.7 : 2} aria-hidden="true" />
+              <span className="max-w-full truncate">{label}</span>
+            </Link>
+          );
+        })}
+        <button onClick={() => setMenuOpen(true)} className="flex min-w-0 flex-col items-center justify-center gap-1 text-[0.68rem] font-bold text-[var(--text-dim)]" aria-label="Abrir mais opcoes">
+          <Menu size={21} aria-hidden="true" />
+          <span>Mais</span>
+        </button>
+      </nav>
+    </div>
+  );
+}
