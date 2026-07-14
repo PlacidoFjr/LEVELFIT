@@ -15,6 +15,8 @@ O produto deve motivar sem pressão tóxica. Recaídas são tratadas como parte 
 - `docs/60-frontend-nextjs-implementado.md`: rotas, componentes, mocks, tokens e validação do frontend funcional.
 - `docs/70-backend-nestjs-implementado.md`: API implementada, segurança, endpoints, setup local e limites atuais do MVP.
 - `docs/80-auditoria-seguranca.md`: controles verificados, testes de abuso e bloqueadores antes da produção.
+- `docs/90-pre-deploy-seguro.md`: checklist de segredos, GitGuardian e ambiente seguro antes do deploy.
+- `docs/91-publicacao-sem-dominio.md`: passo a passo para publicar sem dominio proprio usando subdominios dos provedores.
 - `prisma/schema.prisma`: schema inicial Prisma para PostgreSQL.
 - `prisma.config.ts`: configuração Prisma 7 para migrations e datasource.
 
@@ -67,4 +69,10 @@ npm run typecheck
 npm run build
 npm run build:api
 npm test -w @levelfit/api
+```
+
+Ou rode tudo em sequencia:
+
+```bash
+npm run verify
 ```

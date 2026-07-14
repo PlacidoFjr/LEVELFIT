@@ -53,6 +53,8 @@ Pode usar subdomínios gratuitos:
 - API: Render/Railway/Fly, exemplo `https://levelfit-api.onrender.com`
 - Banco: Neon/Supabase/Railway PostgreSQL
 
+O passo a passo esta em `docs/91-publicacao-sem-dominio.md`.
+
 Variáveis do frontend:
 
 ```env

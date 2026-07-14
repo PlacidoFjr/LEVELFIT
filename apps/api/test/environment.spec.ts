@@ -20,7 +20,26 @@ describe("environment security validation", () => {
     expect(() => validateEnvironment({ ...base, NODE_ENV: "production", WEB_ORIGIN: "http://levelfit.example" })).toThrow(/HTTPS/);
   });
 
+  it("rejects production databases pointing to localhost", () => {
+    expect(() => validateEnvironment({ ...base, NODE_ENV: "production", WEB_ORIGIN: "https://levelfit.example" })).toThrow(/localhost/);
+  });
+
   it("disables Swagger by default in production", () => {
-    expect(validateEnvironment({ ...base, NODE_ENV: "production", WEB_ORIGIN: "https://levelfit.example" }).SWAGGER_ENABLED).toBe(false);
+    expect(validateEnvironment({
+      ...base,
+      DATABASE_URL: "postgresql://unit_user:unit_db_credential_32_chars@db.example.com:5432/levelfit?sslmode=require",
+      NODE_ENV: "production",
+      WEB_ORIGIN: "https://levelfit.example",
+    }).SWAGGER_ENABLED).toBe(false);
+  });
+
+  it("rejects Swagger explicitly enabled in production", () => {
+    expect(() => validateEnvironment({
+      ...base,
+      DATABASE_URL: "postgresql://unit_user:unit_db_credential_32_chars@db.example.com:5432/levelfit?sslmode=require",
+      NODE_ENV: "production",
+      WEB_ORIGIN: "https://levelfit.example",
+      SWAGGER_ENABLED: "true",
+    })).toThrow(/SWAGGER_ENABLED/);
   });
 });
