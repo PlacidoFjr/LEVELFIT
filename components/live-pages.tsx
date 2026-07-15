@@ -381,6 +381,10 @@ export function WorkoutSessionLivePage() {
 
   async function finish() {
     if (!session) return;
+    if (!session.exercises.length) {
+      setError("Esta sessão não tem exercícios. Volte para Treinos e escolha um novo plano.");
+      return;
+    }
     setStarted(false);
     setError(null);
     try {
@@ -401,7 +405,7 @@ export function WorkoutSessionLivePage() {
   return <Screen title="Sessão de treino" description="Siga no seu ritmo. Você pode pausar, adaptar ou encerrar a qualquer momento." action={<Link href="/workouts" className="secondary-button"><ArrowLeft size={18} /> Sair</Link>}>
     <Notice message={notice} />
     <Notice message={error} tone="danger" />
-    {loading ? <LoadingCard /> : !session ? <EmptyState icon={Dumbbell} title="Treino indisponível" detail="Não foi possível iniciar uma sessão agora." /> : (
+    {loading ? <LoadingCard /> : !session ? <EmptyState icon={Dumbbell} title="Treino indisponível" detail="Não foi possível iniciar uma sessão agora." /> : !exercises.length ? <EmptyState icon={Dumbbell} title="Sessão sem exercícios" detail="Essa sessão antiga não tem movimentos cadastrados. Volte para Treinos e comece um novo plano." /> : (
       <div className="grid gap-4 xl:grid-cols-[1fr_360px]">
         <section className="app-card flex min-h-[460px] flex-col items-center justify-center p-6 text-center">
           <Pill tone="coral">EXERCÍCIO {Math.min(done.length + 1, exercises.length)} DE {exercises.length}</Pill>
