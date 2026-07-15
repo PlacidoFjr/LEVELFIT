@@ -136,6 +136,7 @@ export function Dashboard() {
   const [foodDone, setFoodDone] = useState<NutritionCheckId[]>([]);
   const [workoutSummary, setWorkoutSummary] = useState({ title: "Treino do dia", minutes: 20, difficulty: "ajustável", exerciseCount: 1 });
   const [weeklyXp, setWeeklyXp] = useState<WeeklyXpPoint[]>(() => buildWeeklyXp());
+  const [optimisticXp, setOptimisticXp] = useState({ baseTotalXp: progress.totalXp, amount: 0 });
   const [toast, setToast] = useState<string | null>(null);
 
   const dashboardMissions = liveMissions.length
@@ -151,7 +152,9 @@ export function Dashboard() {
 
   const earnedToday = dashboardMissions.filter((mission) => completed.includes(mission.id)).reduce((sum, mission) => sum + mission.xp, 0);
   const missionProgress = Math.round((completed.length / Math.max(1, dashboardMissions.length)) * 100);
-  const levelProgress = Math.round((progress.currentXp / progress.nextLevelXp) * 100);
+  const pendingXp = optimisticXp.baseTotalXp === progress.totalXp ? optimisticXp.amount : 0;
+  const visibleCurrentXp = Math.min(progress.nextLevelXp, progress.currentXp + pendingXp);
+  const levelProgress = Math.round((visibleCurrentXp / progress.nextLevelXp) * 100);
   const waterProgress = Math.min(100, Math.round((water / waterGoal) * 100));
   const nutritionProgress = Math.round((foodDone.length / nutritionChecks.length) * 100);
   const weeklyXpTotal = weeklyXp.reduce((sum, item) => sum + item.xp, 0);
@@ -206,6 +209,10 @@ export function Dashboard() {
 
   function addXpToToday(amount: number) {
     if (amount <= 0) return;
+    setOptimisticXp((current) => ({
+      baseTotalXp: progress.totalXp,
+      amount: current.baseTotalXp === progress.totalXp ? current.amount + amount : amount,
+    }));
     setWeeklyXp((points) => points.map((point, index) => index === points.length - 1 ? { ...point, xp: point.xp + amount } : point));
   }
 
@@ -274,7 +281,7 @@ export function Dashboard() {
               <h2 className="text-lg font-black text-white sm:text-2xl">Ritmo forte, sem exagero.</h2>
               <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--text-muted)]">Você já ganhou <strong className="text-white">{earnedToday} XP</strong> hoje. Um treino curto ou mais um copo de água já deixa o dia completo.</p>
               <div className="mt-5 max-w-xl">
-                <div className="mb-2 flex justify-between text-xs font-bold text-[var(--text-muted)]"><span>{progress.levelName}</span><span>{progress.currentXp} / {progress.nextLevelXp} XP</span></div>
+                <div className="mb-2 flex justify-between text-xs font-bold text-[var(--text-muted)]"><span>{progress.levelName}</span><span>{visibleCurrentXp} / {progress.nextLevelXp} XP</span></div>
                 <div className="progress-track h-2.5"><motion.div className="progress-fill bg-[var(--lime)]" initial={{ width: 0 }} animate={{ width: `${levelProgress}%` }} /></div>
               </div>
             </div>

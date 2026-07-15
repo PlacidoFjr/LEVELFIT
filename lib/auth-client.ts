@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createFirebaseUser, firebaseIdToken, signInFirebaseWithEmail } from "./firebase-client";
+import { createFirebaseUser, firebaseIdToken, sendFirebasePasswordReset, signInFirebaseWithEmail, storedFirebaseIdToken } from "./firebase-client";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001/v1";
 const ACCESS_TOKEN_KEY = "levelfit.accessToken";
@@ -286,6 +286,14 @@ export async function registerUser(input: { displayName: string; email: string; 
   }
 }
 
+export async function requestPasswordReset(email: string) {
+  try {
+    await sendFirebasePasswordReset(email);
+  } catch (error) {
+    throw firebaseError(error);
+  }
+}
+
 export async function legacyRegisterUser(input: { displayName: string; email: string; password: string; gender?: string }) {
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Sao_Paulo";
   const registration = await apiRequest<RegisterResponse>("/auth/register", {
@@ -364,6 +372,14 @@ async function loadSessionUser() {
 
 async function loadSessionUserOnce() {
   if (!getAccessToken()) await refreshSession();
+  if (!getAccessToken()) {
+    try {
+      const idToken = await storedFirebaseIdToken();
+      if (idToken) await loginWithFirebaseToken({ idToken });
+    } catch {
+      // If Firebase cannot restore a local user, continue as logged out.
+    }
+  }
   if (!getAccessToken()) return null;
 
   try {

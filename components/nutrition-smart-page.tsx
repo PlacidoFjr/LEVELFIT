@@ -90,9 +90,11 @@ export function NutritionSmartPage() {
     setLoading(true);
     setError(null);
     try {
-      const [todayData, goalData] = await Promise.all([getNutritionToday(), getNutritionGoal()]);
-      setData(todayData);
-      setGoal(goalData);
+      const [todayResult, goalResult] = await Promise.allSettled([getNutritionToday(), getNutritionGoal()]);
+      if (todayResult.status === "rejected") throw todayResult.reason;
+      setData(todayResult.value);
+      setGoal(goalResult.status === "fulfilled" ? goalResult.value : null);
+      setError(null);
     } catch (err) {
       setError(errorMessage(err));
     } finally {
@@ -275,7 +277,7 @@ export function NutritionSmartPage() {
         <section className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-4">
           <div className="flex items-center justify-between gap-3"><div><p className="eyebrow text-[var(--green)]">Prato</p><h3 className="mt-1 font-black text-white">Itens adicionados</h3></div><span className="text-xs font-black text-[var(--text-dim)]">{plate.length} itens</span></div>
           <div className="mt-3 divide-y divide-[var(--border)]">
-            {plate.length ? plate.map((item) => <div key={item.food.id} className="flex min-h-[72px] items-center gap-3 py-3"><div className="min-w-0 flex-1"><p className="truncate text-sm font-black text-white">{item.food.name}</p><p className="mt-1 text-xs text-[var(--text-muted)]">{Math.round(scaled(item.food.kcalPer100g, item.quantityG))} kcal estimadas</p></div><input className="field h-10 w-24" type="number" min={1} max={5000} value={item.quantityG} aria-label={`Quantidade em gramas de ${item.food.name}`} onChange={(event) => setPlate((current) => current.map((row) => row.food.id === item.food.id ? { ...row, quantityG: Math.max(1, Number(event.target.value) || 1) } : row))} /><span className="text-xs font-bold text-[var(--text-muted)]">g</span><button type="button" className="ghost-button px-2" aria-label={`Remover ${item.food.name}`} onClick={() => setPlate((current) => current.filter((row) => row.food.id !== item.food.id))}><Trash2 size={16} /></button></div>) : <p className="py-8 text-sm text-[var(--text-muted)]">Adicione alimentos pela busca ou salve só com descrição/checklist.</p>}
+            {plate.length ? plate.map((item) => <div key={item.food.id} className="flex min-h-[72px] flex-wrap items-center gap-3 py-3"><div className="min-w-[180px] flex-1"><p className="truncate text-sm font-black text-white">{item.food.name}</p><p className="mt-1 text-xs text-[var(--text-muted)]">{Math.round(scaled(item.food.kcalPer100g, item.quantityG))} kcal estimadas</p></div><input className="field h-10 w-24 shrink-0" type="number" min={1} max={5000} value={item.quantityG} aria-label={`Quantidade em gramas de ${item.food.name}`} onChange={(event) => setPlate((current) => current.map((row) => row.food.id === item.food.id ? { ...row, quantityG: Math.max(1, Number(event.target.value) || 1) } : row))} /><span className="text-xs font-bold text-[var(--text-muted)]">g</span><button type="button" className="ghost-button px-2" aria-label={`Remover ${item.food.name}`} onClick={() => setPlate((current) => current.filter((row) => row.food.id !== item.food.id))}><Trash2 size={16} /></button></div>) : <p className="py-8 text-sm text-[var(--text-muted)]">Adicione alimentos pela busca ou salve só com descrição/checklist.</p>}
           </div>
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             <div className="subtle-card p-3"><p className="text-xs font-bold text-[var(--text-muted)]">Kcal</p><p className="mt-1 font-black text-white">{totals.calories}</p></div>

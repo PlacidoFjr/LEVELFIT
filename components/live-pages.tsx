@@ -69,6 +69,7 @@ import {
   listRanking,
   listSecurityEvents,
   listWorkouts,
+  listWorkoutSessions,
   logoutAllDevices,
   markAllNotificationsRead,
   markNotificationRead,
@@ -864,7 +865,7 @@ export function NotificationPreferencesLivePage() {
     { key: "waterRemindersEnabled", title: "Lembrete de água", detail: "Gentil e configurável.", icon: GlassWater, color: "var(--cyan)" },
     { key: "nutritionRemindersEnabled", title: "Checklist de alimentação", detail: "Uma lembrança sem cobrança.", icon: Salad, color: "var(--green)" },
     { key: "streakRemindersEnabled", title: "Streak em risco", detail: "No máximo uma vez por dia.", icon: Flame, color: "var(--gold)" },
-    { key: "weeklySummaryEnabled", title: "Resumo semanal", detail: "Resumo de consistência.", icon: TrendingUp, color: "var(--lime)" },
+    { key: "weeklySummaryEnabled", title: "Resumo semanal", detail: "Resumo de constância.", icon: TrendingUp, color: "var(--lime)" },
   ];
 
   return <Screen title="Preferências de notificação" description="Escolha o que ajuda. Todas as opções de produto podem ser desligadas." action={<Link href="/settings" className="secondary-button"><ArrowLeft size={18} /> Configurações</Link>}>
@@ -952,7 +953,7 @@ export function AchievementsLivePage() {
     return () => window.clearTimeout(id);
   }, []);
 
-  return <Screen title="Conquistas" description="Badges conquistados por consistência, não por extremos.">
+  return <Screen title="Conquistas" description="Badges conquistados por constância, não por extremos.">
     <Notice message={error} tone="danger" />
     {loading ? <LoadingCard /> : <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{items.map((achievement, index) => {
       const tone = rarityTone[achievement.rarity] ?? "lime";
@@ -966,8 +967,34 @@ function numberValue(value: FormDataEntryValue | null) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
 }
 
+function sessionMinutes(session: WorkoutSession) {
+  if (session.startedAt && session.completedAt) {
+    const started = new Date(session.startedAt).getTime();
+    const completed = new Date(session.completedAt).getTime();
+    if (Number.isFinite(started) && Number.isFinite(completed) && completed > started) {
+      return Math.max(1, Math.round((completed - started) / 60000));
+    }
+  }
+
+  return session.workout.estimatedMinutes;
+}
+
+function shortDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Data indisponivel";
+  return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short" }).format(date);
+}
+
+function completedExerciseNames(session: WorkoutSession) {
+  return session.exercises
+    .filter((item) => item.status === "completed")
+    .map((item) => item.exercise.name)
+    .slice(0, 3);
+}
+
 export function ProgressLivePage() {
   const [items, setItems] = useState<BodyMeasurement[]>([]);
+  const [workoutHistory, setWorkoutHistory] = useState<WorkoutSession[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState<string | null>(null);
@@ -976,8 +1003,9 @@ export function ProgressLivePage() {
   async function load() {
     setError(null);
     try {
-      const result = await listMeasurements();
-      setItems(result.data);
+      const [measurementResult, sessionsResult] = await Promise.all([listMeasurements(), listWorkoutSessions()]);
+      setItems(measurementResult.data);
+      setWorkoutHistory(sessionsResult.data);
     } catch (err) {
       setError(errorMessage(err));
     } finally {
@@ -1022,12 +1050,63 @@ export function ProgressLivePage() {
   }
 
   const latest = items[0];
+  const completedWorkouts = workoutHistory.filter((session) => session.status === "completed");
+  const totalWorkoutMinutes = completedWorkouts.reduce((sum, session) => sum + sessionMinutes(session), 0);
+  const totalWorkoutXp = completedWorkouts.reduce((sum, session) => sum + session.xpAwarded, 0);
+  const lastWorkout = completedWorkouts[0] ?? workoutHistory[0];
 
   return <Screen title="Seu progresso" description="Observe tendências amplas. Um número isolado nunca define sua evolução." action={<button onClick={() => setShowForm(true)} className="secondary-button"><Plus size={18} /> Novo check-in</button>}>
     <Notice message={notice} />
     <Notice message={error} tone="danger" />
     {showForm && <form onSubmit={submit} className="app-card mb-4 p-5"><div className="flex items-start justify-between gap-3"><div><p className="eyebrow">Check-in privado</p><h2 className="mt-2 text-lg font-black text-white">Registre somente o que fizer sentido</h2></div><button type="button" onClick={() => setShowForm(false)} className="ghost-button">Fechar</button></div><div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><input className="field" name="weightKg" type="number" step="0.1" placeholder="Peso kg" /><input className="field" name="waistCm" type="number" step="0.1" placeholder="Cintura cm" /><input className="field" name="hipCm" type="number" step="0.1" placeholder="Quadril cm" /><input className="field" name="chestCm" type="number" step="0.1" placeholder="Peito cm" /></div><textarea className="field mt-3 min-h-20" name="notes" placeholder="Notas opcionais" /><button className="primary-button mt-3">Salvar check-in</button></form>}
     {loading ? <LoadingCard /> : <div className="grid gap-4 lg:grid-cols-2"><section className="app-card p-5"><div className="flex items-center justify-between"><div><p className="eyebrow">Medidas privadas</p><h2 className="mt-2 text-lg font-black text-white">Último check-in</h2></div><LockKeyhole size={20} className="text-[var(--text-dim)]" /></div>{latest ? <div className="mt-5 grid grid-cols-2 gap-3">{[{ label: "Peso", value: latest.weightKg ? `${latest.weightKg} kg` : "-" }, { label: "Cintura", value: latest.waistCm ? `${latest.waistCm} cm` : "-" }, { label: "Quadril", value: latest.hipCm ? `${latest.hipCm} cm` : "-" }, { label: "Peito", value: latest.chestCm ? `${latest.chestCm} cm` : "-" }].map((item) => <div key={item.label} className="subtle-card p-4"><p className="text-xs font-bold text-[var(--text-muted)]">{item.label}</p><p className="mt-2 font-black text-white">{item.value}</p></div>)}</div> : <p className="mt-5 text-sm text-[var(--text-muted)]">Nenhum check-in registrado ainda.</p>}<p className="mt-4 text-xs leading-5 text-[var(--text-dim)]">Visível somente para você. Medidas são opcionais e não afetam XP.</p></section><section className="app-card p-5"><div className="flex items-center justify-between"><div><p className="eyebrow">Fotos de progresso</p><h2 className="mt-2 text-lg font-black text-white">Registro visual privado</h2></div><Camera size={20} className="text-[var(--text-dim)]" /></div><label className="mt-5 grid min-h-[180px] cursor-pointer place-items-center border border-dashed border-[var(--border-strong)] bg-[var(--surface)] p-6 text-center transition-colors hover:border-[var(--cyan)]"><input className="screen-reader-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={preparePhoto} /><span><Camera className="mx-auto text-[var(--text-dim)]" size={30} /><span className="mt-3 block text-sm font-bold text-white">Selecionar foto privada</span><span className="mt-1 block text-xs leading-5 text-[var(--text-muted)]">Hoje o app registra metadados seguros. O envio final será ativado quando o storage S3/R2 estiver configurado.</span></span></label></section></div>}
+    {!loading && <section className="mt-4 app-card p-5">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="eyebrow text-[var(--coral)]">Historico de treinos</p>
+          <h2 className="mt-2 text-lg font-black text-white">O que voce treinou</h2>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-[var(--text-muted)]">Acompanhe sessoes concluidas, tempo, XP e movimentos recentes sem transformar progresso em cobranca.</p>
+        </div>
+        <Pill tone="coral"><Dumbbell size={14} /> {completedWorkouts.length} treinos</Pill>
+      </div>
+
+      <div className="mt-5 grid gap-3 sm:grid-cols-3">
+        <div className="subtle-card p-4"><p className="eyebrow">Treinos concluidos</p><p className="mt-2 text-xl font-black text-white">{completedWorkouts.length}</p></div>
+        <div className="subtle-card p-4"><p className="eyebrow">Tempo treinando</p><p className="mt-2 text-xl font-black text-white">{totalWorkoutMinutes} min</p></div>
+        <div className="subtle-card p-4"><p className="eyebrow">XP de treino</p><p className="mt-2 text-xl font-black text-white">{totalWorkoutXp} XP</p></div>
+      </div>
+
+      {lastWorkout ? <div className="mt-4 rounded-[8px] border border-[rgba(255,107,61,0.28)] bg-[rgba(255,107,61,0.07)] p-4">
+        <p className="text-xs font-black uppercase text-[var(--coral)]">Ultima sessao</p>
+        <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <p className="truncate font-black text-white">{lastWorkout.workout.title}</p>
+            <p className="mt-1 text-xs font-bold text-[var(--text-muted)]">{shortDate(lastWorkout.completedAt ?? lastWorkout.startedAt)} - {sessionMinutes(lastWorkout)} min - {lastWorkout.exercises.length} exercicios</p>
+          </div>
+          <span className="text-sm font-black text-[var(--gold)]">+{lastWorkout.xpAwarded} XP</span>
+        </div>
+      </div> : <div className="mt-4 rounded-[8px] border border-dashed border-[var(--border-strong)] p-5 text-center">
+        <Dumbbell className="mx-auto text-[var(--text-dim)]" size={28} />
+        <p className="mt-3 text-sm font-black text-white">Nenhum treino salvo ainda</p>
+        <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Quando voce concluir uma sessao, ela aparece aqui com exercicios, tempo e XP.</p>
+        <Link href="/workouts" className="secondary-button mx-auto mt-4">Escolher treino</Link>
+      </div>}
+
+      {completedWorkouts.length > 0 && <div className="mt-4 divide-y divide-[var(--border)]">
+        {completedWorkouts.slice(0, 5).map((session) => {
+          const names = completedExerciseNames(session);
+          return <article key={session.id} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center">
+            <span className="grid size-11 shrink-0 place-items-center rounded-[8px] bg-[rgba(255,107,61,0.12)] text-[var(--coral)]"><BicepsFlexed size={22} /></span>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2"><h3 className="font-black text-white">{session.workout.title}</h3><Pill tone={session.status === "completed" ? "lime" : "gold"}>{session.status === "completed" ? "CONCLUIDO" : "EM ANDAMENTO"}</Pill></div>
+              <p className="mt-1 text-xs font-bold text-[var(--text-muted)]">{shortDate(session.completedAt ?? session.startedAt)} - {sessionMinutes(session)} min - {session.exercises.length} exercicios</p>
+              <p className="mt-2 truncate text-xs text-[var(--text-dim)]">{names.length ? names.join(", ") : "Movimentos registrados aparecerao aqui."}</p>
+            </div>
+            <span className="text-sm font-black text-[var(--gold)]">+{session.xpAwarded} XP</span>
+          </article>;
+        })}
+      </div>}
+    </section>}
   </Screen>;
 }
 
@@ -1067,7 +1146,7 @@ export function RankingLivePage() {
   return <Screen title="Ranking geral" description="Competição saudável apenas entre pessoas que aceitaram aparecer publicamente." action={<button onClick={joinRanking} className="secondary-button"><ShieldCheck size={18} /> Participação opt-in</button>}>
     <Notice message={notice} />
     <Notice message={error} tone="danger" />
-    {loading ? <LoadingCard /> : <section className="mb-4 grid gap-4 lg:grid-cols-[1fr_360px]"><div className="app-card p-5"><div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><p className="eyebrow text-[var(--gold)]">Top da semana</p><h2 className="mt-2 text-lg font-black text-white">XP conquistado com consistência</h2></div><Pill tone="gold"><Trophy size={14} /> RANKING REAL</Pill></div>{podium.length ? <div className="mt-5 grid gap-3 md:grid-cols-3">{podium.map((person) => <article key={person.userId} className={`subtle-card p-4 ${person.rank === 1 ? "border-[rgba(250,204,21,0.45)]" : ""}`}><div className="flex items-center justify-between"><span className={`grid size-11 place-items-center rounded-[7px] ${person.rank === 1 ? "bg-[rgba(250,204,21,0.16)] text-[var(--gold)]" : "bg-[var(--surface-soft)] text-[var(--text-muted)]"}`}><Medal size={22} /></span><span className="text-xs font-black text-[var(--text-dim)]">#{person.rank}</span></div><h3 className="mt-4 font-black text-white">{person.displayName}</h3><p className="mt-1 text-xs text-[var(--text-muted)]">Nível {person.level} · {person.streak} dias</p><p className="mt-4 text-xl font-black text-[var(--lime)]">{person.totalXp.toLocaleString("pt-BR")} XP</p></article>)}</div> : <p className="mt-6 text-sm text-[var(--text-muted)]">Ainda não há participantes opt-in no ranking.</p>}</div><aside className="app-card p-5"><p className="eyebrow text-[var(--cyan)]">Sua privacidade</p><h2 className="mt-2 text-lg font-black text-white">Você controla se aparece</h2><p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">Ranking é desligado por padrão. Ao participar, o app mostra apenas nome abreviado, XP, nível e streak.</p><div className="mt-5 border-l-2 border-[var(--lime)] bg-[rgba(183,255,42,0.06)] p-4"><p className="text-sm font-black text-white">Dados nunca exibidos</p><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Peso, medidas, fotos, refeições detalhadas e informações sensíveis de saúde.</p></div><button onClick={joinRanking} className="primary-button mt-5 w-full"><UsersRound size={18} /> Entrar no ranking</button></aside></section>}
+    {loading ? <LoadingCard /> : <section className="mb-4 grid gap-4 lg:grid-cols-[1fr_360px]"><div className="app-card p-5"><div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><p className="eyebrow text-[var(--gold)]">Top da semana</p><h2 className="mt-2 text-lg font-black text-white">XP conquistado com constância</h2></div><Pill tone="gold"><Trophy size={14} /> RANKING REAL</Pill></div>{podium.length ? <div className="mt-5 grid gap-3 md:grid-cols-3">{podium.map((person) => <article key={person.userId} className={`subtle-card p-4 ${person.rank === 1 ? "border-[rgba(250,204,21,0.45)]" : ""}`}><div className="flex items-center justify-between"><span className={`grid size-11 place-items-center rounded-[7px] ${person.rank === 1 ? "bg-[rgba(250,204,21,0.16)] text-[var(--gold)]" : "bg-[var(--surface-soft)] text-[var(--text-muted)]"}`}><Medal size={22} /></span><span className="text-xs font-black text-[var(--text-dim)]">#{person.rank}</span></div><h3 className="mt-4 font-black text-white">{person.displayName}</h3><p className="mt-1 text-xs text-[var(--text-muted)]">Nível {person.level} · {person.streak} dias</p><p className="mt-4 text-xl font-black text-[var(--lime)]">{person.totalXp.toLocaleString("pt-BR")} XP</p></article>)}</div> : <p className="mt-6 text-sm text-[var(--text-muted)]">Ainda não há participantes opt-in no ranking.</p>}</div><aside className="app-card p-5"><p className="eyebrow text-[var(--cyan)]">Sua privacidade</p><h2 className="mt-2 text-lg font-black text-white">Você controla se aparece</h2><p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">Ranking é desligado por padrão. Ao participar, o app mostra apenas nome abreviado, XP, nível e streak.</p><div className="mt-5 border-l-2 border-[var(--lime)] bg-[rgba(183,255,42,0.06)] p-4"><p className="text-sm font-black text-white">Dados nunca exibidos</p><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Peso, medidas, fotos, refeições detalhadas e informações sensíveis de saúde.</p></div><button onClick={joinRanking} className="primary-button mt-5 w-full"><UsersRound size={18} /> Entrar no ranking</button></aside></section>}
     {!loading && items.length > 0 && <section className="app-card px-5"><div className="divide-y divide-[var(--border)]">{items.map((person) => <div key={person.userId} className="flex min-h-[78px] items-center gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-[7px] bg-[var(--surface-soft)] text-sm font-black text-white">#{person.rank}</span><div className="min-w-0 flex-1"><p className="truncate text-sm font-black text-white">{person.displayName}</p><p className="mt-1 truncate text-xs text-[var(--text-muted)]">Nível {person.level}</p></div><span className="hidden text-xs font-black text-[var(--gold)] sm:inline">{person.streak} dias</span><span className="text-sm font-black text-[var(--lime)]">{person.totalXp.toLocaleString("pt-BR")} XP</span></div>)}</div></section>}
   </Screen>;
 }
@@ -1106,7 +1185,7 @@ export function ProfileLivePage() {
     <Notice message={notice} />
     <Notice message={error} tone="danger" />
     {editing && <form onSubmit={submit} className="app-card mb-4 p-5"><div className="flex items-start justify-between gap-3"><div><p className="eyebrow">Perfil</p><h2 className="mt-2 text-lg font-black text-white">Atualize seus dados básicos</h2><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Esses dados ajudam a personalizar o app, mas nada disso aparece no ranking.</p></div><button type="button" onClick={() => setEditing(false)} className="ghost-button">Fechar</button></div><div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5"><input className="field" name="displayName" defaultValue={displayName} minLength={2} maxLength={80} aria-label="Nome de exibição" /><select className="field" name="gender" defaultValue="" aria-label="Gênero"><option value="">Prefiro não informar</option><option value="female">Feminino</option><option value="male">Masculino</option><option value="non_binary">Não binário</option></select><select className="field" name="fitnessGoal" defaultValue="consistency" aria-label="Objetivo"><option value="consistency">Consistência</option><option value="strength">Força</option><option value="conditioning">Condicionamento</option><option value="weight_management">Controle de peso</option><option value="hydration">Hidratação</option><option value="nutrition">Alimentação</option></select><select className="field" name="activityLevel" defaultValue="beginner" aria-label="Nível de atividade"><option value="beginner">Começando</option><option value="returning">Voltando</option><option value="occasional">Às vezes</option><option value="active">Ativo</option></select><input className="field" name="heightCm" type="number" min={80} max={250} step="0.1" placeholder="Altura cm" aria-label="Altura em centímetros" /></div><button className="primary-button mt-3">Salvar perfil</button></form>}
-    <section className="app-card overflow-hidden"><div className="grid md:grid-cols-[280px_1fr]"><PulseAvatar stage={avatarStage} alt={`${avatarStage.name}, avatar atual`} className="min-h-[320px]" imageClassName="p-4" /><div className="p-5 sm:p-7"><div className="flex flex-wrap items-center gap-2"><Pill><Zap size={14} /> NÍVEL {progress.level}</Pill><Pill tone="gold"><Flame size={14} /> {progress.streak} DIAS</Pill><Pill tone="cyan"><Sparkles size={14} /> {avatarStage.name}</Pill></div><h2 className="mt-5 text-2xl font-black text-white">{displayName}</h2><p className="mt-1 text-sm text-[var(--text-muted)]">{email}</p><p className="mt-5 max-w-xl text-sm leading-6 text-[var(--text-muted)]">Construindo força e consistência com uma rotina flexível. O Pulse evolui com XP, missões concluídas e retomadas saudáveis.</p><div className="mt-7 grid gap-3 sm:grid-cols-3"><div className="subtle-card p-4"><p className="eyebrow">XP total</p><p className="mt-2 text-lg font-black text-white">{progress.totalXp.toLocaleString("pt-BR")}</p></div><div className="subtle-card p-4"><p className="eyebrow">Nível</p><p className="mt-2 text-lg font-black text-white">{progress.level}</p></div><div className="subtle-card p-4"><p className="eyebrow">Streak</p><p className="mt-2 text-lg font-black text-white">{progress.streak}</p></div></div></div></div></section>
+    <section className="app-card overflow-hidden"><div className="grid md:grid-cols-[280px_1fr]"><PulseAvatar stage={avatarStage} alt={`${avatarStage.name}, avatar atual`} className="min-h-[320px]" imageClassName="p-4" /><div className="p-5 sm:p-7"><div className="flex flex-wrap items-center gap-2"><Pill><Zap size={14} /> NÍVEL {progress.level}</Pill><Pill tone="gold"><Flame size={14} /> {progress.streak} DIAS</Pill><Pill tone="cyan"><Sparkles size={14} /> {avatarStage.name}</Pill></div><h2 className="mt-5 text-2xl font-black text-white">{displayName}</h2><p className="mt-1 text-sm text-[var(--text-muted)]">{email}</p><p className="mt-5 max-w-xl text-sm leading-6 text-[var(--text-muted)]">Construindo força e constância com uma rotina flexível. O Pulse evolui com XP, missões concluídas e retomadas saudáveis.</p><div className="mt-7 grid gap-3 sm:grid-cols-3"><div className="subtle-card p-4"><p className="eyebrow">XP total</p><p className="mt-2 text-lg font-black text-white">{progress.totalXp.toLocaleString("pt-BR")}</p></div><div className="subtle-card p-4"><p className="eyebrow">Nível</p><p className="mt-2 text-lg font-black text-white">{progress.level}</p></div><div className="subtle-card p-4"><p className="eyebrow">Streak</p><p className="mt-2 text-lg font-black text-white">{progress.streak}</p></div></div></div></div></section>
     <section className="mt-4 app-card p-5"><div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><div><p className="eyebrow text-[var(--cyan)]">Evolução do Pulse</p><h2 className="mt-2 text-lg font-black text-white">Seu companheiro melhora com o tempo</h2><p className="mt-1 max-w-2xl text-xs leading-5 text-[var(--text-muted)]">Pausas não removem upgrades. Elas só adiam o próximo desbloqueio até você voltar para o seu ritmo.</p></div>{nextAvatarStage && <Pill tone="gold"><Sparkles size={14} /> PRÓXIMO: NÍVEL {nextAvatarStage.levelRequired}</Pill>}</div><div className="mt-5 grid gap-3 md:grid-cols-5">{avatarStages.map((stage) => { const unlocked = progress.level >= stage.levelRequired; const current = avatarStage.id === stage.id; return <article key={stage.id} className={`subtle-card min-h-[250px] overflow-hidden p-4 ${unlocked ? "" : "opacity-55"}`}><div className="flex items-center justify-between gap-2"><span className={`grid size-9 place-items-center rounded-[7px] ${current ? "bg-[var(--lime)] text-[var(--lime-ink)]" : "bg-[var(--surface-soft)] text-[var(--text-muted)]"}`}>{unlocked ? <Check size={17} strokeWidth={3} /> : <LockKeyhole size={16} />}</span><span className="text-xs font-black text-[var(--text-dim)]">NÍVEL {stage.levelRequired}</span></div><PulseAvatar stage={stage} alt={`${stage.name}, estágio do Pulse`} locked={!unlocked} className="mt-4 h-[104px] rounded-[7px] border border-[var(--border)]" imageClassName="p-2" /><h3 className="mt-4 text-sm font-black text-white">{stage.name}</h3><p className="mt-1 text-xs font-bold" style={{ color: stage.accent }}>{stage.personality}</p><p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{stage.activeBenefit}</p>{current && <p className="mt-3 text-xs font-black text-[var(--lime)]">ATUAL</p>}</article>; })}</div></section>
     <div className="mt-4 grid gap-4 lg:grid-cols-2"><section className="app-card p-5"><p className="eyebrow">Objetivos atuais</p><div className="mt-4 flex flex-wrap gap-2"><Pill><Target size={14} /> CONSISTÊNCIA</Pill><Pill tone="coral"><Dumbbell size={14} /> FORÇA</Pill><Pill tone="cyan"><GlassWater size={14} /> HIDRATAÇÃO</Pill></div></section><section className="app-card p-5"><p className="eyebrow">Privacidade social</p><div className="mt-4 flex items-center justify-between gap-4"><div><p className="text-sm font-bold text-white">Ranking opt-in</p><p className="mt-1 text-xs text-[var(--text-muted)]">Você decide aparecer ou não no ranking público.</p></div><Link href="/ranking" className="secondary-button"><UserRound size={18} /> Ver ranking</Link></div></section></div>
   </Screen>;

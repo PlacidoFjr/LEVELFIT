@@ -7,9 +7,9 @@ import { AuthService } from "./auth.service";
 import { EmailDto, FirebaseLoginDto, LoginDto, LogoutDto, RegisterDto, ResetPasswordDto, TokenDto } from "./auth.dto";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 
-const refreshCookie = { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict" as const, priority: "high" as const, path: "/v1/auth", maxAge: 30 * 24 * 60 * 60 * 1000 };
-const csrfCookie = { httpOnly: false, secure: process.env.NODE_ENV === "production", sameSite: "strict" as const, priority: "high" as const, path: "/", maxAge: 30 * 24 * 60 * 60 * 1000 };
 const isProduction = process.env.NODE_ENV === "production";
+const refreshCookie = { httpOnly: true, secure: isProduction, sameSite: isProduction ? "none" as const : "lax" as const, priority: "high" as const, path: "/v1/auth", maxAge: 30 * 24 * 60 * 60 * 1000 };
+const csrfCookie = { httpOnly: false, secure: isProduction, sameSite: isProduction ? "none" as const : "lax" as const, priority: "high" as const, path: "/", maxAge: 30 * 24 * 60 * 60 * 1000 };
 
 function hasMatchingCsrfCookie(request: Request, csrfHeader: string) {
   return request.header("cookie")

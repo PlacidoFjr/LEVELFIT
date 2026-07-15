@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, Dumbbell, Eye, EyeOff, HeartPulse, Salad, ShieldCheck, Sparkles, Target } from "lucide-react";
 import { FormEvent, useEffect, useState } from "react";
-import { ApiClientError, loginUser, registerUser, useAuthSession } from "@/lib/auth-client";
+import { ApiClientError, loginUser, registerUser, requestPasswordReset, useAuthSession } from "@/lib/auth-client";
 import { updateMe, updateNotificationPreferences } from "@/lib/level-fit-api";
 import { activityOptions } from "@/lib/mock-data";
 import { LevelFitLogo } from "./level-fit-logo";
@@ -66,12 +66,16 @@ function formError(error: unknown) {
 }
 
 export function LoginPage() {
+  const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    setMessage(null);
     setLoading(true);
 
     const data = new FormData(event.currentTarget);
@@ -85,18 +89,39 @@ export function LoginPage() {
     }
   }
 
+  async function forgotPassword() {
+    const nextEmail = email.trim();
+    setError(null);
+    setMessage(null);
+    if (!nextEmail) {
+      setError("Informe seu e-mail para receber o link de redefinição de senha.");
+      return;
+    }
+
+    setResetting(true);
+    try {
+      await requestPasswordReset(nextEmail);
+      setMessage("Enviamos um link para redefinir sua senha. Confira também Spam, Lixo eletrônico e Promoções.");
+    } catch (err) {
+      setError(formError(err));
+    } finally {
+      setResetting(false);
+    }
+  }
+
   return (
     <AuthFrame eyebrow="Que bom te ver de volta" title="Entre no seu ritmo" description="Acesse seu plano de hoje e continue de onde parou.">
       <form onSubmit={submit} className="space-y-5">
         <label htmlFor="email" className="block text-sm font-bold text-[var(--text-muted)]">
           E-mail
-          <input id="email" name="email" type="email" className="field mt-2" placeholder="voce@exemplo.com" required autoComplete="email" />
+          <input id="email" name="email" type="email" className="field mt-2" placeholder="voce@exemplo.com" required autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} />
         </label>
         <PasswordField />
         {error && <div className="border-l-2 border-[var(--danger)] bg-[rgba(244,63,94,0.08)] p-3 text-sm leading-5 text-white" role="alert">{error}</div>}
+        {message && <div className="border-l-2 border-[var(--lime)] bg-[rgba(183,255,42,0.08)] p-3 text-sm leading-5 text-white" role="status">{message}</div>}
         <div className="flex items-center justify-between gap-3">
-          <label className="flex items-center gap-2 text-sm text-[var(--text-muted)]"><input type="checkbox" className="size-4 accent-[var(--lime)]" /> Lembrar de mim</label>
-          <button type="button" className="text-sm font-bold text-[var(--lime)]">Esqueci a senha</button>
+          <label className="flex items-center gap-2 text-sm text-[var(--text-muted)]"><input type="checkbox" className="size-4 accent-[var(--lime)]" defaultChecked /> Manter conectado</label>
+          <button type="button" onClick={forgotPassword} disabled={resetting} className="text-sm font-bold text-[var(--lime)] disabled:opacity-60">{resetting ? "Enviando..." : "Esqueci a senha"}</button>
         </div>
         <button type="submit" disabled={loading} className="primary-button w-full disabled:cursor-not-allowed disabled:opacity-60">
           {loading ? "Entrando..." : "Entrar"} <ArrowRight size={18} />
@@ -110,10 +135,12 @@ export function LoginPage() {
 
 export function RegisterPage() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -150,6 +177,28 @@ export function RegisterPage() {
     }
   }
 
+  async function forgotPassword() {
+    const nextEmail = email.trim();
+    setError(null);
+    setErrorCode(null);
+    setMessage(null);
+    if (!nextEmail) {
+      setError("Informe seu e-mail para receber o link de redefinição de senha.");
+      return;
+    }
+
+    setResetting(true);
+    try {
+      await requestPasswordReset(nextEmail);
+      setMessage("Enviamos um link para redefinir sua senha. Confira também Spam, Lixo eletrônico e Promoções.");
+    } catch (err) {
+      setError(formError(err));
+      setErrorCode(err instanceof ApiClientError ? err.code : null);
+    } finally {
+      setResetting(false);
+    }
+  }
+
 
   return (
     <AuthFrame eyebrow="Comece com leveza" title="Crie sua conta" description="Leva menos de dois minutos. Suas preferências podem mudar depois.">
@@ -169,7 +218,7 @@ export function RegisterPage() {
         </label>
         <label htmlFor="register-email" className="block text-sm font-bold text-[var(--text-muted)]">
           E-mail
-          <input id="register-email" name="email" type="email" className="field mt-2" placeholder="voce@exemplo.com" required autoComplete="email" />
+          <input id="register-email" name="email" type="email" className="field mt-2" placeholder="voce@exemplo.com" required autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} />
         </label>
         <PasswordField id="register-password" name="password" label="Crie uma senha" placeholder="Mínimo de 10 caracteres" />
         <label className="flex items-start gap-3 text-xs leading-5 text-[var(--text-muted)]">
@@ -186,7 +235,7 @@ export function RegisterPage() {
             {errorCode === "EMAIL_UNAVAILABLE" && (
               <div className="mt-3 flex flex-wrap gap-3">
                 <Link href="/login" className="font-bold text-[var(--lime)]">Ir para login</Link>
-                <button type="button" className="font-bold text-[var(--lime)]">Esqueci a senha</button>
+                <button type="button" onClick={forgotPassword} disabled={resetting} className="font-bold text-[var(--lime)] disabled:opacity-60">{resetting ? "Enviando..." : "Esqueci a senha"}</button>
               </div>
             )}
           </div>
@@ -202,7 +251,7 @@ export function RegisterPage() {
 }
 
 const goals = [
-  { id: "consistency", label: "Criar consistência", detail: "Uma rotina que cabe na vida real", icon: Target, color: "var(--lime)" },
+  { id: "consistency", label: "Criar constância", detail: "Uma rotina que cabe na vida real", icon: Target, color: "var(--lime)" },
   { id: "strength", label: "Ganhar força", detail: "Evolução gradual e recuperação", icon: Dumbbell, color: "var(--coral)" },
   { id: "conditioning", label: "Ter mais energia", detail: "Movimento, sono e hidratação", icon: HeartPulse, color: "var(--cyan)" },
   { id: "nutrition", label: "Comer com mais equilíbrio", detail: "Variedade sem dieta extrema", icon: Salad, color: "var(--green)" },

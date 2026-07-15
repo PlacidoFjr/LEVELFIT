@@ -45,6 +45,17 @@ export class WorkoutsService {
     });
   }
 
+  async sessions(userId: string) {
+    const data = await this.prisma.workoutSession.findMany({
+      where: { userId, deletedAt: null },
+      include: sessionInclude,
+      orderBy: { startedAt: "desc" },
+      take: 20,
+    });
+
+    return { data, page: { nextCursor: null, hasMore: false } };
+  }
+
   async create(userId: string, dto: CreateWorkoutDto) {
     return this.prisma.workout.create({
       data: {

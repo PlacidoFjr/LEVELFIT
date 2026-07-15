@@ -3,14 +3,37 @@ import { asUtcDate } from "../../common/date";
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
 import { GamificationService } from "../gamification/gamification.service";
 
+const missionTypes = ["workout", "water", "nutrition", "habit", "recovery", "progress"] as const;
+const dailyMissionLimit = 8;
+
+function stableHash(value: string) {
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
+  return hash;
+}
+
+function dayKey(date: Date) {
+  return date.toISOString().slice(0, 10);
+}
+
 @Injectable()
 export class MissionsService {
   constructor(private readonly prisma: PrismaService, private readonly game: GamificationService) {}
 
   async today(userId: string) {
     const missionDate = asUtcDate();
-    const templates = await this.prisma.dailyMission.findMany({ where: { isActive: true, deletedAt: null }, orderBy: { type: "asc" }, take: 4 });
-    if (templates.length) await this.prisma.userMission.createMany({ data: templates.map((template) => ({ userId, dailyMissionId: template.id, missionDate })), skipDuplicates: true });
+    const templates = await this.prisma.dailyMission.findMany({ where: { isActive: true, deletedAt: null }, orderBy: [{ type: "asc" }, { key: "asc" }] });
+    const selected = missionTypes
+      .flatMap((type) => templates.filter((template) => template.type === type).sort((a, b) => stableHash(`${userId}:${dayKey(missionDate)}:${a.key}`) - stableHash(`${userId}:${dayKey(missionDate)}:${b.key}`)).slice(0, type === "habit" ? 2 : 1))
+      .slice(0, dailyMissionLimit);
+
+    const extra = templates
+      .filter((template) => !selected.some((item) => item.id === template.id))
+      .sort((a, b) => stableHash(`${dayKey(missionDate)}:${userId}:extra:${a.key}`) - stableHash(`${dayKey(missionDate)}:${userId}:extra:${b.key}`))
+      .slice(0, Math.max(0, dailyMissionLimit - selected.length));
+
+    const dailyTemplates = [...selected, ...extra];
+    if (dailyTemplates.length) await this.prisma.userMission.createMany({ data: dailyTemplates.map((template) => ({ userId, dailyMissionId: template.id, missionDate })), skipDuplicates: true });
     return this.prisma.userMission.findMany({ where: { userId, missionDate, deletedAt: null }, include: { dailyMission: true }, orderBy: { createdAt: "asc" } });
   }
 

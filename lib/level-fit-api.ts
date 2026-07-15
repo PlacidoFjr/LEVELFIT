@@ -282,6 +282,10 @@ export function getTodayWorkout() {
   return apiRequest<TodayWorkout>("/workouts/today");
 }
 
+export function listWorkoutSessions() {
+  return apiRequest<Paginated<WorkoutSession>>("/workout-sessions");
+}
+
 export function startWorkoutSession(workoutId: string) {
   return apiRequest<WorkoutSession>("/workout-sessions", {
     method: "POST",

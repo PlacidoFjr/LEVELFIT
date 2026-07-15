@@ -159,7 +159,7 @@ export const avatarStages = [
     image: "/assets/pulse-companion.png",
     accent: "var(--cyan)",
     visualStyle: "core",
-    detail: "Ganha mais energia visual quando a consistência aparece.",
+    detail: "Ganha mais energia visual quando a constância aparece.",
     personality: "Mais atento ao ritmo",
     activeBenefit: "Destaca o caminho mais curto para manter o dia ativo.",
     perks: ["Sugestão de missão fácil", "Resumo do ritmo", "Modo retomada"],
@@ -173,7 +173,7 @@ export const avatarStages = [
     visualStyle: "neo",
     detail: "Armadura, luzes e postura mais fortes para quem já criou ritmo.",
     personality: "Confiante, calmo e protetor",
-    activeBenefit: "Ativa recomendações inteligentes para manter consistência sem exagero.",
+    activeBenefit: "Ativa recomendações inteligentes para manter constância sem exagero.",
     perks: ["Missão recomendada", "Modo leve inteligente", "Comemoração aprimorada"],
   },
   {
@@ -258,7 +258,7 @@ export const activityOptions = [
   { id: "strength", label: "Força", icon: Dumbbell },
   { id: "cardio", label: "Cardio", icon: Bike },
   { id: "mobility", label: "Mobilidade", icon: HeartPulse },
-  { id: "consistency", label: "Consistência", icon: Target },
+  { id: "consistency", label: "Constância", icon: Target },
 ];
 
 export { CheckCircle2 };

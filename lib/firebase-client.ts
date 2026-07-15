@@ -4,8 +4,12 @@ import { initializeApp, getApps } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  browserLocalPersistence,
   sendEmailVerification,
+  sendPasswordResetEmail,
+  setPersistence,
   signInWithEmailAndPassword,
+  onAuthStateChanged,
   updateProfile,
   type User,
 } from "firebase/auth";
@@ -33,6 +37,7 @@ function requireFirebaseAuth() {
 
 export async function signInFirebaseWithEmail(email: string, password: string) {
   const auth = requireFirebaseAuth();
+  await setPersistence(auth, browserLocalPersistence);
   const credential = await signInWithEmailAndPassword(auth, email, password);
   return credential.user;
 }
@@ -46,6 +51,27 @@ export async function createFirebaseUser(input: { email: string; password: strin
     handleCodeInApp: false,
   });
   return credential.user;
+}
+
+export async function sendFirebasePasswordReset(email: string) {
+  const auth = requireFirebaseAuth();
+  await sendPasswordResetEmail(auth, email, {
+    url: `${window.location.origin}/login?passwordReset=1`,
+    handleCodeInApp: false,
+  });
+}
+
+export async function storedFirebaseIdToken() {
+  const auth = requireFirebaseAuth();
+  await setPersistence(auth, browserLocalPersistence);
+  const user = auth.currentUser ?? await new Promise<User | null>((resolve) => {
+    const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
+      unsubscribe();
+      resolve(nextUser);
+    });
+  });
+
+  return user ? user.getIdToken() : null;
 }
 
 export async function firebaseIdToken(user: User) {

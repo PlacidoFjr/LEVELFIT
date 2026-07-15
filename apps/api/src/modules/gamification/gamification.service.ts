@@ -1,9 +1,52 @@
 import { Injectable } from "@nestjs/common";
-import { Prisma, XpReason } from "@prisma/client";
+import { MissionType, Prisma, XpReason } from "@prisma/client";
 import { asUtcDate } from "../../common/date";
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
 
 type DatabaseClient = Prisma.TransactionClient | PrismaService;
+type AchievementRule = {
+  key: string;
+  reason?: XpReason;
+  count?: number;
+  minLevel?: number;
+  minDailyStreak?: number;
+  missionType?: MissionType;
+  sameDayMissionCount?: number;
+  requiresMissionTypes?: MissionType[];
+};
+
+const achievementRules: AchievementRule[] = [
+  { key: "first-mission", reason: "mission_completed", count: 1 },
+  { key: "mission-5", reason: "mission_completed", count: 5 },
+  { key: "mission-20", reason: "mission_completed", count: 20 },
+  { key: "mission-50", reason: "mission_completed", count: 50 },
+  { key: "first-workout", reason: "workout_completed", count: 1 },
+  { key: "workout-3", reason: "workout_completed", count: 3 },
+  { key: "workout-10", reason: "workout_completed", count: 10 },
+  { key: "workout-25", reason: "workout_completed", count: 25 },
+  { key: "workout-50", reason: "workout_completed", count: 50 },
+  { key: "water-first", reason: "water_goal_completed", count: 1 },
+  { key: "water-3", reason: "water_goal_completed", count: 3 },
+  { key: "water-week", reason: "water_goal_completed", count: 7 },
+  { key: "water-21", reason: "water_goal_completed", count: 21 },
+  { key: "nutrition-first", reason: "nutrition_checklist_completed", count: 1 },
+  { key: "nutrition-3", reason: "nutrition_checklist_completed", count: 3 },
+  { key: "nutrition-21", reason: "nutrition_checklist_completed", count: 21 },
+  { key: "streak-three", minDailyStreak: 3 },
+  { key: "streak-seven", minDailyStreak: 7 },
+  { key: "streak-fourteen", minDailyStreak: 14 },
+  { key: "streak-thirty", minDailyStreak: 30 },
+  { key: "level-2", minLevel: 2 },
+  { key: "level-5", minLevel: 5 },
+  { key: "level-10", minLevel: 10 },
+  { key: "return-kindly", missionType: "recovery", count: 1 },
+  { key: "gentle-day", missionType: "recovery", count: 1 },
+  { key: "recovery-7", missionType: "recovery", count: 7 },
+  { key: "no-extremes", missionType: "recovery", count: 10 },
+  { key: "progress-first-checkin", missionType: "progress", count: 1 },
+  { key: "balanced-week", requiresMissionTypes: ["workout", "water", "nutrition"] },
+  { key: "all-day-flow", sameDayMissionCount: 5 },
+];
 
 function levelFromXp(totalXp: number) {
   const level = Math.max(1, Math.floor(Math.sqrt(totalXp / 100)) + 1);
@@ -26,6 +69,7 @@ export class GamificationService {
     const level = levelFromXp(totalXp);
     await db.userLevel.update({ where: { userId }, data: { totalXp, ...level } });
     await this.countDailyStreak(userId, db);
+    await this.unlockEligibleAchievements(userId, level.level, db);
     return { awarded: amount, duplicate: false, totalXp, ...level };
   }
 
@@ -37,6 +81,50 @@ export class GamificationService {
     const contiguous = streak.lastCountedDate?.getTime() === yesterday.getTime();
     const currentCount = contiguous ? streak.currentCount + 1 : 1;
     await db.streak.update({ where: { id: streak.id }, data: { currentCount, bestCount: Math.max(streak.bestCount, currentCount), lastCountedDate: today, status: "active" } });
+  }
+
+  private async unlockEligibleAchievements(userId: string, currentLevel: number, db: DatabaseClient) {
+    const [counts, dailyStreak, achievements, unlocked, completedMissions] = await Promise.all([
+      db.xpEvent.groupBy({ by: ["reason"], where: { userId }, _count: { _all: true } }),
+      db.streak.findUnique({ where: { userId_type: { userId, type: "daily" } } }),
+      db.achievement.findMany({ where: { key: { in: achievementRules.map((rule) => rule.key) }, isActive: true, deletedAt: null }, select: { id: true, key: true } }),
+      db.userAchievement.findMany({ where: { userId, achievement: { key: { in: achievementRules.map((rule) => rule.key) } } }, select: { achievement: { select: { key: true } } } }),
+      db.userMission.findMany({ where: { userId, status: "completed", deletedAt: null }, select: { missionDate: true, dailyMission: { select: { type: true } } } }),
+    ]);
+    const countByReason = new Map(counts.map((item) => [item.reason, item._count._all]));
+    const achievementByKey = new Map(achievements.map((item) => [item.key, item.id]));
+    const unlockedKeys = new Set(unlocked.map((item) => item.achievement.key));
+    const countByMissionType = new Map<MissionType, number>();
+    const countByMissionDate = new Map<string, number>();
+    const missionTypesByDate = new Map<string, Set<MissionType>>();
+    for (const mission of completedMissions) {
+      const type = mission.dailyMission.type;
+      countByMissionType.set(type, (countByMissionType.get(type) ?? 0) + 1);
+      const dateKey = mission.missionDate.toISOString().slice(0, 10);
+      countByMissionDate.set(dateKey, (countByMissionDate.get(dateKey) ?? 0) + 1);
+      const types = missionTypesByDate.get(dateKey) ?? new Set<MissionType>();
+      types.add(type);
+      missionTypesByDate.set(dateKey, types);
+    }
+    const maxMissionsInSameDay = Math.max(0, ...countByMissionDate.values());
+
+    for (const rule of achievementRules) {
+      if (unlockedKeys.has(rule.key)) continue;
+      if (rule.reason && (countByReason.get(rule.reason) ?? 0) < (rule.count ?? 1)) continue;
+      if (rule.minLevel && currentLevel < rule.minLevel) continue;
+      if (rule.minDailyStreak && (dailyStreak?.currentCount ?? 0) < rule.minDailyStreak) continue;
+      if (rule.missionType && (countByMissionType.get(rule.missionType) ?? 0) < (rule.count ?? 1)) continue;
+      if (rule.sameDayMissionCount && maxMissionsInSameDay < rule.sameDayMissionCount) continue;
+      if (rule.requiresMissionTypes && !Array.from(missionTypesByDate.values()).some((types) => rule.requiresMissionTypes?.every((type) => types.has(type)))) continue;
+
+      const achievementId = achievementByKey.get(rule.key);
+      if (!achievementId) continue;
+      await db.userAchievement.upsert({
+        where: { userId_achievementId: { userId, achievementId } },
+        create: { userId, achievementId },
+        update: {},
+      });
+    }
   }
 
   async xp(userId: string) {
