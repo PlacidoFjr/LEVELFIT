@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
+import { guideExercises, guideWorkoutExercises, guideWorkouts } from "./workout-guide.generated";
 
 const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }),
@@ -147,15 +148,19 @@ const achievements = [
   { id: "40000000-0000-4000-8000-000000000005", key: "return-kindly", name: "Recomeço conta", description: "Retomou sua jornada sem buscar compensação.", category: "recovery" as const, rarity: "rare" as const, xpReward: 60 },
 ];
 
+const seededExercises = [...exercises, ...guideExercises];
+const seededWorkouts = [...workouts, ...guideWorkouts];
+const seededWorkoutExercises = [...workoutExercises, ...guideWorkoutExercises];
+
 async function main() {
-  for (const exercise of exercises) {
+  for (const exercise of seededExercises) {
     await prisma.exercise.upsert({ where: { id: exercise.id }, create: exercise, update: { ...exercise, deletedAt: null } });
   }
-  for (const workout of workouts) {
+  for (const workout of seededWorkouts) {
     await prisma.workout.upsert({ where: { id: workout.id }, create: { ...workout, isPublic: true }, update: { ...workout, isPublic: true, deletedAt: null } });
   }
-  await prisma.workoutExercise.deleteMany({ where: { workoutId: { in: workouts.map((item) => item.id) } } });
-  await prisma.workoutExercise.createMany({ data: workoutExercises });
+  await prisma.workoutExercise.deleteMany({ where: { workoutId: { in: seededWorkouts.map((item) => item.id) } } });
+  await prisma.workoutExercise.createMany({ data: seededWorkoutExercises });
 
   for (const meal of [
     { id: "50000000-0000-4000-8000-000000000001", name: "Café da manhã", sortOrder: 1 },

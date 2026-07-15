@@ -34,6 +34,7 @@ import {
   Plus,
   Salad,
   ShieldCheck,
+  SlidersHorizontal,
   Smartphone,
   Sparkles,
   Target,
@@ -230,13 +231,21 @@ function categoryLabel(value: Workout["category"]) {
 }
 
 type WorkoutFocusId = "all" | "female" | "male" | "full_body" | "low_impact";
+type WorkoutDifficultyFilter = "all" | Workout["difficulty"];
 
 const workoutFocuses: Array<{ id: WorkoutFocusId; label: string; detail: string }> = [
   { id: "all", label: "Todos", detail: "Biblioteca completa" },
-  { id: "female", label: "Foco feminino", detail: "Glúteos e pernas" },
-  { id: "male", label: "Foco masculino", detail: "Peito, costas e ombros" },
+  { id: "female", label: "Glúteos e pernas", detail: "Foco comum feminino" },
+  { id: "male", label: "Tronco e força", detail: "Foco comum masculino" },
   { id: "full_body", label: "Corpo todo", detail: "Treino equilibrado" },
   { id: "low_impact", label: "Baixo impacto", detail: "Sem saltos ou corrida" },
+];
+
+const workoutDifficulties: Array<{ id: WorkoutDifficultyFilter; label: string; detail: string }> = [
+  { id: "all", label: "Qualquer intensidade", detail: "Mostra todos os níveis" },
+  { id: "easy", label: "Leve / iniciante", detail: "Melhor para começar ou retomar" },
+  { id: "medium", label: "Moderado", detail: "Boa base e controle" },
+  { id: "hard", label: "Intenso", detail: "Mais volume e experiência" },
 ];
 
 function searchable(value: string) {
@@ -247,7 +256,7 @@ function workoutMatchesFocus(workout: Workout, focus: WorkoutFocusId) {
   if (focus === "all") return true;
   const text = searchable(`${workout.title} ${workout.description ?? ""} ${workout.category}`);
   if (focus === "female") return text.includes("inferiores") || text.includes("gluteos") || text.includes("pernas");
-  if (focus === "male") return text.includes("superiores") || text.includes("peito") || text.includes("costas") || text.includes("bracos") || text.includes("ombros");
+  if (focus === "male") return text.includes("superiores") || text.includes("tronco") || text.includes("peito") || text.includes("costas") || text.includes("bracos") || text.includes("ombros");
   if (focus === "full_body") return workout.category === "full_body" || text.includes("corpo todo");
   return workout.difficulty === "easy" || text.includes("baixo impacto") || text.includes("sem saltos") || text.includes("sem corrida");
 }
@@ -260,6 +269,7 @@ export function WorkoutsLivePage() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [focus, setFocus] = useState<WorkoutFocusId>("all");
+  const [intensity, setIntensity] = useState<WorkoutDifficultyFilter>("all");
 
   async function load() {
     setLoading(true);
@@ -305,18 +315,37 @@ export function WorkoutsLivePage() {
   }
 
   const focusedWorkouts = workouts.filter((item) => workoutMatchesFocus(item, focus));
+  const configuredWorkouts = focusedWorkouts.filter((item) => intensity === "all" || item.difficulty === intensity);
+  const suggestedWorkouts = configuredWorkouts.length > 0 ? configuredWorkouts : focusedWorkouts;
   const todayWorkout = getWorkoutFromToday(today);
-  const workout = (focus === "all" ? todayWorkout : null) ?? focusedWorkouts[0] ?? todayWorkout ?? workouts[0] ?? null;
-  const optionPool = focusedWorkouts.length > 1 ? focusedWorkouts : workouts;
+  const workout = (focus === "all" && intensity === "all" ? todayWorkout : null) ?? suggestedWorkouts[0] ?? todayWorkout ?? workouts[0] ?? null;
+  const optionPool = suggestedWorkouts.length > 1 ? suggestedWorkouts : workouts;
   const options = optionPool.filter((item) => item.id !== workout?.id).slice(0, 3);
 
   return <Screen title="Treino do dia" description="Um plano curto, ajustável e com espaço para descanso." action={<Link href="/settings/notifications" className="secondary-button"><CalendarClock size={18} /> Agenda</Link>}>
     <Notice message={error} tone="danger" />
-    {!loading && workouts.length > 0 && <section className="mb-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-5" aria-label="Filtro de foco do treino">
-      {workoutFocuses.map((item) => <button key={item.id} onClick={() => setFocus(item.id)} className={`min-h-[74px] rounded-[8px] border px-3 py-3 text-left transition-colors ${focus === item.id ? "border-[var(--lime)] bg-[rgba(183,255,42,0.1)]" : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-strong)]"}`}>
-        <span className={`block text-sm font-black ${focus === item.id ? "text-[var(--lime)]" : "text-white"}`}>{item.label}</span>
-        <span className="mt-1 block text-xs font-bold leading-4 text-[var(--text-muted)]">{item.detail}</span>
-      </button>)}
+    {!loading && workouts.length > 0 && <section id="workout-plan-settings" className="mb-4 app-card p-4 sm:p-5" aria-label="Ajustes do plano de treino">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="eyebrow text-[var(--coral)]">Ajuste do plano</p>
+          <h2 className="mt-2 text-lg font-black text-white">Escolha foco e intensidade</h2>
+          <p className="mt-1 max-w-2xl text-xs leading-5 text-[var(--text-muted)]">Para começar, use baixo impacto com intensidade leve. O LevelFit prioriza técnica, descanso e progressão sem cobrança tóxica.</p>
+        </div>
+        <Pill tone="cyan">{configuredWorkouts.length || focusedWorkouts.length} opções</Pill>
+      </div>
+      <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
+        {workoutFocuses.map((item) => <button key={item.id} type="button" onClick={() => setFocus(item.id)} className={`min-h-[74px] rounded-[8px] border px-3 py-3 text-left transition-colors ${focus === item.id ? "border-[var(--lime)] bg-[rgba(183,255,42,0.1)]" : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-strong)]"}`}>
+          <span className={`block text-sm font-black ${focus === item.id ? "text-[var(--lime)]" : "text-white"}`}>{item.label}</span>
+          <span className="mt-1 block text-xs font-bold leading-4 text-[var(--text-muted)]">{item.detail}</span>
+        </button>)}
+      </div>
+      <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+        {workoutDifficulties.map((item) => <button key={item.id} type="button" onClick={() => setIntensity(item.id)} className={`min-h-[68px] rounded-[8px] border px-3 py-3 text-left transition-colors ${intensity === item.id ? "border-[var(--coral)] bg-[rgba(255,107,61,0.1)]" : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-strong)]"}`}>
+          <span className={`block text-sm font-black ${intensity === item.id ? "text-[var(--coral)]" : "text-white"}`}>{item.label}</span>
+          <span className="mt-1 block text-xs font-bold leading-4 text-[var(--text-muted)]">{item.detail}</span>
+        </button>)}
+      </div>
+      {configuredWorkouts.length === 0 && focusedWorkouts.length > 0 && <p className="mt-3 rounded-[8px] border border-[var(--border)] bg-[rgba(255,214,10,0.06)] px-3 py-2 text-xs font-bold text-[var(--gold)]">Não encontrei esse foco nessa intensidade. Mostrando a opção mais próxima para você não ficar travado.</p>}
     </section>}
     {loading ? <LoadingCard /> : !workout ? <section className="app-card grid min-h-[240px] place-items-center p-6 text-center"><div><Dumbbell className="mx-auto text-[var(--text-dim)]" size={32} /><h2 className="mt-4 font-black text-white">Nenhum treino disponível</h2><p className="mt-2 max-w-md text-sm leading-6 text-[var(--text-muted)]">{error ? "Não conseguimos carregar sua biblioteca de treinos agora." : "A biblioteca de treinos ainda não foi carregada."}</p><button onClick={() => void load()} className="secondary-button mx-auto mt-5">Tentar novamente</button></div></section> : (
       <>
@@ -327,7 +356,7 @@ export function WorkoutsLivePage() {
               <h2 className="mt-5 text-2xl font-black text-white">{workout.title}</h2>
               <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--text-muted)]">{workout.description ?? "Movimentos adaptáveis. Pare se sentir dor e reduza a intensidade quando necessário."}</p>
               <div className="mt-5 flex flex-wrap gap-5 text-sm font-bold text-[var(--text-muted)]"><span className="inline-flex items-center gap-2"><Clock3 size={18} /> {workout.estimatedMinutes} minutos</span><span className="inline-flex items-center gap-2"><Activity size={18} /> {workout.exercises.length} exercícios</span><span className="inline-flex items-center gap-2"><Zap size={18} /> 60 XP</span></div>
-              <div className="mt-7 flex flex-col gap-2 sm:flex-row"><button onClick={() => start(workout.id)} disabled={busyId === workout.id} className="primary-button bg-[var(--coral)] text-white disabled:opacity-60">{isWorkoutSession(today) ? "Continuar treino" : "Começar treino"} <ArrowRight size={18} /></button><button onClick={() => start(options[0]?.id ?? workout.id)} className="secondary-button">Ajustar intensidade</button></div>
+              <div className="mt-7 flex flex-col gap-2 sm:flex-row"><button onClick={() => start(workout.id)} disabled={busyId === workout.id} className="primary-button bg-[var(--coral)] text-white disabled:opacity-60">{isWorkoutSession(today) ? "Continuar treino" : "Começar treino"} <ArrowRight size={18} /></button><button type="button" onClick={() => document.getElementById("workout-plan-settings")?.scrollIntoView({ behavior: "smooth", block: "start" })} className="secondary-button"><SlidersHorizontal size={18} /> Ajustar plano</button></div>
             </div>
             <div className="border-t border-[var(--border)] bg-[var(--surface-elevated)] p-5 lg:border-l lg:border-t-0"><p className="eyebrow mb-3">Sequência do treino</p><div className="divide-y divide-[var(--border)]">{workout.exercises.map((exercise, index) => <div key={exercise.id} className="flex min-h-[64px] items-center gap-3"><span className="grid size-8 shrink-0 place-items-center rounded-[6px] bg-[var(--surface-soft)] text-[var(--coral)]"><BicepsFlexed size={17} /></span><span className="min-w-0 flex-1 truncate text-sm font-bold text-white">{exercise.exercise.name}</span><span className="text-xs font-bold text-[var(--text-muted)]">{formatExerciseTarget(exercise)}</span><span className="text-xs text-[var(--text-dim)]">{index + 1}</span></div>)}</div></div>
           </div>
