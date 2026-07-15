@@ -20,6 +20,7 @@ export type AuthUser = {
   id: string;
   email: string;
   displayName?: string | null;
+  onboardingCompleted?: boolean;
   level?: {
     level: number;
     totalXp: number;
@@ -340,7 +341,7 @@ async function refreshSessionOnce() {
 }
 
 export async function fetchMe() {
-  return apiRequest<AuthUser & { profile?: { displayName?: string | null }; level?: AuthUser["level"]; streaks?: AuthUser["streaks"] }>("/me");
+  return apiRequest<AuthUser & { profile?: { displayName?: string | null; fitnessGoal?: string | null; activityLevel?: string | null }; level?: AuthUser["level"]; streaks?: AuthUser["streaks"] }>("/me");
 }
 
 function toAuthUser(me: Awaited<ReturnType<typeof fetchMe>>): AuthUser {
@@ -348,6 +349,7 @@ function toAuthUser(me: Awaited<ReturnType<typeof fetchMe>>): AuthUser {
     id: me.id,
     email: me.email,
     displayName: me.profile?.displayName ?? me.displayName,
+    onboardingCompleted: Boolean(me.profile?.fitnessGoal && me.profile?.activityLevel),
     level: me.level ?? null,
     streaks: me.streaks ?? [],
   };

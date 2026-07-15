@@ -90,7 +90,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!session.loading && !session.authenticated) router.replace("/login");
-  }, [router, session.authenticated, session.loading]);
+    if (!session.loading && session.authenticated && !session.user?.onboardingCompleted) router.replace("/onboarding");
+  }, [router, session.authenticated, session.loading, session.user?.onboardingCompleted]);
 
   if (session.loading || !session.authenticated) {
     return (

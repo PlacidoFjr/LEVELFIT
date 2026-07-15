@@ -4,8 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, Dumbbell, Eye, EyeOff, HeartPulse, Salad, ShieldCheck, Sparkles, Target } from "lucide-react";
-import { FormEvent, useState } from "react";
-import { ApiClientError, loginUser, registerUser } from "@/lib/auth-client";
+import { FormEvent, useEffect, useState } from "react";
+import { ApiClientError, loginUser, registerUser, useAuthSession } from "@/lib/auth-client";
+import { updateMe, updateNotificationPreferences } from "@/lib/level-fit-api";
 import { activityOptions } from "@/lib/mock-data";
 import { LevelFitLogo } from "./level-fit-logo";
 
@@ -203,16 +204,51 @@ export function RegisterPage() {
 const goals = [
   { id: "consistency", label: "Criar consistência", detail: "Uma rotina que cabe na vida real", icon: Target, color: "var(--lime)" },
   { id: "strength", label: "Ganhar força", detail: "Evolução gradual e recuperação", icon: Dumbbell, color: "var(--coral)" },
-  { id: "energy", label: "Ter mais energia", detail: "Movimento, sono e hidratação", icon: HeartPulse, color: "var(--cyan)" },
+  { id: "conditioning", label: "Ter mais energia", detail: "Movimento, sono e hidratação", icon: HeartPulse, color: "var(--cyan)" },
   { id: "nutrition", label: "Comer com mais equilíbrio", detail: "Variedade sem dieta extrema", icon: Salad, color: "var(--green)" },
 ];
 
 export function OnboardingPage() {
   const router = useRouter();
+  const session = useAuthSession();
   const [step, setStep] = useState(1);
   const [goal, setGoal] = useState("consistency");
   const [activity, setActivity] = useState("returning");
+  const [workoutTime, setWorkoutTime] = useState("18:30");
   const [reminders, setReminders] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!session.loading && !session.authenticated) router.replace("/login");
+  }, [router, session.authenticated, session.loading]);
+
+  async function finish() {
+    if (step < 3) {
+      setStep((value) => value + 1);
+      return;
+    }
+    if (!session.authenticated) {
+      router.replace("/login");
+      return;
+    }
+
+    setError(null);
+    setSaving(true);
+    try {
+      await Promise.all([
+        updateMe({ fitnessGoal: goal, activityLevel: activity }),
+        updateNotificationPreferences({
+          workoutRemindersEnabled: reminders,
+          preferredWorkoutTime: reminders ? workoutTime : undefined,
+        }),
+      ]);
+      window.location.assign("/");
+    } catch (err) {
+      setError(formError(err));
+      setSaving(false);
+    }
+  }
 
   return (
     <main className="min-h-screen px-4 py-6 sm:px-8">
@@ -232,11 +268,13 @@ export function OnboardingPage() {
 
         {step === 2 && <div className="mt-8 grid gap-3 sm:grid-cols-2">{[{ id: "beginner", label: "Estou começando", detail: "Quero aprender o básico" }, { id: "returning", label: "Estou voltando", detail: "Tive uma pausa e quero retomar" }, { id: "occasional", label: "Faço às vezes", detail: "Quero ganhar regularidade" }, { id: "active", label: "Já tenho rotina", detail: "Quero organizar e evoluir" }].map((item, index) => { const Icon = activityOptions[index]?.icon ?? Sparkles; return <button key={item.id} onClick={() => setActivity(item.id)} className={`app-card flex min-h-[104px] items-center gap-4 p-4 text-left ${activity === item.id ? "border-[var(--lime)]" : ""}`}><span className="grid size-11 place-items-center rounded-[7px] bg-[var(--surface-soft)] text-[var(--lime)]"><Icon size={22} /></span><span className="flex-1"><strong className="block text-sm text-white">{item.label}</strong><span className="mt-1 block text-xs text-[var(--text-muted)]">{item.detail}</span></span>{activity === item.id && <Check className="text-[var(--lime)]" size={19} />}</button>; })}</div>}
 
-        {step === 3 && <div className="mt-8 space-y-4"><div className="app-card p-5"><label htmlFor="workout-time" className="text-sm font-bold text-white">Horário preferido de treino</label><input id="workout-time" type="time" className="field mt-3" defaultValue="18:30" /></div><div className="app-card flex items-center gap-4 p-5"><span className="grid size-11 place-items-center rounded-[7px] bg-[rgba(183,255,42,0.1)] text-[var(--lime)]"><Sparkles size={22} /></span><div className="flex-1"><p className="text-sm font-bold text-white">Lembrete gentil</p><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">No máximo uma vez no horário escolhido.</p></div><button role="switch" aria-checked={reminders} onClick={() => setReminders((value) => !value)} className={`relative h-7 w-12 rounded-full ${reminders ? "bg-[var(--lime)]" : "bg-[var(--surface-soft)]"}`}><span className={`absolute top-1 size-[18px] rounded-full transition-transform ${reminders ? "left-1 translate-x-5 bg-[var(--lime-ink)]" : "left-1 bg-[var(--text-muted)]"}`} /></button></div><div className="flex gap-3 border-l-2 border-[var(--cyan)] bg-[rgba(34,211,238,0.06)] p-4 text-xs leading-5 text-[var(--text-muted)]"><ShieldCheck size={19} className="shrink-0 text-[var(--cyan)]" /> Dados de saúde são privados. Ranking e compartilhamento permanecem desativados.</div></div>}
+        {step === 3 && <div className="mt-8 space-y-4"><div className="app-card p-5"><label htmlFor="workout-time" className="text-sm font-bold text-white">Horário preferido de treino</label><input id="workout-time" type="time" className="field mt-3" value={workoutTime} onChange={(event) => setWorkoutTime(event.target.value)} /></div><div className="app-card flex items-center gap-4 p-5"><span className="grid size-11 place-items-center rounded-[7px] bg-[rgba(183,255,42,0.1)] text-[var(--lime)]"><Sparkles size={22} /></span><div className="flex-1"><p className="text-sm font-bold text-white">Lembrete gentil</p><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">No máximo uma vez no horário escolhido.</p></div><button role="switch" aria-checked={reminders} onClick={() => setReminders((value) => !value)} className={`relative h-7 w-12 rounded-full ${reminders ? "bg-[var(--lime)]" : "bg-[var(--surface-soft)]"}`}><span className={`absolute top-1 size-[18px] rounded-full transition-transform ${reminders ? "left-1 translate-x-5 bg-[var(--lime-ink)]" : "left-1 bg-[var(--text-muted)]"}`} /></button></div><div className="flex gap-3 border-l-2 border-[var(--cyan)] bg-[rgba(34,211,238,0.06)] p-4 text-xs leading-5 text-[var(--text-muted)]"><ShieldCheck size={19} className="shrink-0 text-[var(--cyan)]" /> Dados de saúde são privados. Ranking e compartilhamento permanecem desativados.</div></div>}
+
+        {error && <div className="mt-6 border-l-2 border-[var(--danger)] bg-[rgba(244,63,94,0.08)] p-3 text-sm leading-5 text-white" role="alert">{error}</div>}
 
         <div className="mt-10 flex items-center justify-between gap-3">
-          <button onClick={() => step > 1 ? setStep((value) => value - 1) : router.push("/register")} className="secondary-button"><ArrowLeft size={18} /> Voltar</button>
-          <button onClick={() => step < 3 ? setStep((value) => value + 1) : window.location.assign("/")} className="primary-button">{step < 3 ? "Continuar" : "Entrar no LevelFit"} <ArrowRight size={18} /></button>
+          <button onClick={() => step > 1 ? setStep((value) => value - 1) : router.push("/register")} disabled={saving} className="secondary-button disabled:opacity-60"><ArrowLeft size={18} /> Voltar</button>
+          <button onClick={finish} disabled={saving || session.loading} className="primary-button disabled:opacity-60">{saving ? "Salvando..." : step < 3 ? "Continuar" : "Entrar no LevelFit"} <ArrowRight size={18} /></button>
         </div>
       </div>
     </main>
