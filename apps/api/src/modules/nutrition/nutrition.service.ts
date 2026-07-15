@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { asUtcDate, utcDayRange } from "../../common/date";
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
 import { GamificationService } from "../gamification/gamification.service";
@@ -6,6 +6,8 @@ import type { CreateFoodLogDto, UpdateNutritionGoalDto } from "./nutrition.dto";
 
 @Injectable()
 export class NutritionService {
+  private readonly logger = new Logger(NutritionService.name);
+
   constructor(private readonly prisma: PrismaService, private readonly game: GamificationService) {}
 
   async goal(userId: string) {
@@ -41,7 +43,7 @@ export class NutritionService {
   async create(userId: string, dto: CreateFoodLogDto) {
     const loggedAt = dto.loggedAt ? new Date(dto.loggedAt) : new Date();
     const { start, end } = utcDayRange(loggedAt);
-    return this.prisma.$transaction(async (tx) => {
+    const { log, distinctChecks } = await this.prisma.$transaction(async (tx) => {
       const log = await tx.foodLog.create({ data: { userId, ...dto, loggedAt } });
       const dayLogs = await tx.foodLog.findMany({ where: { userId, loggedAt: { gte: start, lt: end }, deletedAt: null } });
       const distinctChecks = new Set<string>();
@@ -51,12 +53,16 @@ export class NutritionService {
         if (item.avoidedSkippingMeal) distinctChecks.add("no_skip");
         if (item.mindfulChoice) distinctChecks.add("mindful");
       }
-      let xpAwarded = 0;
-      if (distinctChecks.size >= 3) {
-        const award = await this.game.awardXp(userId, 30, "nutrition_checklist_completed", `nutrition_checklist:${userId}:${start.toISOString()}`, "food_log", log.id, tx);
+      return { log, distinctChecks };
+    });
+
+    let xpAwarded = 0;
+    if (distinctChecks.size >= 3) {
+      try {
+        const award = await this.game.awardXp(userId, 30, "nutrition_checklist_completed", `nutrition_checklist:${userId}:${start.toISOString()}`, "food_log", log.id);
         xpAwarded = award.awarded;
         if (xpAwarded > 0) {
-          await tx.notification.create({
+          await this.prisma.notification.create({
             data: {
               userId,
               type: "daily_summary",
@@ -66,8 +72,11 @@ export class NutritionService {
             },
           });
         }
+      } catch (error) {
+        this.logger.warn(`Nutrition XP side effect failed for user ${userId}: ${error instanceof Error ? error.message : "unknown error"}`);
       }
-      return { log, checklistCompleted: distinctChecks.size, xpAwarded };
-    });
+    }
+
+    return { log, checklistCompleted: distinctChecks.size, xpAwarded };
   }
 }
