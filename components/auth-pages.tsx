@@ -36,15 +36,15 @@ function PasswordField({ id = "password", name = id, label = "Senha", placeholde
 function AuthFrame({ eyebrow, title, description, children }: { eyebrow: string; title: string; description: string; children: React.ReactNode }) {
   return (
     <main className="grid min-h-screen lg:grid-cols-[1fr_0.92fr]">
-      <section className="flex min-h-screen items-center justify-center px-4 py-8 sm:px-8">
+      <section className="flex min-h-screen items-center justify-center px-4 py-6 sm:px-8 sm:py-8">
         <div className="w-full max-w-md">
           <AuthBrand />
-          <div className="mt-10">
+          <div className="mt-7 sm:mt-10">
             <p className="eyebrow text-[var(--lime)]">{eyebrow}</p>
-            <h1 className="mt-3 text-3xl font-black text-white">{title}</h1>
-            <p className="mt-3 text-sm leading-6 text-[var(--text-muted)]">{description}</p>
+            <h1 className="mt-3 text-[1.7rem] font-black leading-tight text-white sm:text-3xl">{title}</h1>
+            <p className="mt-3 text-sm leading-5 text-[var(--text-muted)] sm:leading-6">{description}</p>
           </div>
-          <div className="mt-8">{children}</div>
+          <div className="mt-6 sm:mt-8">{children}</div>
         </div>
       </section>
       <aside className="relative hidden min-h-screen overflow-hidden border-l border-[var(--border)] lg:block">
@@ -251,17 +251,17 @@ export function OnboardingPage() {
   }
 
   return (
-    <main className="min-h-screen px-4 py-6 sm:px-8">
+    <main className="min-h-screen px-3 py-5 sm:px-8 sm:py-6">
       <div className="mx-auto max-w-3xl">
         <div className="flex items-center justify-between"><AuthBrand /><span className="text-sm font-bold text-[var(--text-muted)]">Etapa {step} de 3</span></div>
         <div className="mt-6 grid grid-cols-3 gap-2" aria-label={`Etapa ${step} de 3`}>
           {[1, 2, 3].map((item) => <span key={item} className={`h-1.5 rounded-[3px] ${item <= step ? "bg-[var(--lime)]" : "bg-[var(--surface-soft)]"}`} />)}
         </div>
 
-        <section className="mt-10">
+        <section className="mt-8 sm:mt-10">
           <p className="eyebrow text-[var(--lime)]">{step === 1 ? "Seu foco" : step === 2 ? "Seu momento" : "Sua rotina"}</p>
-          <h1 className="mt-3 text-3xl font-black text-white">{step === 1 ? "O que você quer construir?" : step === 2 ? "Como está sua atividade hoje?" : "Quando prefere receber um lembrete?"}</h1>
-          <p className="mt-3 text-sm leading-6 text-[var(--text-muted)]">{step === 1 ? "Escolha o objetivo que mais importa agora. Ele pode mudar depois." : step === 2 ? "Isso ajuda a sugerir um primeiro plano confortável." : "Lembretes são opcionais e respeitam seu horário silencioso."}</p>
+          <h1 className="mt-3 text-[1.7rem] font-black leading-tight text-white sm:text-3xl">{step === 1 ? "O que você quer construir?" : step === 2 ? "Como está sua atividade hoje?" : "Quando prefere receber um lembrete?"}</h1>
+          <p className="mt-3 text-sm leading-5 text-[var(--text-muted)] sm:leading-6">{step === 1 ? "Escolha o objetivo que mais importa agora. Ele pode mudar depois." : step === 2 ? "Isso ajuda a sugerir um primeiro plano confortável." : "Lembretes são opcionais e respeitam seu horário silencioso."}</p>
         </section>
 
         {step === 1 && <div className="mt-8 grid gap-3 sm:grid-cols-2">{goals.map(({ id, label, detail, icon: Icon, color }) => <button key={id} onClick={() => setGoal(id)} className={`app-card flex min-h-[112px] items-center gap-4 p-4 text-left ${goal === id ? "border-[var(--lime)]" : ""}`}><span className="grid size-11 shrink-0 place-items-center rounded-[7px] bg-[var(--surface-soft)]" style={{ color }}><Icon size={22} /></span><span className="flex-1"><strong className="block text-sm text-white">{label}</strong><span className="mt-1 block text-xs text-[var(--text-muted)]">{detail}</span></span>{goal === id && <span className="grid size-6 place-items-center rounded-full bg-[var(--lime)] text-[var(--lime-ink)]"><Check size={15} strokeWidth={3} /></span>}</button>)}</div>}
@@ -272,7 +272,7 @@ export function OnboardingPage() {
 
         {error && <div className="mt-6 border-l-2 border-[var(--danger)] bg-[rgba(244,63,94,0.08)] p-3 text-sm leading-5 text-white" role="alert">{error}</div>}
 
-        <div className="mt-10 flex items-center justify-between gap-3">
+        <div className="mt-8 flex items-center justify-between gap-3 sm:mt-10">
           <button onClick={() => step > 1 ? setStep((value) => value - 1) : router.push("/register")} disabled={saving} className="secondary-button disabled:opacity-60"><ArrowLeft size={18} /> Voltar</button>
           <button onClick={finish} disabled={saving || session.loading} className="primary-button disabled:opacity-60">{saving ? "Salvando..." : step < 3 ? "Continuar" : "Entrar no LevelFit"} <ArrowRight size={18} /></button>
         </div>
