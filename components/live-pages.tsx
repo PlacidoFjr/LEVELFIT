@@ -407,11 +407,15 @@ export function WorkoutSessionLivePage() {
     <Notice message={error} tone="danger" />
     {loading ? <LoadingCard /> : !session ? <EmptyState icon={Dumbbell} title="Treino indisponível" detail="Não foi possível iniciar uma sessão agora." /> : !exercises.length ? <EmptyState icon={Dumbbell} title="Sessão sem exercícios" detail="Essa sessão antiga não tem movimentos cadastrados. Volte para Treinos e comece um novo plano." /> : (
       <div className="grid gap-4 xl:grid-cols-[1fr_360px]">
-        <section className="app-card flex min-h-[460px] flex-col items-center justify-center p-6 text-center">
+        <section className="app-card flex min-h-[520px] flex-col items-center justify-center p-6 text-center">
           <Pill tone="coral">EXERCÍCIO {Math.min(done.length + 1, exercises.length)} DE {exercises.length}</Pill>
           <span className="mt-8 grid size-20 place-items-center rounded-[8px] bg-[rgba(255,107,61,0.12)] text-[var(--coral)]"><BicepsFlexed size={40} /></span>
           <h2 className="mt-6 text-2xl font-black text-white">{current?.exercise.name ?? "Treino concluído"}</h2>
           <p className="mt-2 text-[var(--text-muted)]">{current ? formatExerciseTarget(current) : "Todos os movimentos foram registrados."}</p>
+          {current && <div className="mt-5 grid w-full max-w-2xl gap-3 text-left sm:grid-cols-2">
+            <div className="subtle-card p-4"><p className="eyebrow text-[var(--coral)]">Como executar</p><p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">{current.exercise.instructions ?? "Faça em ritmo confortável, mantendo postura e respiração controladas."}</p></div>
+            <div className="subtle-card p-4"><p className="eyebrow text-[var(--lime)]">Segurança</p><p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">{current.exercise.safetyNotes ?? "Pare se sentir dor aguda e ajuste carga, amplitude ou descanso."}</p></div>
+          </div>}
           <div className="mt-8 font-mono text-5xl font-black text-white" aria-label={`Tempo ${minutesLabel}`}>{minutesLabel}</div>
           <div className="mt-8 flex flex-wrap justify-center gap-2">
             <button onClick={() => setStarted((value) => !value)} className="secondary-button"><Timer size={18} /> {started ? "Pausar" : seconds ? "Continuar" : "Iniciar"}</button>
@@ -419,7 +423,7 @@ export function WorkoutSessionLivePage() {
           </div>
           <p className="mt-6 max-w-md text-xs leading-5 text-[var(--text-dim)]">Movimento controlado e respiração confortável. Dor aguda não faz parte do treino.</p>
         </section>
-        <aside className="app-card p-5"><div className="mb-5 flex items-center justify-between"><div><p className="eyebrow">Progresso</p><p className="mt-2 font-black text-white">{done.length} de {exercises.length}</p></div><ProgressRing value={Math.round((done.length / Math.max(1, exercises.length)) * 100)} size={76} stroke={7} color="var(--coral)" label="Progresso do treino" /></div><div className="divide-y divide-[var(--border)]">{exercises.map((exercise) => <div key={exercise.id} className="flex min-h-[60px] items-center gap-3"><span className={`grid size-7 place-items-center rounded-[5px] border ${done.includes(exercise.exerciseId) ? "border-[var(--lime)] bg-[var(--lime)] text-[var(--lime-ink)]" : current?.exerciseId === exercise.exerciseId ? "border-[var(--coral)] text-[var(--coral)]" : "border-[var(--border)] text-[var(--text-dim)]"}`}>{done.includes(exercise.exerciseId) ? <Check size={15} strokeWidth={3} /> : <span className="size-1.5 rounded-full bg-current" />}</span><div className="min-w-0"><p className="truncate text-sm font-bold text-white">{exercise.exercise.name}</p><p className="mt-0.5 text-xs text-[var(--text-muted)]">{formatExerciseTarget(exercise)}</p></div></div>)}</div></aside>
+        <aside className="app-card p-5"><div className="mb-5 flex items-center justify-between"><div><p className="eyebrow">Progresso</p><p className="mt-2 font-black text-white">{done.length} de {exercises.length}</p></div><ProgressRing value={Math.round((done.length / Math.max(1, exercises.length)) * 100)} size={76} stroke={7} color="var(--coral)" label="Progresso do treino" /></div><div className="divide-y divide-[var(--border)]">{exercises.map((exercise) => <div key={exercise.id} className="flex min-h-[72px] items-center gap-3"><span className={`grid size-7 place-items-center rounded-[5px] border ${done.includes(exercise.exerciseId) ? "border-[var(--lime)] bg-[var(--lime)] text-[var(--lime-ink)]" : current?.exerciseId === exercise.exerciseId ? "border-[var(--coral)] text-[var(--coral)]" : "border-[var(--border)] text-[var(--text-dim)]"}`}>{done.includes(exercise.exerciseId) ? <Check size={15} strokeWidth={3} /> : <span className="size-1.5 rounded-full bg-current" />}</span><div className="min-w-0"><p className="truncate text-sm font-bold text-white">{exercise.exercise.name}</p><p className="mt-0.5 truncate text-xs text-[var(--text-muted)]">{formatExerciseTarget(exercise)} · {exercise.exercise.muscleGroup}{exercise.exercise.equipment ? ` · ${exercise.exercise.equipment}` : ""}</p></div></div>)}</div></aside>
       </div>
     )}
   </Screen>;
