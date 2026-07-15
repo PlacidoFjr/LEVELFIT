@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Bell, Flame, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuthSession } from "@/lib/auth-client";
 import { getUserProgress } from "@/lib/user-progress";
 
@@ -20,11 +20,7 @@ export function PageHeader({ title, description, action }: { title: string; desc
   const progress = getUserProgress(session.user);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [currentDate, setCurrentDate] = useState("Hoje");
-
-  useEffect(() => {
-    setCurrentDate(new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long" }).format(new Date()));
-  }, []);
+  const currentDate = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long" }).format(new Date());
 
   return (
     <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
