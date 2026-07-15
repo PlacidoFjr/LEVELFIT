@@ -742,20 +742,34 @@ export function NotificationPreferencesLivePage() {
     return () => { active = false; };
   }, []);
 
-  function updateLocal(key: keyof NotificationPreferences, value: boolean | string | number) {
+  function updateLocal(key: keyof NotificationPreferences, value: boolean | string | number | number[]) {
     setPrefs((current) => current ? { ...current, [key]: value } : current);
   }
 
   async function save() {
     if (!prefs) return;
     setError(null);
+    setNotice(null);
     try {
+      const preferredWorkoutTime = timeValue(prefs.preferredWorkoutTime);
+      const streakRiskTime = timeValue(prefs.streakRiskTime);
+      const quietHoursStart = timeValue(prefs.quietHoursStart);
+      const quietHoursEnd = timeValue(prefs.quietHoursEnd);
       const saved = await updateNotificationPreferences({
-        ...prefs,
-        preferredWorkoutTime: timeValue(prefs.preferredWorkoutTime),
-        streakRiskTime: timeValue(prefs.streakRiskTime),
-        quietHoursStart: timeValue(prefs.quietHoursStart),
-        quietHoursEnd: timeValue(prefs.quietHoursEnd),
+        emailEnabled: prefs.emailEnabled,
+        pushEnabled: prefs.pushEnabled,
+        waterRemindersEnabled: prefs.waterRemindersEnabled,
+        workoutRemindersEnabled: prefs.workoutRemindersEnabled,
+        nutritionRemindersEnabled: prefs.nutritionRemindersEnabled,
+        streakRemindersEnabled: prefs.streakRemindersEnabled,
+        weeklySummaryEnabled: prefs.weeklySummaryEnabled,
+        preferredWorkoutTime: preferredWorkoutTime || undefined,
+        waterReminderIntervalMinutes: prefs.waterReminderIntervalMinutes,
+        streakRiskTime: streakRiskTime || undefined,
+        quietHoursStart: quietHoursStart || undefined,
+        quietHoursEnd: quietHoursEnd || undefined,
+        silentDays: prefs.silentDays ?? [],
+        timezone: prefs.timezone,
       });
       setPrefs(saved);
       setNotice("Preferências salvas.");
