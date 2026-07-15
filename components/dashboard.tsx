@@ -152,6 +152,7 @@ export function Dashboard() {
 
   const earnedToday = dashboardMissions.filter((mission) => completed.includes(mission.id)).reduce((sum, mission) => sum + mission.xp, 0);
   const missionProgress = Math.round((completed.length / Math.max(1, dashboardMissions.length)) * 100);
+  const homeMissions = dashboardMissions.filter((mission) => !completed.includes(mission.id)).slice(0, 4);
   const pendingXp = optimisticXp.baseTotalXp === progress.totalXp ? optimisticXp.amount : 0;
   const visibleCurrentXp = Math.min(progress.nextLevelXp, progress.currentXp + pendingXp);
   const levelProgress = Math.round((visibleCurrentXp / progress.nextLevelXp) * 100);
@@ -316,7 +317,7 @@ export function Dashboard() {
             <Link href="/missions" className="ghost-button">Ver todas <ChevronRight size={17} /></Link>
           </div>
           <div className="divide-y divide-[var(--border)]">
-            {dashboardMissions.map((mission) => {
+            {homeMissions.map((mission) => {
               const done = completed.includes(mission.id);
               const Icon = mission.icon;
               const style = toneStyles[mission.tone] ?? toneStyles.progress;
