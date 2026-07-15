@@ -7,13 +7,14 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001/v
 const ACCESS_TOKEN_KEY = "levelfit.accessToken";
 const CSRF_TOKEN_KEY = "levelfit.csrfToken";
 const USER_KEY = "levelfit.user";
-const REQUEST_TIMEOUT_MS = 60000;
+const REQUEST_TIMEOUT_MS = 120000;
 
 let memoryAccessToken: string | null = null;
 let memoryCsrfToken: string | null = null;
 let memoryUser: AuthUser | null = null;
 let refreshPromise: Promise<boolean> | null = null;
 let sessionPromise: Promise<AuthUser | null> | null = null;
+let warmupPromise: Promise<void> | null = null;
 
 export type AuthUser = {
   id: string;
@@ -74,6 +75,29 @@ export class ApiClientError extends Error {
 
 function timeoutError() {
   return new ApiClientError("A API ainda está acordando. Aguarde alguns segundos e tente novamente.", "REQUEST_TIMEOUT", 408);
+}
+
+async function warmApi() {
+  warmupPromise ??= warmApiOnce().finally(() => {
+    warmupPromise = null;
+  });
+  return warmupPromise;
+}
+
+async function warmApiOnce() {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    await fetch(`${API_BASE_URL}/health`, {
+      method: "GET",
+      cache: "no-store",
+      signal: controller.signal,
+    });
+  } catch {
+    // The real authenticated request below will surface the actionable error.
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
 }
 
 function readStoredUser(): AuthUser | null {
@@ -231,6 +255,7 @@ export async function loginUser(email: string, password: string) {
 }
 
 async function loginWithFirebaseToken(input: FirebaseLoginInput) {
+  await warmApi();
   const response = await apiRequest<LoginResponse>("/auth/firebase", {
     method: "POST",
     body: JSON.stringify({
