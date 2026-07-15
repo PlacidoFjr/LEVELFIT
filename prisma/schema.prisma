@@ -503,6 +503,29 @@ model Meal {
   @@map("meals")
 }
 
+model Food {
+  id              String    @id @default(uuid()) @db.Uuid
+  tacoCode        Int?      @unique @map("taco_code")
+  name            String    @db.VarChar(180)
+  searchName      String    @map("search_name") @db.VarChar(220)
+  category        String    @db.VarChar(100)
+  kcalPer100g     Int?      @map("kcal_per_100g")
+  proteinGPer100g Decimal?  @map("protein_g_per_100g") @db.Decimal(7, 2)
+  carbsGPer100g   Decimal?  @map("carbs_g_per_100g") @db.Decimal(7, 2)
+  fatGPer100g     Decimal?  @map("fat_g_per_100g") @db.Decimal(7, 2)
+  fiberGPer100g   Decimal?  @map("fiber_g_per_100g") @db.Decimal(7, 2)
+  source          String    @db.VarChar(120)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt       DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  foodLogItems FoodLogItem[]
+
+  @@index([searchName])
+  @@index([category])
+  @@map("foods")
+}
+
 model FoodLog {
   id                    String    @id @default(uuid()) @db.Uuid
   userId                String    @map("user_id") @db.Uuid
@@ -523,10 +546,33 @@ model FoodLog {
 
   user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   meal Meal? @relation(fields: [mealId], references: [id])
+  items FoodLogItem[]
 
   @@index([userId, loggedAt])
   @@index([mealId])
   @@map("food_logs")
+}
+
+model FoodLogItem {
+  id           String   @id @default(uuid()) @db.Uuid
+  foodLogId    String   @map("food_log_id") @db.Uuid
+  foodId       String?  @map("food_id") @db.Uuid
+  nameSnapshot String   @map("name_snapshot") @db.VarChar(180)
+  quantityG    Decimal  @map("quantity_g") @db.Decimal(7, 2)
+  calories     Int?
+  proteinG     Decimal? @map("protein_g") @db.Decimal(7, 2)
+  carbsG       Decimal? @map("carbs_g") @db.Decimal(7, 2)
+  fatG         Decimal? @map("fat_g") @db.Decimal(7, 2)
+  fiberG       Decimal? @map("fiber_g") @db.Decimal(7, 2)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  foodLog FoodLog @relation(fields: [foodLogId], references: [id], onDelete: Cascade)
+  food    Food?   @relation(fields: [foodId], references: [id], onDelete: SetNull)
+
+  @@index([foodLogId])
+  @@index([foodId])
+  @@map("food_log_items")
 }
 
 model NutritionGoal {

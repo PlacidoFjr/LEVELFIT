@@ -1,2 +1,2 @@
-import { NutritionLivePage } from "@/components/live-pages";
-export default function Page() { return <NutritionLivePage />; }
+import { NutritionSmartPage } from "@/components/nutrition-smart-page";
+export default function Page() { return <NutritionSmartPage />; }

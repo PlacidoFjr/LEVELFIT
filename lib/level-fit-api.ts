@@ -99,6 +99,35 @@ export type FoodLog = {
   carbsG?: string | number | null;
   fatG?: string | number | null;
   meal?: { id: string; name: string } | null;
+  items?: FoodLogItem[];
+};
+
+export type Food = {
+  id: string;
+  tacoCode?: number | null;
+  name: string;
+  searchName: string;
+  category: string;
+  kcalPer100g?: number | null;
+  proteinGPer100g?: string | number | null;
+  carbsGPer100g?: string | number | null;
+  fatGPer100g?: string | number | null;
+  fiberGPer100g?: string | number | null;
+  source: string;
+};
+
+export type FoodLogItem = {
+  id: string;
+  foodLogId: string;
+  foodId?: string | null;
+  nameSnapshot: string;
+  quantityG: string | number;
+  calories?: number | null;
+  proteinG?: string | number | null;
+  carbsG?: string | number | null;
+  fatG?: string | number | null;
+  fiberG?: string | number | null;
+  food?: Food | null;
 };
 
 export type NutritionToday = {
@@ -296,6 +325,13 @@ export function getNutritionGoal() {
   return apiRequest<NutritionGoal | null>("/nutrition/goals");
 }
 
+export function searchFoods(q: string, limit = 20) {
+  const params = new URLSearchParams();
+  if (q.trim()) params.set("q", q.trim());
+  params.set("limit", String(limit));
+  return apiRequest<Food[]>(`/foods?${params.toString()}`);
+}
+
 export function updateNutritionGoal(input: {
   dailyCalories?: number;
   proteinG?: number;
@@ -320,6 +356,16 @@ export function addFoodLog(input: {
   proteinG?: number;
   carbsG?: number;
   fatG?: number;
+  items?: Array<{
+    foodId?: string;
+    name?: string;
+    quantityG: number;
+    calories?: number;
+    proteinG?: number;
+    carbsG?: number;
+    fatG?: number;
+    fiberG?: number;
+  }>;
 }) {
   return apiRequest<{ log: FoodLog; checklistCompleted: number; xpAwarded: number }>("/food-logs", {
     method: "POST",

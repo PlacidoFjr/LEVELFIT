@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
+import { tacoFoods } from "./taco-foods.generated";
 import { guideExercises, guideWorkoutExercises, guideWorkouts } from "./workout-guide.generated";
 
 const prisma = new PrismaClient({
@@ -168,6 +169,14 @@ async function main() {
     { id: "50000000-0000-4000-8000-000000000003", name: "Lanche", sortOrder: 3 },
     { id: "50000000-0000-4000-8000-000000000004", name: "Jantar", sortOrder: 4 },
   ]) await prisma.meal.upsert({ where: { id: meal.id }, create: meal, update: meal });
+
+  for (const food of tacoFoods) {
+    await prisma.food.upsert({
+      where: { tacoCode: food.tacoCode },
+      create: food,
+      update: { ...food, deletedAt: null },
+    });
+  }
 
   for (const mission of missions) {
     await prisma.dailyMission.upsert({ where: { key: mission.key }, create: mission, update: { ...mission, isActive: true, deletedAt: null } });
