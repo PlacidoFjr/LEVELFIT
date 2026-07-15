@@ -66,6 +66,10 @@ function optionalFormNumber(form: FormData, key: string) {
   return Number.isFinite(value) && value >= 0 ? value : undefined;
 }
 
+function hasPositiveValue(value?: number) {
+  return typeof value === "number" && Number.isFinite(value) && value > 0;
+}
+
 export function NutritionSmartPage() {
   const [data, setData] = useState<NutritionToday | null>(null);
   const [goal, setGoal] = useState<NutritionGoal | null>(null);
@@ -139,6 +143,8 @@ export function NutritionSmartPage() {
   const checkPercent = Math.min(100, Math.round((doneChecks.size / Math.max(1, targetChecks)) * 100));
 
   function addToPlate(food: Food) {
+    setError(null);
+    setNotice(null);
     setPlate((current) => {
       const existing = current.find((item) => item.food.id === food.id);
       if (existing) return current.map((item) => item.food.id === food.id ? { ...item, quantityG: item.quantityG + 50 } : item);
@@ -167,21 +173,38 @@ export function NutritionSmartPage() {
   async function submitFood(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
+    const trimmedDescription = String(form.get("description") ?? "").trim() || description.trim();
+    const manualNumbers = {
+      calories: plate.length ? undefined : optionalFormNumber(form, "calories"),
+      proteinG: plate.length ? undefined : optionalFormNumber(form, "proteinG"),
+      carbsG: plate.length ? undefined : optionalFormNumber(form, "carbsG"),
+      fatG: plate.length ? undefined : optionalFormNumber(form, "fatG"),
+    };
+    const hasManualCheck = Object.values(manualChecks).some(Boolean);
+    const hasManualNumber = Object.values(manualNumbers).some(hasPositiveValue);
+    const hasMeaningfulEntry = Boolean(trimmedDescription || plate.length || hasManualCheck || hasManualNumber);
+
+    if (!hasMeaningfulEntry) {
+      setNotice(null);
+      setError("Adicione um alimento, escreva uma descrição ou marque pelo menos uma escolha do checklist.");
+      return;
+    }
+
     setSaving(true);
     setError(null);
     setNotice(null);
     try {
       const result = await addFoodLog({
-        description: String(form.get("description") ?? "").trim() || description.trim() || (plate.length ? plate.map((item) => item.food.name).join(", ") : "Refeição registrada"),
+        description: trimmedDescription || (plate.length ? plate.map((item) => item.food.name).join(", ") : "Refeição registrada"),
         hasProtein: manualChecks.hasProtein || undefined,
         hasFruitOrVegetable: manualChecks.hasFruitOrVegetable || undefined,
         avoidedSkippingMeal: manualChecks.avoidedSkippingMeal || undefined,
         mindfulChoice: manualChecks.mindfulChoice || undefined,
-        calories: plate.length ? undefined : optionalFormNumber(form, "calories"),
-        proteinG: plate.length ? undefined : optionalFormNumber(form, "proteinG"),
-        carbsG: plate.length ? undefined : optionalFormNumber(form, "carbsG"),
-        fatG: plate.length ? undefined : optionalFormNumber(form, "fatG"),
-        items: plate.map((item) => ({ foodId: item.food.id, quantityG: item.quantityG })),
+        calories: manualNumbers.calories,
+        proteinG: manualNumbers.proteinG,
+        carbsG: manualNumbers.carbsG,
+        fatG: manualNumbers.fatG,
+        items: plate.length ? plate.map((item) => ({ foodId: item.food.id, quantityG: item.quantityG })) : undefined,
       });
       setNotice(result.xpAwarded ? `Refeição salva. +${result.xpAwarded} XP.` : "Refeição salva.");
       setDescription("");
@@ -222,7 +245,7 @@ export function NutritionSmartPage() {
   }
 
   return <div className="mx-auto w-full max-w-[1480px] px-3 py-4 sm:px-6 lg:px-8 lg:py-7">
-    <PageHeader title="Alimentação" description="Registre refeições sem transformar comida em prêmio ou culpa." action={<div className="flex flex-wrap gap-2"><button onClick={() => setShowGoal(true)} disabled={saving} className="secondary-button disabled:opacity-60"><Target size={18} /> Editar metas</button><button onClick={() => setShowAdd(true)} disabled={saving} className="primary-button disabled:opacity-60"><Plus size={18} /> Registrar refeição</button></div>} />
+    <PageHeader title="Alimentação" description="Registre refeições sem transformar comida em prêmio ou culpa." action={<div className="flex flex-wrap gap-2"><button onClick={() => { setError(null); setNotice(null); setShowGoal(true); }} disabled={saving} className="secondary-button disabled:opacity-60"><Target size={18} /> Editar metas</button><button onClick={() => { setError(null); setNotice(null); setShowAdd(true); }} disabled={saving} className="primary-button disabled:opacity-60"><Plus size={18} /> Registrar refeição</button></div>} />
     <Notice message={notice} />
     <Notice message={error} tone="danger" />
 
@@ -239,12 +262,12 @@ export function NutritionSmartPage() {
     </form>}
 
     {showAdd && <form onSubmit={submitFood} className="app-card mb-4 p-5">
-      <div className="flex items-start justify-between gap-3"><div><p className="eyebrow text-[var(--green)]">Nova refeição</p><h2 className="mt-2 text-lg font-black text-white">Monte o prato ou registre do seu jeito</h2><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">A estimativa é opcional e serve para orientar, não para cobrar perfeição.</p></div><button type="button" onClick={() => setShowAdd(false)} className="ghost-button">Fechar</button></div>
-      <textarea className="field mt-4 min-h-20 py-3" name="description" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Ex: almoço com arroz, feijão, frango e salada" />
+      <div className="flex items-start justify-between gap-3"><div><p className="eyebrow text-[var(--green)]">Nova refeição</p><h2 className="mt-2 text-lg font-black text-white">Monte o prato ou registre do seu jeito</h2><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">A estimativa é opcional e serve para orientar, não para cobrar perfeição.</p></div><button type="button" onClick={() => { setError(null); setShowAdd(false); }} className="ghost-button">Fechar</button></div>
+      <textarea className="field mt-4 min-h-20 py-3" name="description" value={description} onChange={(event) => { setDescription(event.target.value); setError(null); }} placeholder="Ex: almoço com arroz, feijão, frango e salada" />
       <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_0.9fr]">
         <section className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-4">
           <label className="text-xs font-bold text-[var(--text-muted)]">Busca de alimentos</label>
-          <div className="relative mt-2"><Search className="pointer-events-none absolute left-3 top-3 text-[var(--text-dim)]" size={18} /><input className="field" style={{ paddingLeft: 42 }} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Arroz, feijão, banana..." /></div>
+          <div className="relative mt-2"><Search className="pointer-events-none absolute left-3 top-3 text-[var(--text-dim)]" size={18} /><input className="field" style={{ paddingLeft: 42 }} value={query} onChange={(event) => { setQuery(event.target.value); setError(null); }} placeholder="Arroz, feijão, banana..." /></div>
           <div className="mt-3 max-h-64 overflow-auto rounded-[8px] border border-[var(--border)]">
             {query.trim().length < 2 ? <p className="p-4 text-sm text-[var(--text-muted)]">Digite pelo menos 2 letras para buscar.</p> : searching ? <p className="p-4 text-sm text-[var(--text-muted)]">Buscando alimentos...</p> : foods.length ? foods.map((food) => <button key={food.id} type="button" onClick={() => addToPlate(food)} className="flex min-h-[64px] w-full items-center justify-between gap-3 border-b border-[var(--border)] px-3 py-2 text-left last:border-b-0 hover:bg-[rgba(255,255,255,0.03)]"><span><strong className="block text-sm text-white">{food.name}</strong><span className="mt-1 block text-xs text-[var(--text-muted)]">{food.category}</span></span><span className="shrink-0 text-xs font-black text-[var(--green)]">{food.kcalPer100g ?? "-"} kcal</span></button>) : <p className="p-4 text-sm text-[var(--text-muted)]">Nenhum alimento encontrado.</p>}
           </div>
@@ -262,7 +285,7 @@ export function NutritionSmartPage() {
           </div>
         </section>
       </div>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{checklist.map((item) => <label key={item.id} className="flex min-h-12 items-center gap-3 rounded-[7px] border border-[var(--border)] bg-[var(--surface)] px-3 text-sm font-bold text-white"><input type="checkbox" checked={manualChecks[item.id]} onChange={(event) => setManualChecks((current) => ({ ...current, [item.id]: event.target.checked }))} className="size-4 accent-[var(--green)]" /> {item.label}</label>)}</div>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{checklist.map((item) => <label key={item.id} className="flex min-h-12 items-center gap-3 rounded-[7px] border border-[var(--border)] bg-[var(--surface)] px-3 text-sm font-bold text-white"><input type="checkbox" checked={manualChecks[item.id]} onChange={(event) => { setManualChecks((current) => ({ ...current, [item.id]: event.target.checked })); setError(null); }} className="size-4 accent-[var(--green)]" /> {item.label}</label>)}</div>
       {!plate.length && <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><input className="field" name="calories" type="number" min={0} max={10000} placeholder="Calorias opcional" /><input className="field" name="proteinG" type="number" min={0} max={1000} step="0.1" placeholder="Proteína g" /><input className="field" name="carbsG" type="number" min={0} max={2000} step="0.1" placeholder="Carboidratos g" /><input className="field" name="fatG" type="number" min={0} max={1000} step="0.1" placeholder="Gorduras g" /></div>}
       <button disabled={saving} className="primary-button mt-4 bg-[var(--green)] text-[#052313] disabled:opacity-60">{saving ? "Salvando..." : "Salvar refeição"}</button>
     </form>}

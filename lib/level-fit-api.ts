@@ -259,12 +259,19 @@ export function timeValue(value?: string | null) {
   return value.slice(0, 5);
 }
 
+function notifyXpUpdate(amount?: number) {
+  if (typeof window === "undefined" || !amount || amount <= 0) return;
+  window.dispatchEvent(new CustomEvent("levelfit:xp-updated", { detail: { amount } }));
+}
+
 export function listMissions() {
   return apiRequest<UserMission[]>("/missions/today");
 }
 
-export function completeMission(id: string) {
-  return apiRequest<{ mission: UserMission; xpAwarded: number }>(`/missions/${id}/complete`, { method: "PATCH" });
+export async function completeMission(id: string) {
+  const result = await apiRequest<{ mission: UserMission; xpAwarded: number }>(`/missions/${id}/complete`, { method: "PATCH" });
+  notifyXpUpdate(result.xpAwarded);
+  return result;
 }
 
 export function listWorkouts() {
@@ -282,8 +289,8 @@ export function startWorkoutSession(workoutId: string) {
   });
 }
 
-export function finishWorkoutSession(sessionId: string, exercises: WorkoutSessionExercise[], perceivedEffort?: number) {
-  return apiRequest<WorkoutSession>(`/workout-sessions/${sessionId}`, {
+export async function finishWorkoutSession(sessionId: string, exercises: WorkoutSessionExercise[], perceivedEffort?: number) {
+  const result = await apiRequest<WorkoutSession>(`/workout-sessions/${sessionId}`, {
     method: "PATCH",
     body: JSON.stringify({
       status: "completed",
@@ -297,17 +304,21 @@ export function finishWorkoutSession(sessionId: string, exercises: WorkoutSessio
       })),
     }),
   });
+  notifyXpUpdate(result.xpAwarded);
+  return result;
 }
 
 export function getHydrationToday() {
   return apiRequest<HydrationToday>("/hydration/today");
 }
 
-export function addWaterLog(amountMl: number) {
-  return apiRequest<{ log: { id: string; amountMl: number; loggedAt: string }; consumedMl: number; goalMl: number; xpAwarded: number }>("/water-logs", {
+export async function addWaterLog(amountMl: number) {
+  const result = await apiRequest<{ log: { id: string; amountMl: number; loggedAt: string }; consumedMl: number; goalMl: number; xpAwarded: number }>("/water-logs", {
     method: "POST",
     body: JSON.stringify({ amountMl }),
   });
+  notifyXpUpdate(result.xpAwarded);
+  return result;
 }
 
 export function updateHydrationGoal(dailyGoalMl: number) {
@@ -345,7 +356,7 @@ export function updateNutritionGoal(input: {
   });
 }
 
-export function addFoodLog(input: {
+export async function addFoodLog(input: {
   description?: string;
   mealId?: string;
   hasProtein?: boolean;
@@ -367,10 +378,12 @@ export function addFoodLog(input: {
     fiberG?: number;
   }>;
 }) {
-  return apiRequest<{ log: FoodLog; checklistCompleted: number; xpAwarded: number }>("/food-logs", {
+  const result = await apiRequest<{ log: FoodLog; checklistCompleted: number; xpAwarded: number }>("/food-logs", {
     method: "POST",
     body: JSON.stringify(input),
   });
+  notifyXpUpdate(result.xpAwarded);
+  return result;
 }
 
 export function listMeasurements() {

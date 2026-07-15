@@ -407,13 +407,20 @@ export function useAuthSession() {
       setUser(readStoredUser());
     }
 
+    async function refreshAfterXp() {
+      const nextUser = await loadSessionUser();
+      if (active) setUser(nextUser);
+    }
+
     void load();
     window.addEventListener("storage", sync);
     window.addEventListener("levelfit:auth", sync);
+    window.addEventListener("levelfit:xp-updated", refreshAfterXp);
     return () => {
       active = false;
       window.removeEventListener("storage", sync);
       window.removeEventListener("levelfit:auth", sync);
+      window.removeEventListener("levelfit:xp-updated", refreshAfterXp);
     };
   }, []);
 

@@ -248,6 +248,50 @@ const workoutDifficulties: Array<{ id: WorkoutDifficultyFilter; label: string; d
   { id: "hard", label: "Intenso", detail: "Mais volume e experiência" },
 ];
 
+function WorkoutChoicePicker({
+  focus,
+  intensity,
+  onFocusChange,
+  onIntensityChange,
+}: {
+  focus: WorkoutFocusId;
+  intensity: WorkoutDifficultyFilter;
+  onFocusChange: (value: WorkoutFocusId) => void;
+  onIntensityChange: (value: WorkoutDifficultyFilter) => void;
+}) {
+  return (
+    <>
+      <div className="mt-4 grid gap-3 sm:hidden">
+        <label className="block">
+          <span className="text-xs font-black uppercase text-[var(--text-muted)]">Foco do treino</span>
+          <select className="field mt-2 h-14 text-base font-black" value={focus} onChange={(event) => onFocusChange(event.target.value as WorkoutFocusId)}>
+            {workoutFocuses.map((item) => <option key={item.id} value={item.id}>{item.label} - {item.detail}</option>)}
+          </select>
+        </label>
+        <label className="block">
+          <span className="text-xs font-black uppercase text-[var(--text-muted)]">Intensidade</span>
+          <select className="field mt-2 h-14 text-base font-black" value={intensity} onChange={(event) => onIntensityChange(event.target.value as WorkoutDifficultyFilter)}>
+            {workoutDifficulties.map((item) => <option key={item.id} value={item.id}>{item.label} - {item.detail}</option>)}
+          </select>
+        </label>
+        <p className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-bold leading-5 text-[var(--text-muted)]">No iPhone, toque no campo para abrir o seletor rolável nativo.</p>
+      </div>
+      <div className="mt-4 hidden gap-2 sm:grid sm:grid-cols-2 xl:grid-cols-5">
+        {workoutFocuses.map((item) => <button key={item.id} type="button" onClick={() => onFocusChange(item.id)} className={`min-h-[74px] rounded-[8px] border px-3 py-3 text-left transition-colors ${focus === item.id ? "border-[var(--lime)] bg-[rgba(183,255,42,0.1)]" : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-strong)]"}`}>
+          <span className={`block text-sm font-black ${focus === item.id ? "text-[var(--lime)]" : "text-white"}`}>{item.label}</span>
+          <span className="mt-1 block text-xs font-bold leading-4 text-[var(--text-muted)]">{item.detail}</span>
+        </button>)}
+      </div>
+      <div className="mt-3 hidden gap-2 sm:grid sm:grid-cols-2 xl:grid-cols-4">
+        {workoutDifficulties.map((item) => <button key={item.id} type="button" onClick={() => onIntensityChange(item.id)} className={`min-h-[68px] rounded-[8px] border px-3 py-3 text-left transition-colors ${intensity === item.id ? "border-[var(--coral)] bg-[rgba(255,107,61,0.1)]" : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-strong)]"}`}>
+          <span className={`block text-sm font-black ${intensity === item.id ? "text-[var(--coral)]" : "text-white"}`}>{item.label}</span>
+          <span className="mt-1 block text-xs font-bold leading-4 text-[var(--text-muted)]">{item.detail}</span>
+        </button>)}
+      </div>
+    </>
+  );
+}
+
 function searchable(value: string) {
   return value.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 }
@@ -333,18 +377,7 @@ export function WorkoutsLivePage() {
         </div>
         <Pill tone="cyan">{configuredWorkouts.length || focusedWorkouts.length} opções</Pill>
       </div>
-      <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
-        {workoutFocuses.map((item) => <button key={item.id} type="button" onClick={() => setFocus(item.id)} className={`min-h-[74px] rounded-[8px] border px-3 py-3 text-left transition-colors ${focus === item.id ? "border-[var(--lime)] bg-[rgba(183,255,42,0.1)]" : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-strong)]"}`}>
-          <span className={`block text-sm font-black ${focus === item.id ? "text-[var(--lime)]" : "text-white"}`}>{item.label}</span>
-          <span className="mt-1 block text-xs font-bold leading-4 text-[var(--text-muted)]">{item.detail}</span>
-        </button>)}
-      </div>
-      <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-        {workoutDifficulties.map((item) => <button key={item.id} type="button" onClick={() => setIntensity(item.id)} className={`min-h-[68px] rounded-[8px] border px-3 py-3 text-left transition-colors ${intensity === item.id ? "border-[var(--coral)] bg-[rgba(255,107,61,0.1)]" : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-strong)]"}`}>
-          <span className={`block text-sm font-black ${intensity === item.id ? "text-[var(--coral)]" : "text-white"}`}>{item.label}</span>
-          <span className="mt-1 block text-xs font-bold leading-4 text-[var(--text-muted)]">{item.detail}</span>
-        </button>)}
-      </div>
+      <WorkoutChoicePicker focus={focus} intensity={intensity} onFocusChange={setFocus} onIntensityChange={setIntensity} />
       {configuredWorkouts.length === 0 && focusedWorkouts.length > 0 && <p className="mt-3 rounded-[8px] border border-[var(--border)] bg-[rgba(255,214,10,0.06)] px-3 py-2 text-xs font-bold text-[var(--gold)]">Não encontrei esse foco nessa intensidade. Mostrando a opção mais próxima para você não ficar travado.</p>}
     </section>}
     {loading ? <LoadingCard /> : !workout ? <section className="app-card grid min-h-[240px] place-items-center p-6 text-center"><div><Dumbbell className="mx-auto text-[var(--text-dim)]" size={32} /><h2 className="mt-4 font-black text-white">Nenhum treino disponível</h2><p className="mt-2 max-w-md text-sm leading-6 text-[var(--text-muted)]">{error ? "Não conseguimos carregar sua biblioteca de treinos agora." : "A biblioteca de treinos ainda não foi carregada."}</p><button onClick={() => void load()} className="secondary-button mx-auto mt-5">Tentar novamente</button></div></section> : (

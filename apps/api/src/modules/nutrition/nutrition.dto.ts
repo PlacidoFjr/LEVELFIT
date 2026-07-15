@@ -5,7 +5,7 @@ export class FoodLogItemDto {
   @IsOptional() @IsUUID() foodId?: string;
   @IsOptional() @IsString() @MaxLength(180) name?: string;
   @Type(() => Number) @IsNumber({ maxDecimalPlaces: 2 }) @Min(1) @Max(5000) quantityG!: number;
-  @IsOptional() @IsInt() @Min(0) @Max(10000) calories?: number;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(0) @Max(10000) calories?: number;
   @IsOptional() @Type(() => Number) @IsNumber({ maxDecimalPlaces: 2 }) @Min(0) @Max(1000) proteinG?: number;
   @IsOptional() @Type(() => Number) @IsNumber({ maxDecimalPlaces: 2 }) @Min(0) @Max(2000) carbsG?: number;
   @IsOptional() @Type(() => Number) @IsNumber({ maxDecimalPlaces: 2 }) @Min(0) @Max(1000) fatG?: number;
@@ -33,9 +33,9 @@ export class CreateFoodLogDto {
 }
 
 export class UpdateNutritionGoalDto {
-  @IsOptional() @IsInt() @Min(800) @Max(10000) dailyCalories?: number;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(800) @Max(10000) dailyCalories?: number;
   @IsOptional() @Type(() => Number) @IsNumber({ maxDecimalPlaces: 2 }) @Min(0) @Max(1000) proteinG?: number;
   @IsOptional() @Type(() => Number) @IsNumber({ maxDecimalPlaces: 2 }) @Min(0) @Max(2000) carbsG?: number;
   @IsOptional() @Type(() => Number) @IsNumber({ maxDecimalPlaces: 2 }) @Min(0) @Max(1000) fatG?: number;
-  @IsOptional() @IsInt() @Min(1) @Max(4) checklistGoalCount?: number;
+  @IsOptional() @Type(() => Number) @IsInt() @Min(1) @Max(4) checklistGoalCount?: number;
 }
