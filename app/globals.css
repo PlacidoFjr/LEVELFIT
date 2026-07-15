@@ -29,11 +29,14 @@
 html {
   background: var(--bg);
   color-scheme: dark;
+  overflow-x: hidden;
 }
 
 body {
+  width: 100%;
   min-height: 100vh;
   margin: 0;
+  overflow-x: hidden;
   background:
     linear-gradient(rgba(183, 255, 42, 0.025) 1px, transparent 1px),
     linear-gradient(90deg, rgba(183, 255, 42, 0.025) 1px, transparent 1px),
@@ -85,6 +88,7 @@ textarea:focus-visible {
 }
 
 .app-card {
+  min-width: 0;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: rgba(16, 22, 29, 0.96);
@@ -92,6 +96,7 @@ textarea:focus-visible {
 }
 
 .subtle-card {
+  min-width: 0;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--surface-elevated);
@@ -109,6 +114,7 @@ textarea:focus-visible {
 .secondary-button,
 .ghost-button,
 .icon-button {
+  max-width: 100%;
   display: inline-flex;
   min-height: 44px;
   align-items: center;
@@ -120,6 +126,29 @@ textarea:focus-visible {
   line-height: 1;
   cursor: pointer;
   transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+@media (max-width: 640px) {
+  .app-card,
+  .subtle-card {
+    box-shadow: none;
+  }
+
+  .primary-button,
+  .secondary-button {
+    min-height: 42px;
+    padding: 0 14px;
+  }
+
+  .ghost-button {
+    min-height: 38px;
+  }
+
+  .icon-button {
+    width: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
 }
 
 .primary-button {

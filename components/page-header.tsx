@@ -23,11 +23,11 @@ export function PageHeader({ title, description, action }: { title: string; desc
   const currentDate = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long" }).format(new Date());
 
   return (
-    <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <header className="mb-4 flex min-w-0 flex-col gap-3 sm:mb-6 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0 flex-1">
         <p className="eyebrow mb-2 capitalize">{currentDate}</p>
-        <h1 className="max-w-[980px] break-words text-2xl font-black leading-tight text-white sm:text-[2rem]">{title}</h1>
-        {description && <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-muted)]">{description}</p>}
+        <h1 className="max-w-[980px] break-words text-[1.55rem] font-black leading-[1.08] text-white sm:text-[2rem]">{title}</h1>
+        {description && <p className="mt-2 max-w-2xl text-sm leading-5 text-[var(--text-muted)] sm:leading-6">{description}</p>}
         {searchOpen && (
           <div className="mt-4 max-w-md">
             <label htmlFor="global-search" className="screen-reader-only">Buscar no LevelFit</label>
@@ -43,7 +43,7 @@ export function PageHeader({ title, description, action }: { title: string; desc
           </div>
         )}
       </div>
-      <div className="flex shrink-0 flex-wrap items-center gap-2 sm:justify-end">
+      <div className="flex w-full min-w-0 shrink-0 flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
         {action}
         <div className="hidden h-11 items-center gap-2 rounded-[7px] border border-[rgba(250,204,21,0.25)] bg-[rgba(250,204,21,0.08)] px-3 text-sm font-black text-[var(--gold)] sm:flex" title="Sequência atual">
           <Flame size={18} fill="currentColor" aria-hidden="true" /> {progress.streak} dias

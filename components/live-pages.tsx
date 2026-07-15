@@ -98,7 +98,7 @@ import { PulseAvatar } from "./pulse-avatar";
 import { ProgressRing } from "./progress-ring";
 
 function Screen({ title, description, action, children }: { title: string; description?: string; action?: React.ReactNode; children: React.ReactNode }) {
-  return <div className="mx-auto w-full max-w-[1480px] px-4 py-5 sm:px-6 lg:px-8 lg:py-7"><PageHeader title={title} description={description} action={action} />{children}</div>;
+  return <div className="mx-auto w-full max-w-[1480px] px-3 py-4 sm:px-6 lg:px-8 lg:py-7"><PageHeader title={title} description={description} action={action} />{children}</div>;
 }
 
 function Pill({ children, tone = "lime" }: { children: React.ReactNode; tone?: "lime" | "cyan" | "coral" | "green" | "gold" | "violet" }) {

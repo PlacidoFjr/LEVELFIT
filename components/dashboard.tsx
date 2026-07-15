@@ -127,6 +127,7 @@ export function Dashboard() {
   const avatarStage = getCurrentAvatarStage(progress.level);
   const nextAvatarStage = getNextAvatarStage(progress.level);
   const displayName = session.user?.displayName || user.name;
+  const greetingName = displayName.trim().split(/\s+/)[0] || "atleta";
 
   const [liveMissions, setLiveMissions] = useState<UserMission[]>([]);
   const [completed, setCompleted] = useState<string[]>([]);
@@ -258,36 +259,36 @@ export function Dashboard() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1480px] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
-      <PageHeader title={`Bom dia, ${displayName}`} description="Seu plano está equilibrado. Escolha uma ação pequena e deixe o resto para depois." />
+    <div className="mx-auto w-full max-w-[1480px] px-3 py-4 sm:px-6 lg:px-8 lg:py-7">
+      <PageHeader title={`Bom dia, ${greetingName}`} description="Seu plano está equilibrado. Escolha uma ação pequena e deixe o resto para depois." />
       <DashboardToast message={toast} />
 
       <section className="mb-4 grid gap-4 xl:grid-cols-[1.7fr_1fr]">
-        <div className="app-card overflow-hidden p-5 sm:p-6">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="app-card overflow-hidden p-4 sm:p-6">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
               <div className="mb-3 flex flex-wrap items-center gap-2">
                 <span className="inline-flex min-h-7 items-center gap-1.5 rounded-[6px] bg-[rgba(183,255,42,0.12)] px-2.5 text-xs font-black text-[var(--lime)]"><Zap size={14} fill="currentColor" /> NÍVEL {progress.level}</span>
                 <span className="inline-flex min-h-7 items-center gap-1.5 rounded-[6px] bg-[rgba(250,204,21,0.1)] px-2.5 text-xs font-black text-[var(--gold)]"><Flame size={14} fill="currentColor" /> {progress.streak} DIAS</span>
               </div>
-              <h2 className="text-xl font-black text-white sm:text-2xl">Ritmo forte, sem exagero.</h2>
+              <h2 className="text-lg font-black text-white sm:text-2xl">Ritmo forte, sem exagero.</h2>
               <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--text-muted)]">Você já ganhou <strong className="text-white">{earnedToday} XP</strong> hoje. Um treino curto ou mais um copo de água já deixa o dia completo.</p>
               <div className="mt-5 max-w-xl">
                 <div className="mb-2 flex justify-between text-xs font-bold text-[var(--text-muted)]"><span>{progress.levelName}</span><span>{progress.currentXp} / {progress.nextLevelXp} XP</span></div>
                 <div className="progress-track h-2.5"><motion.div className="progress-fill bg-[var(--lime)]" initial={{ width: 0 }} animate={{ width: `${levelProgress}%` }} /></div>
               </div>
             </div>
-            <div className="flex items-center gap-4 sm:flex-col sm:items-end">
-              <ProgressRing value={missionProgress} label="Missões do dia" />
+            <div className="flex items-center justify-between gap-4 border-t border-[var(--border)] pt-4 sm:flex-col sm:items-end sm:border-0 sm:pt-0">
+              <ProgressRing value={missionProgress} size={84} stroke={8} label="Missões do dia" />
               <p className="text-xs font-bold text-[var(--text-muted)]">{completed.length} de {dashboardMissions.length} missões</p>
             </div>
           </div>
         </div>
 
-        <div className="app-card relative min-h-[240px] overflow-hidden bg-[#080d12]">
+        <div className="app-card relative min-h-[190px] overflow-hidden bg-[#080d12] sm:min-h-[240px]">
           <PulseAvatar stage={avatarStage} alt={`${avatarStage.name}, companheiro de treino do LevelFit`} className="absolute inset-0" imageClassName="p-3" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#080b0f] via-[rgba(8,11,15,0.08)] to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 p-5">
+          <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
             <div className="flex flex-wrap items-center gap-2">
               <span className="eyebrow text-[var(--cyan)]">{avatarStage.name}</span>
               <span className="rounded-[5px] bg-[rgba(34,211,238,0.12)] px-2 py-1 text-[0.68rem] font-black text-[var(--cyan)]">{avatarStage.personality}</span>
@@ -302,7 +303,7 @@ export function Dashboard() {
       </section>
 
       <section className="grid gap-4 xl:grid-cols-3">
-        <div className="app-card p-5 xl:col-span-2">
+        <div className="app-card p-4 sm:p-5 xl:col-span-2">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div><p className="eyebrow">Missões de hoje</p><h2 className="mt-2 text-lg font-black text-white">Seu caminho mais curto</h2></div>
             <Link href="/missions" className="ghost-button">Ver todas <ChevronRight size={17} /></Link>
@@ -327,16 +328,16 @@ export function Dashboard() {
         </div>
 
         <div className="app-card flex flex-col p-5">
-          <div className="mb-5 flex items-center justify-between"><div><p className="eyebrow text-[var(--cyan)]">Hidratação</p><h2 className="mt-2 text-lg font-black text-white">{water.toLocaleString("pt-BR")} ml</h2></div><ProgressRing value={waterProgress} size={78} stroke={7} color="var(--cyan)" label="Meta de água" /></div>
+          <div className="mb-5 flex min-w-0 items-center justify-between gap-3"><div className="min-w-0"><p className="eyebrow text-[var(--cyan)]">Hidratação</p><h2 className="mt-2 text-lg font-black text-white">{water.toLocaleString("pt-BR")} ml</h2></div><ProgressRing value={waterProgress} size={68} stroke={7} color="var(--cyan)" label="Meta de água" /></div>
           <div className="progress-track"><motion.div className="progress-fill bg-[var(--cyan)]" animate={{ width: `${waterProgress}%` }} /></div>
           <p className="mt-3 text-sm text-[var(--text-muted)]">Faltam {Math.max(0, waterGoal - water).toLocaleString("pt-BR")} ml para sua meta flexível.</p>
-          <div className="mt-auto grid grid-cols-2 gap-2 pt-5">
-            <button onClick={() => addWater(250)} className="secondary-button px-2"><Plus size={17} /> 250 ml</button>
-            <button onClick={() => addWater(500)} className="secondary-button px-2"><Plus size={17} /> 500 ml</button>
+          <div className="mt-auto grid min-w-0 grid-cols-2 gap-2 pt-5">
+            <button onClick={() => addWater(250)} className="secondary-button min-w-0 px-2"><Plus size={17} /> 250 ml</button>
+            <button onClick={() => addWater(500)} className="secondary-button min-w-0 px-2"><Plus size={17} /> 500 ml</button>
           </div>
         </div>
 
-        <div className="app-card overflow-hidden p-5 xl:col-span-2">
+        <div className="app-card overflow-hidden p-4 sm:p-5 xl:col-span-2">
           <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div><p className="eyebrow text-[var(--coral)]">Treino do dia</p><h2 className="mt-2 text-xl font-black text-white">{workoutSummary.title}</h2><p className="mt-2 flex flex-wrap items-center gap-3 text-sm text-[var(--text-muted)]"><span className="inline-flex items-center gap-1.5"><Clock3 size={16} /> {workoutSummary.minutes} min</span><span className="inline-flex items-center gap-1.5"><Dumbbell size={16} /> {workoutSummary.difficulty}</span><span>{workoutSummary.exerciseCount} exercícios</span></p></div>
             <span className="inline-flex h-8 items-center rounded-[6px] bg-[rgba(255,107,61,0.12)] px-3 text-xs font-black text-[var(--coral)]">+60 XP</span>
@@ -350,7 +351,7 @@ export function Dashboard() {
           </div>
         </div>
 
-        <div className="app-card p-5">
+        <div className="app-card p-4 sm:p-5">
           <div className="mb-4 flex items-center justify-between gap-3"><div className="min-w-0"><p className="eyebrow text-[var(--green)]">Alimentação</p><h2 className="mt-2 truncate text-lg font-black text-white">Checklist de energia</h2></div><span className="shrink-0 text-sm font-black text-[var(--green)]">{nutritionProgress}%</span></div>
           <div className="space-y-2">
             {nutritionChecks.map((item) => {

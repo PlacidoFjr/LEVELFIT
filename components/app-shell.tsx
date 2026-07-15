@@ -132,7 +132,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-[var(--border)] bg-[rgba(8,11,15,0.92)] px-4 backdrop-blur lg:hidden">
+      <header className="sticky top-0 z-30 flex h-[60px] items-center justify-between border-b border-[var(--border)] bg-[rgba(8,11,15,0.92)] px-3 backdrop-blur lg:hidden">
         <Brand />
         <div className="flex items-center gap-2">
           <Link href="/notifications" className="icon-button relative" aria-label="Abrir notificações" title="Notificações">
@@ -164,11 +164,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       )}
 
-      <main id="main-content" className="pb-24 lg:ml-[248px] lg:pb-8">
+      <main id="main-content" className="pb-[calc(88px+env(safe-area-inset-bottom))] lg:ml-[248px] lg:pb-8">
         {children}
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid h-[72px] grid-cols-5 border-t border-[var(--border)] bg-[rgba(8,11,15,0.96)] px-2 pb-[env(safe-área-inset-bottom)] backdrop-blur lg:hidden" aria-label="Navegacao inferior">
+      <nav className="fixed inset-x-0 bottom-0 z-40 grid h-[calc(68px+env(safe-area-inset-bottom))] grid-cols-5 border-t border-[var(--border)] bg-[rgba(8,11,15,0.96)] px-1.5 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden" aria-label="Navegacao inferior">
         {mobileNav.map(({ href, label, icon: Icon }) => {
           const active = isActive(pathname, href);
           return (
