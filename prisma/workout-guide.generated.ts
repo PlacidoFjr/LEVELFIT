@@ -2,7 +2,7 @@
 
 export const guideExercises = [
   {
-    "id": "60000000-16d7cfa-b04f-429c-8fbe-94db8d36a00e",
+    "id": "60000000-9549-6404-a7cf-ef5c2011e036",
     "name": "Supino reto com barra",
     "muscleGroup": "Peito",
     "equipment": "Barra e banco",
@@ -10,7 +10,7 @@ export const guideExercises = [
     "safetyNotes": "Use travas/spotter em séries pesadas; ajuste se houver dor no ombro"
   },
   {
-    "id": "60000000-4792e03-c0b5-40ea-8e39-2faed9ac9384",
+    "id": "60000000-f654-c4ca-e5d2-348299d05fa6",
     "name": "Supino reto com halteres",
     "muscleGroup": "Peito",
     "equipment": "Halteres e banco",
@@ -18,7 +18,7 @@ export const guideExercises = [
     "safetyNotes": "Cuidado ao colocar halteres pesados em posição"
   },
   {
-    "id": "60000000-207e366-6dbb-4618-83dd-2aac63a28b5f",
+    "id": "60000000-7295-4a35-03ed-059867d3303c",
     "name": "Supino inclinado com barra",
     "muscleGroup": "Peito superior",
     "equipment": "Barra e banco inclinado",
@@ -26,7 +26,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste amplitude se o ombro pinçar"
   },
   {
-    "id": "60000000-a3a917c-5988-4288-871d-97b1c944b4b0",
+    "id": "60000000-eb92-839d-b84e-5185a92420b9",
     "name": "Supino inclinado com halteres",
     "muscleGroup": "Peito superior",
     "equipment": "Halteres",
@@ -34,7 +34,7 @@ export const guideExercises = [
     "safetyNotes": "Sem dor anterior no ombro"
   },
   {
-    "id": "60000000-06abd6d-caa9-4393-8401-d32c27bb0574",
+    "id": "60000000-fc0b-6132-010c-4b516625b048",
     "name": "Chest press máquina",
     "muscleGroup": "Peito",
     "equipment": "Máquina",
@@ -42,7 +42,7 @@ export const guideExercises = [
     "safetyNotes": "Ajustar banco e amplitude individualmente"
   },
   {
-    "id": "60000000-7f59ded-7da6-46be-8377-17d92261a1e1",
+    "id": "60000000-36cf-7d24-f878-2f69e35a6d7d",
     "name": "Chest press convergente",
     "muscleGroup": "Peito",
     "equipment": "Máquina convergente",
@@ -50,7 +50,7 @@ export const guideExercises = [
     "safetyNotes": "Evite travar cotovelos com impacto"
   },
   {
-    "id": "60000000-17e2838-df68-4a08-84a6-df86e306e358",
+    "id": "60000000-6160-d843-61be-dee9835ca588",
     "name": "Crucifixo com halteres",
     "muscleGroup": "Peito",
     "equipment": "Halteres e banco",
@@ -58,7 +58,7 @@ export const guideExercises = [
     "safetyNotes": "Não force alongamento com dor"
   },
   {
-    "id": "60000000-0cbeea7-35da-4aca-8ddd-c433f159f508",
+    "id": "60000000-8e7b-cbaa-143e-92e97620fb1b",
     "name": "Crossover alto para baixo",
     "muscleGroup": "Peito inferior",
     "equipment": "Cabos",
@@ -66,7 +66,7 @@ export const guideExercises = [
     "safetyNotes": "Controle a lombar"
   },
   {
-    "id": "60000000-50e9e81-30e8-44cb-8bd4-4c367f635cf1",
+    "id": "60000000-aa7e-6dcf-6d7d-562e2a26056d",
     "name": "Crossover médio",
     "muscleGroup": "Peito",
     "equipment": "Cabos",
@@ -74,7 +74,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste altura das polias"
   },
   {
-    "id": "60000000-6a6ca70-c44c-4e8e-834d-0d4528c7fc02",
+    "id": "60000000-ca2a-7df0-9818-bb64cb449ddc",
     "name": "Crossover baixo para alto",
     "muscleGroup": "Peito superior",
     "equipment": "Cabos",
@@ -82,7 +82,7 @@ export const guideExercises = [
     "safetyNotes": "Carga moderada"
   },
   {
-    "id": "60000000-d3a068e-e958-4ccc-82cc-db2989174f97",
+    "id": "60000000-5bde-75d2-901c-e28e236e66b7",
     "name": "Peck deck",
     "muscleGroup": "Peito",
     "equipment": "Máquina",
@@ -90,7 +90,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste para não hiperestender ombro"
   },
   {
-    "id": "60000000-bb27641-140d-4513-8b89-eae27547c5ac",
+    "id": "60000000-3256-df7a-0309-cd04d7d916ee",
     "name": "Flexão de braços",
     "muscleGroup": "Peito",
     "equipment": "Peso corporal",
@@ -98,7 +98,7 @@ export const guideExercises = [
     "safetyNotes": "Use apoio alto se carga corporal for excessiva"
   },
   {
-    "id": "60000000-4dbf4a0-4298-4ce0-81d1-12a28fea2f66",
+    "id": "60000000-2880-9770-061a-50a0a27bdac1",
     "name": "Flexão inclinada",
     "muscleGroup": "Peito",
     "equipment": "Banco/apoio",
@@ -106,7 +106,7 @@ export const guideExercises = [
     "safetyNotes": "Escolha altura segura"
   },
   {
-    "id": "60000000-1461be2-cbc0-4e0d-8f63-0a56846209e0",
+    "id": "60000000-b8ef-3ff4-c6f4-580b7300c5cb",
     "name": "Paralelas com foco em peito",
     "muscleGroup": "Peito inferior",
     "equipment": "Paralelas",
@@ -114,7 +114,7 @@ export const guideExercises = [
     "safetyNotes": "Evite se houver dor no ombro/esterno"
   },
   {
-    "id": "60000000-951d544-040b-47ec-82dd-addc74a371b7",
+    "id": "60000000-ed51-dc8f-1ff0-034570c52a69",
     "name": "Puxada alta pronada",
     "muscleGroup": "Dorsais",
     "equipment": "Polia",
@@ -122,7 +122,7 @@ export const guideExercises = [
     "safetyNotes": "Amplitude sem dor no ombro"
   },
   {
-    "id": "60000000-778fc34-89a2-4f4d-88fb-656996111f5c",
+    "id": "60000000-a75d-d2b7-4027-350ab97794eb",
     "name": "Puxada alta neutra",
     "muscleGroup": "Dorsais",
     "equipment": "Polia",
@@ -130,7 +130,7 @@ export const guideExercises = [
     "safetyNotes": "Boa opção para ombros sensíveis"
   },
   {
-    "id": "60000000-3819ddf-e3b8-4f66-86cb-4f088649f045",
+    "id": "60000000-2e72-fd40-95d7-947533cc5f12",
     "name": "Puxada alta supinada",
     "muscleGroup": "Dorsais",
     "equipment": "Polia",
@@ -138,7 +138,7 @@ export const guideExercises = [
     "safetyNotes": "Cuidado com cotovelo/punho"
   },
   {
-    "id": "60000000-efc0a48-64fd-41bb-8c67-5817bad5daf2",
+    "id": "60000000-8c45-b792-3b0a-322ea364091f",
     "name": "Puxada unilateral na polia",
     "muscleGroup": "Dorsais",
     "equipment": "Polia",
@@ -146,7 +146,7 @@ export const guideExercises = [
     "safetyNotes": "Use apoio se equilíbrio limitar"
   },
   {
-    "id": "60000000-021c6eb-d640-4405-8b34-b9ebb230ecf6",
+    "id": "60000000-1f4b-b8f2-3fea-e157ffda0a7b",
     "name": "Barra fixa pronada",
     "muscleGroup": "Dorsais",
     "equipment": "Barra fixa",
@@ -154,7 +154,7 @@ export const guideExercises = [
     "safetyNotes": "Use assistência se necessário"
   },
   {
-    "id": "60000000-301e2f7-3c85-4b85-8d0d-cf9ab7a01d65",
+    "id": "60000000-b519-4414-fb06-eebaa6c8a364",
     "name": "Barra fixa assistida",
     "muscleGroup": "Dorsais",
     "equipment": "Máquina/elástico",
@@ -162,7 +162,7 @@ export const guideExercises = [
     "safetyNotes": "Cuidado ao subir/descer da máquina"
   },
   {
-    "id": "60000000-a586386-cf26-4c31-85c4-b9e1dd624501",
+    "id": "60000000-a93a-bf73-a67e-b5395333abce",
     "name": "Remada baixa neutra",
     "muscleGroup": "Costas médias",
     "equipment": "Polia",
@@ -170,7 +170,7 @@ export const guideExercises = [
     "safetyNotes": "Não arredonde lombar sob carga"
   },
   {
-    "id": "60000000-2f1cb1b-186a-4da8-834b-53e268f4cd8e",
+    "id": "60000000-bd4e-06fe-fc66-86491d56a51b",
     "name": "Remada baixa aberta",
     "muscleGroup": "Costas médias",
     "equipment": "Polia",
@@ -178,7 +178,7 @@ export const guideExercises = [
     "safetyNotes": "Carga que permita controle escapular"
   },
   {
-    "id": "60000000-d7dcdae-32f3-47df-84fc-677d841f39a8",
+    "id": "60000000-559d-e730-1ff4-5bad3745cc7f",
     "name": "Remada curvada com barra",
     "muscleGroup": "Costas médias",
     "equipment": "Barra",
@@ -186,7 +186,7 @@ export const guideExercises = [
     "safetyNotes": "Evite se a lombar limita ou dói"
   },
   {
-    "id": "60000000-0f67af8-5483-4c6f-8222-53e9cd8a8d49",
+    "id": "60000000-1f6c-e50e-102e-e35507b55691",
     "name": "Remada unilateral com halter",
     "muscleGroup": "Dorsais",
     "equipment": "Halter e banco",
@@ -194,7 +194,7 @@ export const guideExercises = [
     "safetyNotes": "Evite apoiar peso sobre banco instável"
   },
   {
-    "id": "60000000-8689bd3-10f8-4def-83f3-8eb8da2d356a",
+    "id": "60000000-ef6f-d88f-86a9-4263f1528799",
     "name": "Remada cavalinho",
     "muscleGroup": "Costas médias",
     "equipment": "Landmine/T-bar",
@@ -202,7 +202,7 @@ export const guideExercises = [
     "safetyNotes": "Gerencie fadiga lombar"
   },
   {
-    "id": "60000000-2d9752b-9c16-40af-8234-3679587867ef",
+    "id": "60000000-efe4-39d4-3fe2-0ff94c2d645b",
     "name": "Remada articulada apoiada",
     "muscleGroup": "Costas médias",
     "equipment": "Máquina",
@@ -210,7 +210,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste banco para respirar bem"
   },
   {
-    "id": "60000000-1104182-df74-4d29-8a6f-1f1b766d1f4d",
+    "id": "60000000-e35c-1860-2b65-239a302b89ca",
     "name": "Remada alta no banco inclinado",
     "muscleGroup": "Costas médias",
     "equipment": "Halteres e banco",
@@ -218,7 +218,7 @@ export const guideExercises = [
     "safetyNotes": "Conforto no tórax/abdome"
   },
   {
-    "id": "60000000-271650c-ea74-447d-83d6-98b599919e3f",
+    "id": "60000000-99aa-edb5-323c-50f85ec5ead4",
     "name": "Pulldown com braços estendidos",
     "muscleGroup": "Dorsais",
     "equipment": "Polia",
@@ -226,7 +226,7 @@ export const guideExercises = [
     "safetyNotes": "Carga moderada"
   },
   {
-    "id": "60000000-5a77514-a083-4ac3-8f77-fe2b3734b1d1",
+    "id": "60000000-c9f8-23c2-5ccf-6b97850b754f",
     "name": "Pullover máquina",
     "muscleGroup": "Dorsais",
     "equipment": "Máquina",
@@ -234,7 +234,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste o assento"
   },
   {
-    "id": "60000000-316fa40-d854-4afd-8392-6b40992b572a",
+    "id": "60000000-b20c-0616-aaa8-1926ef81bd4c",
     "name": "Face pull",
     "muscleGroup": "Deltoide posterior",
     "equipment": "Corda na polia",
@@ -242,7 +242,7 @@ export const guideExercises = [
     "safetyNotes": "Não force rotação"
   },
   {
-    "id": "60000000-d72fa30-99d1-47ea-85f6-f28f09cf0daa",
+    "id": "60000000-f4d4-feb8-13e9-ef30d557c78d",
     "name": "Reverse peck deck",
     "muscleGroup": "Deltoide posterior",
     "equipment": "Máquina",
@@ -250,7 +250,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste alças à altura do ombro"
   },
   {
-    "id": "60000000-658cddd-7a44-4b00-8735-a9c5ecd5bebc",
+    "id": "60000000-296d-8612-1029-936d6a04284f",
     "name": "Encolhimento com halteres",
     "muscleGroup": "Trapézio superior",
     "equipment": "Halteres",
@@ -258,7 +258,7 @@ export const guideExercises = [
     "safetyNotes": "Evite projetar cabeça"
   },
   {
-    "id": "60000000-df3ff29-a5eb-44fa-8567-bfa1cb3a6796",
+    "id": "60000000-4526-6ccf-68a0-d28590357559",
     "name": "Extensão lombar 45°",
     "muscleGroup": "Eretores da coluna",
     "equipment": "Banco romano",
@@ -266,7 +266,7 @@ export const guideExercises = [
     "safetyNotes": "Sem dor lombar irradiada"
   },
   {
-    "id": "60000000-b1d226a-80ee-428e-86d6-ed4df3515d1f",
+    "id": "60000000-4921-49d8-d758-940cfd299334",
     "name": "Desenvolvimento com halteres sentado",
     "muscleGroup": "Ombros",
     "equipment": "Halteres e banco",
@@ -274,7 +274,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste amplitude se houver pinçamento"
   },
   {
-    "id": "60000000-e862422-fac3-4053-805e-820f2cc4fd0d",
+    "id": "60000000-cca9-85ad-e356-61e63dc15dd1",
     "name": "Shoulder press máquina",
     "muscleGroup": "Ombros",
     "equipment": "Máquina",
@@ -282,7 +282,7 @@ export const guideExercises = [
     "safetyNotes": "Não force amplitude dolorosa"
   },
   {
-    "id": "60000000-a427da8-03c7-44e2-8769-8c497cc34c95",
+    "id": "60000000-9d20-1570-9958-bb26cccc0812",
     "name": "Desenvolvimento militar com barra",
     "muscleGroup": "Ombros",
     "equipment": "Barra",
@@ -290,7 +290,7 @@ export const guideExercises = [
     "safetyNotes": "Exige mobilidade e controle"
   },
   {
-    "id": "60000000-600ec6a-4851-448c-8363-ed6f3c5c7b14",
+    "id": "60000000-5512-4fc7-7d9d-4c026acb743b",
     "name": "Landmine press unilateral",
     "muscleGroup": "Deltoide anterior",
     "equipment": "Landmine",
@@ -298,7 +298,7 @@ export const guideExercises = [
     "safetyNotes": "Opção amigável para muitos ombros"
   },
   {
-    "id": "60000000-a2b596a-7124-4f9c-80ea-e15cc35d28e6",
+    "id": "60000000-6435-2464-8440-a159433a9f7c",
     "name": "Elevação lateral com halteres",
     "muscleGroup": "Deltoide lateral",
     "equipment": "Halteres",
@@ -306,7 +306,7 @@ export const guideExercises = [
     "safetyNotes": "Carga leve a moderada"
   },
   {
-    "id": "60000000-5009596-706b-4225-8cac-0415ff9cc9cc",
+    "id": "60000000-990d-a402-ea54-40ced2628ed3",
     "name": "Elevação lateral na polia",
     "muscleGroup": "Deltoide lateral",
     "equipment": "Polia",
@@ -314,7 +314,7 @@ export const guideExercises = [
     "safetyNotes": "Sem dor aguda"
   },
   {
-    "id": "60000000-878674c-1e69-4804-8452-f2290fe34ce0",
+    "id": "60000000-134b-075e-64b0-c28008f2888b",
     "name": "Elevação lateral máquina",
     "muscleGroup": "Deltoide lateral",
     "equipment": "Máquina",
@@ -322,7 +322,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste individual"
   },
   {
-    "id": "60000000-9d42345-beb0-4b3d-8cb0-4ce9524cc71a",
+    "id": "60000000-03a0-dc13-fa10-095d3a413611",
     "name": "Crucifixo inverso com halteres",
     "muscleGroup": "Deltoide posterior",
     "equipment": "Halteres",
@@ -330,7 +330,7 @@ export const guideExercises = [
     "safetyNotes": "Evite carga que tire controle"
   },
   {
-    "id": "60000000-ac26865-c518-4292-80e1-68a446557985",
+    "id": "60000000-2f67-7cbc-4a0e-64541a634814",
     "name": "Rotação externa na polia",
     "muscleGroup": "Manguito rotador",
     "equipment": "Polia/elástico",
@@ -338,7 +338,7 @@ export const guideExercises = [
     "safetyNotes": "Não é exercício para carga máxima"
   },
   {
-    "id": "60000000-972e7aa-d9bb-405d-8d87-774120fb3aca",
+    "id": "60000000-bdf1-63c1-e4c4-49375143f6f8",
     "name": "Rosca direta com barra W",
     "muscleGroup": "Bíceps",
     "equipment": "Barra W",
@@ -346,7 +346,7 @@ export const guideExercises = [
     "safetyNotes": "Use barra W se punhos incomodarem"
   },
   {
-    "id": "60000000-c754e1b-6bbb-4018-81f9-06325ead231e",
+    "id": "60000000-f536-ed42-ece9-dfac5b515ef1",
     "name": "Rosca alternada com halteres",
     "muscleGroup": "Bíceps",
     "equipment": "Halteres",
@@ -354,7 +354,7 @@ export const guideExercises = [
     "safetyNotes": "Controle o balanço"
   },
   {
-    "id": "60000000-dfd7fcd-6852-483e-80f7-32c5d1a00f57",
+    "id": "60000000-fd4e-3fc7-3096-8b7717c5b5ba",
     "name": "Rosca martelo",
     "muscleGroup": "Braquial",
     "equipment": "Halteres/cabo",
@@ -362,7 +362,7 @@ export const guideExercises = [
     "safetyNotes": "Cuidado com dor no cotovelo"
   },
   {
-    "id": "60000000-6291fb5-1fa6-4085-8c49-4a4ddefa071f",
+    "id": "60000000-948b-d9ce-769f-c6f9e87a28a6",
     "name": "Rosca Scott máquina",
     "muscleGroup": "Bíceps",
     "equipment": "Máquina",
@@ -370,7 +370,7 @@ export const guideExercises = [
     "safetyNotes": "Evite hiperextensão dolorosa"
   },
   {
-    "id": "60000000-9aa28ea-9f78-45ec-8d4f-719a476d98bb",
+    "id": "60000000-30d9-fd59-b158-512fb06f6a26",
     "name": "Rosca inclinada com halteres",
     "muscleGroup": "Bíceps",
     "equipment": "Halteres e banco inclinado",
@@ -378,7 +378,7 @@ export const guideExercises = [
     "safetyNotes": "Reduza amplitude se o ombro reclamar"
   },
   {
-    "id": "60000000-3156fcc-6c8f-4d9d-825e-402dbfa56a7f",
+    "id": "60000000-7f36-0dda-8ba1-02486f5e0f7b",
     "name": "Rosca Bayesian na polia",
     "muscleGroup": "Bíceps",
     "equipment": "Polia",
@@ -386,7 +386,7 @@ export const guideExercises = [
     "safetyNotes": "Carga controlável"
   },
   {
-    "id": "60000000-f1d01bf-d61d-49ba-811b-545dc8801a85",
+    "id": "60000000-62d2-a3c2-c2f5-1d64a9adf598",
     "name": "Tríceps na polia com corda",
     "muscleGroup": "Tríceps",
     "equipment": "Polia",
@@ -394,7 +394,7 @@ export const guideExercises = [
     "safetyNotes": "Sem dor no cotovelo"
   },
   {
-    "id": "60000000-5279e0c-dd86-400d-880b-63b2a35f5dec",
+    "id": "60000000-7d74-034a-34ae-6efc5fe12300",
     "name": "Tríceps barra reta na polia",
     "muscleGroup": "Tríceps",
     "equipment": "Polia",
@@ -402,7 +402,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste pegada"
   },
   {
-    "id": "60000000-eaad27d-51b5-4985-8067-4fd113415d5d",
+    "id": "60000000-1b5a-f094-5814-c211488710cd",
     "name": "Tríceps francês unilateral",
     "muscleGroup": "Tríceps longo",
     "equipment": "Halter/polia",
@@ -410,7 +410,7 @@ export const guideExercises = [
     "safetyNotes": "Mobilidade de ombro sem dor"
   },
   {
-    "id": "60000000-a7294a1-9e6c-44a6-8309-3ce2a30a2091",
+    "id": "60000000-a215-4b76-3efe-3e6106970cea",
     "name": "Tríceps acima da cabeça na corda",
     "muscleGroup": "Tríceps longo",
     "equipment": "Polia",
@@ -418,7 +418,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste altura e base"
   },
   {
-    "id": "60000000-a1ead67-2012-4008-8930-eaac2ccf2e39",
+    "id": "60000000-bc91-fbe1-a44c-18253fbc33d8",
     "name": "Supino fechado",
     "muscleGroup": "Tríceps",
     "equipment": "Barra",
@@ -426,7 +426,7 @@ export const guideExercises = [
     "safetyNotes": "Spotter recomendado"
   },
   {
-    "id": "60000000-70182b3-e7b0-4b4e-80a8-a6a62bcf295e",
+    "id": "60000000-c60a-0d9d-eab7-75818c4864b5",
     "name": "Mergulho no banco",
     "muscleGroup": "Tríceps",
     "equipment": "Banco",
@@ -434,7 +434,7 @@ export const guideExercises = [
     "safetyNotes": "Frequentemente desconfortável para ombros"
   },
   {
-    "id": "60000000-6d70206-f89a-4304-843e-4b337115a155",
+    "id": "60000000-5db3-63ba-96a5-ac5a20b07695",
     "name": "Agachamento livre com barra",
     "muscleGroup": "Quadríceps",
     "equipment": "Barra e rack",
@@ -442,7 +442,7 @@ export const guideExercises = [
     "safetyNotes": "Rack com travas; técnica supervisionada em cargas altas"
   },
   {
-    "id": "60000000-28c7b02-da68-430c-8af7-a418fd104d1e",
+    "id": "60000000-b0fd-fd32-c9fb-a4d80cc1080f",
     "name": "Agachamento frontal",
     "muscleGroup": "Quadríceps",
     "equipment": "Barra e rack",
@@ -450,7 +450,7 @@ export const guideExercises = [
     "safetyNotes": "Exige mobilidade de punho/torácica"
   },
   {
-    "id": "60000000-5a22e36-a2bc-442e-8c13-6be2a68f0659",
+    "id": "60000000-2f1a-2b49-5ea8-09fb2eeb8601",
     "name": "Goblet squat",
     "muscleGroup": "Quadríceps",
     "equipment": "Halter/kettlebell",
@@ -458,7 +458,7 @@ export const guideExercises = [
     "safetyNotes": "Carga limitada pela sustentação"
   },
   {
-    "id": "60000000-e3957ed-2806-4c00-8018-757bec7a9ffa",
+    "id": "60000000-b669-9434-baca-d03b9f97a608",
     "name": "Hack squat máquina",
     "muscleGroup": "Quadríceps",
     "equipment": "Máquina",
@@ -466,7 +466,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste dos pés e amplitude"
   },
   {
-    "id": "60000000-113a1bb-fe52-4ff5-87c0-187a3edfa6c9",
+    "id": "60000000-7679-c46f-a8ca-006df15ccde9",
     "name": "Leg press 45°",
     "muscleGroup": "Quadríceps",
     "equipment": "Máquina",
@@ -474,7 +474,7 @@ export const guideExercises = [
     "safetyNotes": "Não use amplitude além do controle pélvico"
   },
   {
-    "id": "60000000-56bf149-74de-4437-86b8-1e3058d00920",
+    "id": "60000000-81c4-261a-c7c5-006de1413d33",
     "name": "Leg press horizontal",
     "muscleGroup": "Quadríceps",
     "equipment": "Máquina",
@@ -482,7 +482,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste o banco"
   },
   {
-    "id": "60000000-5b3e753-bb75-4c87-88fc-a8d460c172e8",
+    "id": "60000000-e388-a0a5-263a-3344506aa0bb",
     "name": "Cadeira extensora",
     "muscleGroup": "Quadríceps",
     "equipment": "Máquina",
@@ -490,7 +490,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste amplitude se houver dor patelofemoral"
   },
   {
-    "id": "60000000-53f74b4-d8f2-4892-8c05-68fb63c2da05",
+    "id": "60000000-06e9-601b-663b-ba9fc47a48af",
     "name": "Afundo reverso",
     "muscleGroup": "Quadríceps",
     "equipment": "Halteres/peso corporal",
@@ -498,7 +498,7 @@ export const guideExercises = [
     "safetyNotes": "Use apoio se necessário"
   },
   {
-    "id": "60000000-e95bf87-c652-47d8-8078-841174d90621",
+    "id": "60000000-4081-f2ab-c7d4-571a3d0a7846",
     "name": "Passada caminhando",
     "muscleGroup": "Quadríceps",
     "equipment": "Halteres",
@@ -506,7 +506,7 @@ export const guideExercises = [
     "safetyNotes": "Espaço livre e piso seguro"
   },
   {
-    "id": "60000000-371bd55-2297-4c5c-88d5-679588fea126",
+    "id": "60000000-8bbe-592e-745f-61eac1ca58d7",
     "name": "Agachamento búlgaro",
     "muscleGroup": "Quadríceps",
     "equipment": "Halteres e banco",
@@ -514,7 +514,7 @@ export const guideExercises = [
     "safetyNotes": "Comece sem carga"
   },
   {
-    "id": "60000000-c43167d-b6e9-4587-8eb7-46a1f4ba62bd",
+    "id": "60000000-6f82-f0a8-3c0d-f4d5579cbfaa",
     "name": "Step-up",
     "muscleGroup": "Quadríceps",
     "equipment": "Caixa/step",
@@ -522,7 +522,7 @@ export const guideExercises = [
     "safetyNotes": "Altura compatível com mobilidade"
   },
   {
-    "id": "60000000-b0a15fb-2e46-4d37-837a-64876a0c3224",
+    "id": "60000000-81a3-56da-4a8c-3fba7bc20a00",
     "name": "Sissy squat assistido",
     "muscleGroup": "Quadríceps",
     "equipment": "Apoio/peso corporal",
@@ -530,7 +530,7 @@ export const guideExercises = [
     "safetyNotes": "Exigente para joelhos; não usar com dor"
   },
   {
-    "id": "60000000-69e7183-70f3-42f1-8e9a-4b45e764edff",
+    "id": "60000000-92c5-795e-872e-3040b25b9075",
     "name": "Levantamento terra romeno",
     "muscleGroup": "Posteriores",
     "equipment": "Barra/halteres",
@@ -538,7 +538,7 @@ export const guideExercises = [
     "safetyNotes": "Pare ao perder posição"
   },
   {
-    "id": "60000000-7ff0c02-35b0-4b0f-81b0-f70cafdab487",
+    "id": "60000000-a26e-15c7-e55e-62be01c25b0a",
     "name": "Stiff com halteres",
     "muscleGroup": "Posteriores",
     "equipment": "Halteres",
@@ -546,7 +546,7 @@ export const guideExercises = [
     "safetyNotes": "Amplitude individual"
   },
   {
-    "id": "60000000-69532ab-a254-4604-8d8e-4a883a7160ad",
+    "id": "60000000-6427-3cae-80b5-c4432b6c3a3c",
     "name": "Terra convencional",
     "muscleGroup": "Glúteos",
     "equipment": "Barra",
@@ -554,7 +554,7 @@ export const guideExercises = [
     "safetyNotes": "Técnica e progressão supervisionadas"
   },
   {
-    "id": "60000000-6e4717d-f785-4a94-8d83-b2cf9d4fde34",
+    "id": "60000000-77ba-1dd5-f051-8bf6966be23f",
     "name": "Terra com trap bar",
     "muscleGroup": "Glúteos",
     "equipment": "Trap bar",
@@ -562,7 +562,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste altura das alças"
   },
   {
-    "id": "60000000-60ad53f-2e78-473a-84c2-3058b191fa0c",
+    "id": "60000000-a99a-7af2-c4fd-04062f03463e",
     "name": "Mesa flexora",
     "muscleGroup": "Posteriores",
     "equipment": "Máquina",
@@ -570,7 +570,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste rolo acima do calcanhar"
   },
   {
-    "id": "60000000-ac13e55-b3f4-4e54-8f76-61ccb2f154e0",
+    "id": "60000000-6a05-2a8e-cf5f-1cd89b93a6c6",
     "name": "Flexora sentada",
     "muscleGroup": "Posteriores",
     "equipment": "Máquina",
@@ -578,7 +578,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste o encosto"
   },
   {
-    "id": "60000000-e48dacb-f2cc-4296-8305-ba200e1553e8",
+    "id": "60000000-3153-6925-0e70-012d52732f56",
     "name": "Flexora unilateral",
     "muscleGroup": "Posteriores",
     "equipment": "Máquina",
@@ -586,7 +586,7 @@ export const guideExercises = [
     "safetyNotes": "Boa para assimetrias, sem perseguir igualdade perfeita"
   },
   {
-    "id": "60000000-caebf3e-d6cb-48cb-866b-44203f33a232",
+    "id": "60000000-244c-a97e-175e-b7c4b944d42d",
     "name": "Nordic curl assistido",
     "muscleGroup": "Posteriores",
     "equipment": "Apoio/elástico",
@@ -594,7 +594,7 @@ export const guideExercises = [
     "safetyNotes": "Alta demanda; progredir gradualmente"
   },
   {
-    "id": "60000000-3ae6e62-61ca-458e-8e45-415b23b11adb",
+    "id": "60000000-ef83-4e08-a047-40a31826fdc5",
     "name": "Hip thrust com barra",
     "muscleGroup": "Glúteos",
     "equipment": "Barra e banco",
@@ -602,7 +602,7 @@ export const guideExercises = [
     "safetyNotes": "Proteja o quadril e estabilize o banco"
   },
   {
-    "id": "60000000-3ff0ac9-692e-4380-8b0e-cc8de7682094",
+    "id": "60000000-6cb3-4889-f673-9a619df29f48",
     "name": "Glute bridge máquina",
     "muscleGroup": "Glúteos",
     "equipment": "Máquina",
@@ -610,7 +610,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste cinto e pés"
   },
   {
-    "id": "60000000-4afa6fa-e83a-4660-8ca9-fdc5474d37bd",
+    "id": "60000000-166a-faf2-1105-973d9c716389",
     "name": "Coice na polia",
     "muscleGroup": "Glúteos",
     "equipment": "Polia",
@@ -618,7 +618,7 @@ export const guideExercises = [
     "safetyNotes": "Use apoio estável"
   },
   {
-    "id": "60000000-0a50e48-145a-4625-811b-990f1fa57074",
+    "id": "60000000-6f6d-3845-1786-deebb65b487c",
     "name": "Abdutora máquina",
     "muscleGroup": "Glúteo médio",
     "equipment": "Máquina",
@@ -626,7 +626,7 @@ export const guideExercises = [
     "safetyNotes": "Não force amplitude"
   },
   {
-    "id": "60000000-31284da-4a5e-4f19-8df0-b5b6ba98646a",
+    "id": "60000000-af1d-de96-2cef-8585c2b46c69",
     "name": "Adução de quadril máquina",
     "muscleGroup": "Adutores",
     "equipment": "Máquina",
@@ -634,7 +634,7 @@ export const guideExercises = [
     "safetyNotes": "Amplitude individual"
   },
   {
-    "id": "60000000-c96747d-b01d-4cdf-8990-f4c395a27c08",
+    "id": "60000000-290d-3e26-be56-dcc1392ce540",
     "name": "Panturrilha em pé máquina",
     "muscleGroup": "Panturrilhas",
     "equipment": "Máquina",
@@ -642,7 +642,7 @@ export const guideExercises = [
     "safetyNotes": "Apoio firme; sem dor no Aquiles"
   },
   {
-    "id": "60000000-34a9f70-985e-4a54-8257-4f5079a5e404",
+    "id": "60000000-7096-7d71-6a14-f87969584191",
     "name": "Panturrilha sentada",
     "muscleGroup": "Sóleo",
     "equipment": "Máquina",
@@ -650,7 +650,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste almofada"
   },
   {
-    "id": "60000000-8724ad4-ca8a-4c03-8622-2bed118cd803",
+    "id": "60000000-31a0-0637-0b47-0d456fd61953",
     "name": "Panturrilha no leg press",
     "muscleGroup": "Panturrilhas",
     "equipment": "Leg press",
@@ -658,7 +658,7 @@ export const guideExercises = [
     "safetyNotes": "Posição do pé segura"
   },
   {
-    "id": "60000000-c743efe-c034-4063-8157-49fee3e36cee",
+    "id": "60000000-b513-f68e-f3fb-4aa8cdfa5d10",
     "name": "Prancha frontal",
     "muscleGroup": "Core anterior",
     "equipment": "Peso corporal",
@@ -666,7 +666,7 @@ export const guideExercises = [
     "safetyNotes": "Pare se houver dor lombar"
   },
   {
-    "id": "60000000-7992b58-f763-4896-8de5-e3f59390086c",
+    "id": "60000000-2765-18d1-65a4-209686fb4341",
     "name": "Prancha lateral",
     "muscleGroup": "Oblíquos",
     "equipment": "Peso corporal",
@@ -674,7 +674,7 @@ export const guideExercises = [
     "safetyNotes": "Apoio do ombro confortável"
   },
   {
-    "id": "60000000-1c384cd-14ee-4db3-85d6-2e4d86f1f519",
+    "id": "60000000-a2e0-e934-6714-f9019ce41c26",
     "name": "Dead bug",
     "muscleGroup": "Core anterior",
     "equipment": "Peso corporal",
@@ -682,7 +682,7 @@ export const guideExercises = [
     "safetyNotes": "Sem dor lombar"
   },
   {
-    "id": "60000000-16d8c82-94f6-49b9-89ab-467f067437a3",
+    "id": "60000000-b0aa-7c2d-11d9-0ee3eaea7a28",
     "name": "Bird dog",
     "muscleGroup": "Core posterior",
     "equipment": "Peso corporal",
@@ -690,7 +690,7 @@ export const guideExercises = [
     "safetyNotes": "Apoio confortável para joelhos"
   },
   {
-    "id": "60000000-b8b6e16-fe5c-48ef-8c10-7e457e1e642a",
+    "id": "60000000-e5cf-9389-aba1-4b5ceb3ddaa2",
     "name": "Pallof press",
     "muscleGroup": "Oblíquos",
     "equipment": "Polia/elástico",
@@ -698,7 +698,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste distância da polia"
   },
   {
-    "id": "60000000-f72bd4c-7fdc-47a2-82b6-8cf9500ec5fb",
+    "id": "60000000-dd2a-1fb7-ed21-12749d8d2015",
     "name": "Crunch na polia",
     "muscleGroup": "Reto abdominal",
     "equipment": "Polia",
@@ -706,7 +706,7 @@ export const guideExercises = [
     "safetyNotes": "Sem tracionar o pescoço"
   },
   {
-    "id": "60000000-c769fa8-9df7-48dc-8e59-8d3f7f39cc42",
+    "id": "60000000-e0ce-7841-d17a-03660369cc24",
     "name": "Elevação de joelhos na cadeira romana",
     "muscleGroup": "Reto abdominal",
     "equipment": "Cadeira romana",
@@ -714,7 +714,7 @@ export const guideExercises = [
     "safetyNotes": "Ombros bem apoiados"
   },
   {
-    "id": "60000000-0ca5833-e2cb-4cd8-83ee-c75039c5c5c2",
+    "id": "60000000-07f1-82ad-ee1a-5d7d6035bde7",
     "name": "Reverse crunch",
     "muscleGroup": "Reto abdominal",
     "equipment": "Colchonete",
@@ -722,7 +722,7 @@ export const guideExercises = [
     "safetyNotes": "Sem dor cervical"
   },
   {
-    "id": "60000000-52eed1b-c23a-48a5-8a01-55bbcf9a3ce8",
+    "id": "60000000-90fc-bc51-9001-6ca8bb985d4c",
     "name": "Farmer carry",
     "muscleGroup": "Core; pegada",
     "equipment": "Halteres/trap bar",
@@ -730,7 +730,7 @@ export const guideExercises = [
     "safetyNotes": "Espaço livre; cuidado ao largar cargas"
   },
   {
-    "id": "60000000-1b46136-685d-4dcf-80c7-d23cf50febce",
+    "id": "60000000-ff96-1f16-ce7d-d636d23591e6",
     "name": "Suitcase carry",
     "muscleGroup": "Oblíquos; pegada",
     "equipment": "Halter/kettlebell",
@@ -738,7 +738,7 @@ export const guideExercises = [
     "safetyNotes": "Piso livre"
   },
   {
-    "id": "60000000-a718b01-00f3-4bd1-8eb9-d705493a9b6c",
+    "id": "60000000-bab1-cdd6-cf37-0bfea93445a1",
     "name": "Sled push",
     "muscleGroup": "Quadríceps",
     "equipment": "Trenó",
@@ -746,7 +746,7 @@ export const guideExercises = [
     "safetyNotes": "Verifique piso e calçado"
   },
   {
-    "id": "60000000-9db931d-88eb-4503-8649-f3f468fcf380",
+    "id": "60000000-6ed7-61a7-47a3-fee0c99a3c6e",
     "name": "Battle rope",
     "muscleGroup": "Ombros",
     "equipment": "Corda naval",
@@ -754,7 +754,7 @@ export const guideExercises = [
     "safetyNotes": "Progrida impacto cardiovascular"
   },
   {
-    "id": "60000000-2ce7ee3-1bba-4096-8906-259012ea1976",
+    "id": "60000000-a543-9c8c-0c75-48e7831d750a",
     "name": "Caminhada em esteira",
     "muscleGroup": "Cardiorrespiratório",
     "equipment": "Esteira",
@@ -762,7 +762,7 @@ export const guideExercises = [
     "safetyNotes": "Aumente duração antes da inclinação se articulações reclamarem"
   },
   {
-    "id": "60000000-c46f688-62de-4f8c-8af6-21939b5850ad",
+    "id": "60000000-bfcf-eeb2-e290-ac5c2f48cd84",
     "name": "Bicicleta ergométrica",
     "muscleGroup": "Cardiorrespiratório",
     "equipment": "Bicicleta",
@@ -770,7 +770,7 @@ export const guideExercises = [
     "safetyNotes": "Ajuste para joelhos confortáveis"
   },
   {
-    "id": "60000000-9ca0ba7-bca8-44bd-8622-b3ed3accb6c4",
+    "id": "60000000-a89b-2d42-050b-9d8cd4ca901b",
     "name": "Bicicleta reclinada",
     "muscleGroup": "Cardiorrespiratório",
     "equipment": "Bicicleta reclinada",
@@ -778,7 +778,7 @@ export const guideExercises = [
     "safetyNotes": "Boa opção se peso corporal torna caminhada desconfortável"
   },
   {
-    "id": "60000000-5385aee-4b2a-4763-88b8-857dda6dce7a",
+    "id": "60000000-9a2e-2965-b86e-b7950e660f58",
     "name": "Elíptico",
     "muscleGroup": "Cardiorrespiratório",
     "equipment": "Elíptico",
@@ -786,7 +786,7 @@ export const guideExercises = [
     "safetyNotes": "Suba/saia com máquina parada"
   },
   {
-    "id": "60000000-495b7a4-5442-4d7a-8cfd-1235281f1b7f",
+    "id": "60000000-c1f6-5b70-62a7-28408eb62d57",
     "name": "Remo ergométrico",
     "muscleGroup": "Cardiorrespiratório",
     "equipment": "Remo",
@@ -794,7 +794,7 @@ export const guideExercises = [
     "safetyNotes": "Aprenda técnica antes de intensidade"
   },
   {
-    "id": "61000000-2bb9aef-8a79-4e91-8c59-f0e0da3c5f5d",
+    "id": "61000000-4a77-528e-86d3-a917d08cf364",
     "name": "Supino inclinado máquina",
     "muscleGroup": "Empurrar",
     "equipment": "Adaptável",
@@ -802,7 +802,7 @@ export const guideExercises = [
     "safetyNotes": "Pode usar chest press inclinado"
   },
   {
-    "id": "61000000-ad5c88b-7cdc-4434-8d7d-5fca450c68fb",
+    "id": "61000000-2546-b24b-710b-6ab7fcd037b9",
     "name": "Tríceps corda",
     "muscleGroup": "Braços",
     "equipment": "Adaptável",
@@ -810,7 +810,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-85ecbad-6e4a-4b80-8949-21eb1a5ffd39",
+    "id": "61000000-ed84-24f5-503e-6bfcd5480df5",
     "name": "Rosca inclinada",
     "muscleGroup": "Braços",
     "equipment": "Adaptável",
@@ -818,7 +818,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-bb47c49-cfbb-41b2-8030-fb0eaa7f41a6",
+    "id": "61000000-ffe5-d33e-1258-f17628146b95",
     "name": "Tríceps acima da cabeça",
     "muscleGroup": "Braços",
     "equipment": "Adaptável",
@@ -826,7 +826,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-a8e18d8-9c9f-4d70-8e9e-6213bb82c654",
+    "id": "61000000-2f22-06c3-46ce-aae1cd32a36b",
     "name": "Supino inclinado halteres",
     "muscleGroup": "Peito",
     "equipment": "Adaptável",
@@ -834,7 +834,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-544c9ad-a6e3-4215-88c0-264a728ef060",
+    "id": "61000000-b919-9472-afdc-b2e371593318",
     "name": "Elevação lateral polia",
     "muscleGroup": "Ombros",
     "equipment": "Adaptável",
@@ -842,7 +842,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-67f824d-8ea4-497f-86fd-4bbc6e980ad9",
+    "id": "61000000-fb4b-4402-67bf-92e24b3613c5",
     "name": "Remada apoiada",
     "muscleGroup": "Costas",
     "equipment": "Adaptável",
@@ -850,7 +850,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-146992a-6825-48ec-8982-17f64dbd85d6",
+    "id": "61000000-b71e-4f43-e199-73145bcaf622",
     "name": "Puxada unilateral",
     "muscleGroup": "Costas",
     "equipment": "Adaptável",
@@ -858,7 +858,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-4f43708-db6a-446e-84e6-a6dc80242ed2",
+    "id": "61000000-5525-fb46-3cd5-296807215183",
     "name": "Rosca direta W",
     "muscleGroup": "Bíceps",
     "equipment": "Adaptável",
@@ -866,7 +866,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-e4ce7fe-d38c-40a8-83ef-13838c7031bf",
+    "id": "61000000-2cec-e5cf-e1e2-e9f9c0e0ff5b",
     "name": "Hack squat",
     "muscleGroup": "Quadríceps",
     "equipment": "Adaptável",
@@ -874,7 +874,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-033e1fd-049f-4e1c-8ef5-92c142454b03",
+    "id": "61000000-d933-2045-7f3e-3878dc90c5d5",
     "name": "RDL",
     "muscleGroup": "Posteriores",
     "equipment": "Adaptável",
@@ -882,7 +882,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-5a994cc-4f52-49b1-86d5-a21c08c9f628",
+    "id": "61000000-206f-f602-6271-15776bb2582a",
     "name": "Leg press",
     "muscleGroup": "Quadríceps",
     "equipment": "Adaptável",
@@ -890,7 +890,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-50ec2b1-6e67-47ed-865a-4ef9d58ca864",
+    "id": "61000000-053a-ba4f-2c66-99d4e6ec7eea",
     "name": "Crossover",
     "muscleGroup": "Peito",
     "equipment": "Adaptável",
@@ -898,7 +898,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-497f08b-1251-413a-805c-b1ffa8956111",
+    "id": "61000000-d12d-ec73-099d-db52babcbb87",
     "name": "Puxada pronada",
     "muscleGroup": "Costas",
     "equipment": "Adaptável",
@@ -906,7 +906,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-7784339-a5c2-41c2-8638-7a8ee41a6ce6",
+    "id": "61000000-2461-269d-cb40-6d00bc6cc4d5",
     "name": "Elevação lateral",
     "muscleGroup": "Ombros",
     "equipment": "Adaptável",
@@ -914,7 +914,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-5350398-086a-437e-8230-34a1d4c6b2cf",
+    "id": "61000000-0c9c-404f-3148-3abc75696fd3",
     "name": "Rosca Bayesian",
     "muscleGroup": "Bíceps",
     "equipment": "Adaptável",
@@ -922,7 +922,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-0c4e5ef-7a56-466e-80f5-04f43524f15d",
+    "id": "61000000-af15-5002-0bac-0076b53e361b",
     "name": "Agachamento livre",
     "muscleGroup": "Quadríceps",
     "equipment": "Adaptável",
@@ -930,7 +930,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-9a580b0-1405-4926-810b-9543802b4bd6",
+    "id": "61000000-8402-9ceb-4638-d02e8cfaef73",
     "name": "Hip thrust",
     "muscleGroup": "Glúteos",
     "equipment": "Adaptável",
@@ -938,7 +938,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-96beef9-c8d7-4dbb-8a59-516e35439dcf",
+    "id": "61000000-7c43-dcdb-e2b5-17fa006a943d",
     "name": "Búlgaro",
     "muscleGroup": "Quadríceps/glúteos",
     "equipment": "Adaptável",
@@ -946,7 +946,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-e754fbf-daa3-44c7-8253-e3032643b487",
+    "id": "61000000-559e-3f1d-568d-133d5ecf1468",
     "name": "Panturrilha em pé",
     "muscleGroup": "Panturrilha",
     "equipment": "Adaptável",
@@ -954,7 +954,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-c09f8f6-4d45-4887-84f2-46bfa02bd0e1",
+    "id": "61000000-dd61-1b2b-d9c7-128e107be936",
     "name": "Crunch polia",
     "muscleGroup": "Core",
     "equipment": "Adaptável",
@@ -962,7 +962,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-023959c-d846-47c0-8988-2656e5a9ea51",
+    "id": "61000000-2704-b34a-f1a4-4e2419e7522a",
     "name": "Supino reto barra",
     "muscleGroup": "Peito",
     "equipment": "Adaptável",
@@ -970,7 +970,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-e2fe617-91e5-4726-80d8-8f3f8d16f295",
+    "id": "61000000-1ec6-a7e9-07b6-bf8382c1fbb2",
     "name": "Shoulder press",
     "muscleGroup": "Ombros",
     "equipment": "Adaptável",
@@ -978,7 +978,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-99ec07f-2f1a-4dc3-8da5-3930bf52838a",
+    "id": "61000000-8f07-346f-6c7d-81372f8826c2",
     "name": "Puxada neutra",
     "muscleGroup": "Costas",
     "equipment": "Adaptável",
@@ -986,7 +986,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-097c33b-ea36-4bd8-8c90-70c2d6e3a679",
+    "id": "61000000-789d-269f-2f0b-3edc4b713e5b",
     "name": "Pulldown braços estendidos",
     "muscleGroup": "Costas",
     "equipment": "Adaptável",
@@ -994,7 +994,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-e140606-a03b-43ae-8631-7b9d9f73c3ba",
+    "id": "61000000-92e6-d685-d39b-7cbc36b5b158",
     "name": "Landmine press",
     "muscleGroup": "Ombros",
     "equipment": "Adaptável",
@@ -1002,7 +1002,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-9bfc240-0a0a-462a-85cf-aa33faa199ee",
+    "id": "61000000-4f63-e33d-64f6-8623399495d2",
     "name": "Remada unilateral",
     "muscleGroup": "Costas",
     "equipment": "Adaptável",
@@ -1010,7 +1010,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-ea0b1d6-94bb-43b3-8c55-670b9e0802c1",
+    "id": "61000000-17e6-160a-0608-ad829fc254d0",
     "name": "Prancha inclinada",
     "muscleGroup": "Core",
     "equipment": "Adaptável",
@@ -1018,7 +1018,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-b9584e1-5e45-48e4-88a4-8ff40f935e9e",
+    "id": "61000000-3755-9849-977f-538f7f2a6bca",
     "name": "Hip thrust máquina",
     "muscleGroup": "Glúteos",
     "equipment": "Adaptável",
@@ -1026,7 +1026,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-e4e713b-69ae-45f3-87b7-76a2d01e4a5d",
+    "id": "61000000-54c2-3a0a-bc21-13c0be0288fe",
     "name": "Barra fixa/puxada",
     "muscleGroup": "Costas",
     "equipment": "Adaptável",
@@ -1034,7 +1034,7 @@ export const guideExercises = [
     "safetyNotes": "Autorregule volume; avançado não significa falhar tudo"
   },
   {
-    "id": "61000000-f0243ff-e682-4b27-8153-6e746a201aa9",
+    "id": "61000000-9acc-48a0-a27b-b7997019b29f",
     "name": "Agachamento livre ou hack",
     "muscleGroup": "Quadríceps/glúteos",
     "equipment": "Adaptável",
@@ -1042,7 +1042,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-a9da51d-7371-4c3c-8342-e5cc8575f897",
+    "id": "61000000-713b-8cbb-9434-35570fbe8714",
     "name": "Abdutora",
     "muscleGroup": "Glúteo médio",
     "equipment": "Adaptável",
@@ -1050,7 +1050,7 @@ export const guideExercises = [
     "safetyNotes": "Use carga conservadora no início e pare se sentir dor aguda ou perda de controle."
   },
   {
-    "id": "61000000-b75f88e-779d-4225-8576-9e0b548cc6a8",
+    "id": "61000000-1108-794a-bbae-d62e28887277",
     "name": "Agachamento/hack",
     "muscleGroup": "Quadríceps",
     "equipment": "Adaptável",
@@ -1058,7 +1058,7 @@ export const guideExercises = [
     "safetyNotes": "Reduza volume se sintomas do ciclo, sono ou desempenho piorarem"
   },
   {
-    "id": "61000000-63884e6-c103-4821-85fa-2b36456e4d1e",
+    "id": "61000000-0d9c-1101-173e-f8ed6fc70515",
     "name": "Remada baixa",
     "muscleGroup": "Costas",
     "equipment": "Adaptável",
@@ -1066,7 +1066,7 @@ export const guideExercises = [
     "safetyNotes": "Reduza volume se sintomas do ciclo, sono ou desempenho piorarem"
   },
   {
-    "id": "61000000-d86134e-4012-4ce2-88c8-cfd3c1adfce2",
+    "id": "61000000-7816-fe20-7f20-cedc8eafb75b",
     "name": "Chest press",
     "muscleGroup": "Peito",
     "equipment": "Adaptável",
@@ -1074,7 +1074,7 @@ export const guideExercises = [
     "safetyNotes": "Reduza volume se sintomas do ciclo, sono ou desempenho piorarem"
   },
   {
-    "id": "61000000-77b91d3-3bbe-4e63-8152-463277c6a379",
+    "id": "61000000-c697-b460-bbbc-4b7e97eb8817",
     "name": "Braços bi-set",
     "muscleGroup": "Bíceps/tríceps",
     "equipment": "Adaptável",
@@ -1085,7 +1085,7 @@ export const guideExercises = [
 
 export const guideWorkouts = [
   {
-    "id": "62000000-7576e62-5048-4376-8f44-1da1b0e6db09",
+    "id": "62000000-19f1-175b-7ac3-fab7f1128dcc",
     "title": "Full body 2x - Sessão A",
     "description": "Modelo de 2 dias por semana para saúde/base mínima. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "easy",
@@ -1093,7 +1093,7 @@ export const guideWorkouts = [
     "category": "full_body"
   },
   {
-    "id": "62000000-c2d7c7a-7442-45d4-8f67-d8492290fd94",
+    "id": "62000000-6f39-2235-b21b-3cadca1ecfe0",
     "title": "Full body 2x - Sessão B",
     "description": "Modelo de 2 dias por semana para saúde/base mínima. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "easy",
@@ -1101,7 +1101,7 @@ export const guideWorkouts = [
     "category": "full_body"
   },
   {
-    "id": "62000000-6f9fb65-7883-4032-8c1e-88a2e72e88d5",
+    "id": "62000000-8dae-5081-a114-7f86a5fc8984",
     "title": "Full body 3x - Sessão A",
     "description": "Modelo de 3 dias por semana para hipertrofia/recomposição. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1109,7 +1109,7 @@ export const guideWorkouts = [
     "category": "full_body"
   },
   {
-    "id": "62000000-1011331-95d0-4ce5-841b-261555feb2bb",
+    "id": "62000000-a730-cf22-d570-4e3f30e13ab7",
     "title": "Full body 3x - Sessão B",
     "description": "Modelo de 3 dias por semana para hipertrofia/recomposição. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1117,7 +1117,7 @@ export const guideWorkouts = [
     "category": "full_body"
   },
   {
-    "id": "62000000-c43d513-6a13-406c-8e61-15f397a38876",
+    "id": "62000000-2814-a694-fc16-3746863a9e9e",
     "title": "Full body 3x - Sessão C",
     "description": "Modelo de 3 dias por semana para hipertrofia/recomposição. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1125,7 +1125,7 @@ export const guideWorkouts = [
     "category": "full_body"
   },
   {
-    "id": "62000000-34eb484-aa62-43c7-8f72-e42dc361be6f",
+    "id": "62000000-b05d-e8af-4303-96694b1449f6",
     "title": "Upper/Lower 4x - Sessão Upper A",
     "description": "Modelo de 4 dias por semana para força + hipertrofia. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1133,7 +1133,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-cff93e7-a7ac-4afd-836f-6c37771dd3a6",
+    "id": "62000000-ecbd-0839-7fd8-3b8e44721069",
     "title": "Upper/Lower 4x - Sessão Lower A",
     "description": "Modelo de 4 dias por semana para força + hipertrofia. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1141,7 +1141,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-74912aa-e550-447d-8e3b-1abe85ee6a01",
+    "id": "62000000-7a55-5ce0-4f02-6381231ab0e2",
     "title": "Upper/Lower 4x - Sessão Upper B",
     "description": "Modelo de 4 dias por semana para força + hipertrofia. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1149,7 +1149,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-1e268bd-5cf8-47a7-8517-e0fc97ffa68a",
+    "id": "62000000-41e3-cb35-ba96-60e5ada9d1da",
     "title": "Upper/Lower 4x - Sessão Lower B",
     "description": "Modelo de 4 dias por semana para força + hipertrofia. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1157,7 +1157,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-7f5e3f4-080f-4ee4-8462-2c50b22d3aa8",
+    "id": "62000000-26bd-9ad2-2ddd-09d6ca4815b4",
     "title": "PPL + Upper/Lower 5x - Sessão Push",
     "description": "Modelo de 5 dias por semana para hipertrofia. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1165,7 +1165,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-c31204b-5292-472f-8779-63b7f3c78e6e",
+    "id": "62000000-1876-14b6-1bf8-78d42e04b4d1",
     "title": "PPL + Upper/Lower 5x - Sessão Pull",
     "description": "Modelo de 5 dias por semana para hipertrofia. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1173,7 +1173,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-08c3ed8-5de6-4c34-8aed-f2a9a4a34cce",
+    "id": "62000000-6c32-dbfd-b0fd-4c64db506b40",
     "title": "PPL + Upper/Lower 5x - Sessão Legs",
     "description": "Modelo de 5 dias por semana para hipertrofia. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1181,7 +1181,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-7029829-2ee6-4aa4-8d57-bbcc9a48e325",
+    "id": "62000000-2fb3-994d-622a-c9ce6a641021",
     "title": "PPL + Upper/Lower 5x - Sessão Upper",
     "description": "Modelo de 5 dias por semana para hipertrofia. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1189,7 +1189,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-2b66124-3a2d-4667-8356-efadb6503684",
+    "id": "62000000-130d-6bac-0fd4-581c88d95d8d",
     "title": "PPL + Upper/Lower 5x - Sessão Lower",
     "description": "Modelo de 5 dias por semana para hipertrofia. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1197,7 +1197,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-8c4a6d1-b80c-421d-8b90-1235215b7f46",
+    "id": "62000000-48ac-cb3a-7771-43bf39c42315",
     "title": "PPL 6x - Sessão Push A",
     "description": "Modelo de 6 dias por semana para hipertrofia alto volume. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1205,7 +1205,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-fd29543-8c85-45f5-8cc7-be5c6f7cd455",
+    "id": "62000000-0a67-7adb-2d82-500a1faecdbb",
     "title": "PPL 6x - Sessão Pull A",
     "description": "Modelo de 6 dias por semana para hipertrofia alto volume. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1213,7 +1213,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-244ef22-b061-4ea1-82be-37260c8ba968",
+    "id": "62000000-08cb-0d26-61f5-80f770c4371b",
     "title": "PPL 6x - Sessão Legs A",
     "description": "Modelo de 6 dias por semana para hipertrofia alto volume. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1221,7 +1221,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-374c6aa-7bf4-45ca-87b3-e62876859c4b",
+    "id": "62000000-f7ac-6d0a-8c6f-a0932d4a444e",
     "title": "PPL 6x - Sessão Push B",
     "description": "Modelo de 6 dias por semana para hipertrofia alto volume. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1229,7 +1229,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-214f0dc-7603-45af-8275-3cb34b687ba7",
+    "id": "62000000-e9fe-cfc3-b395-f64906a8b6bc",
     "title": "PPL 6x - Sessão Pull B",
     "description": "Modelo de 6 dias por semana para hipertrofia alto volume. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1237,7 +1237,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-d8f0b97-79c4-4ceb-8ca1-29f371fab202",
+    "id": "62000000-fa81-4cd8-ef5d-db67a7893518",
     "title": "PPL 6x - Sessão Legs B",
     "description": "Modelo de 6 dias por semana para hipertrofia alto volume. Ajuste cargas por RIR e mantenha execução confortável.",
     "difficulty": "medium",
@@ -1245,7 +1245,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-f701c61-7d8a-49f5-867c-5c6aef699931",
+    "id": "62000000-fc6e-5140-ddf3-b298dcee824b",
     "title": "Foco tronco e força Iniciante - Sessão A",
     "description": "Plano iniciante para perda de peso + base muscular, com ênfase em tronco, força e postura sem negligenciar pernas e core. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "easy",
@@ -1253,7 +1253,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-9dc99f3-30e0-40d0-8ec0-8660a2173d3a",
+    "id": "62000000-1847-690f-638c-c4d471396066",
     "title": "Foco tronco e força Iniciante - Sessão B",
     "description": "Plano iniciante para perda de peso + base muscular, com ênfase em tronco, força e postura sem negligenciar pernas e core. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "easy",
@@ -1261,7 +1261,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-c0c0e0e-86d1-4a8e-8baa-3d4601369e8a",
+    "id": "62000000-0013-dca1-32e8-90b802a973ce",
     "title": "Foco tronco e força Iniciante - Sessão C",
     "description": "Plano iniciante para perda de peso + base muscular, com ênfase em tronco, força e postura sem negligenciar pernas e core. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "easy",
@@ -1269,7 +1269,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-a1bd144-451a-464e-8850-624c1d3e7b3d",
+    "id": "62000000-4489-a6c8-1ede-94a1867254b4",
     "title": "Foco tronco e força Intermediário - Sessão Upper A",
     "description": "Plano intermediário para recomposição + força, com ênfase em tronco, força e postura sem negligenciar pernas e core. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "medium",
@@ -1277,7 +1277,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-a981051-80a3-47ee-8ded-8a499d8b73d0",
+    "id": "62000000-4f8f-84fc-acc7-c0e18f78240e",
     "title": "Foco tronco e força Intermediário - Sessão Lower A",
     "description": "Plano intermediário para recomposição + força, com ênfase em tronco, força e postura sem negligenciar pernas e core. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "medium",
@@ -1285,7 +1285,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-8bc46dd-93c3-4408-8ab9-44de23acb6d8",
+    "id": "62000000-a779-a7a4-6192-21e2c8ba366a",
     "title": "Foco tronco e força Intermediário - Sessão Upper B",
     "description": "Plano intermediário para recomposição + força, com ênfase em tronco, força e postura sem negligenciar pernas e core. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "medium",
@@ -1293,7 +1293,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-fa6cfe9-ff02-4e7c-884d-620639675c61",
+    "id": "62000000-3646-15dc-c226-4a12fec8748d",
     "title": "Foco tronco e força Intermediário - Sessão Lower B",
     "description": "Plano intermediário para recomposição + força, com ênfase em tronco, força e postura sem negligenciar pernas e core. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "medium",
@@ -1301,7 +1301,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-aca36c7-7a16-4147-8edd-a24490678a69",
+    "id": "62000000-75f8-f65e-cec0-a6decd1e7fda",
     "title": "Foco tronco e força Avançado - Sessão Push",
     "description": "Plano avançado para hipertrofia + manutenção de força, com ênfase em tronco, força e postura sem negligenciar pernas e core. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "hard",
@@ -1309,7 +1309,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-561f110-589d-49c3-89c3-b8c5ae0bbd75",
+    "id": "62000000-0a49-7105-d669-5cf867bb763a",
     "title": "Foco tronco e força Avançado - Sessão Pull",
     "description": "Plano avançado para hipertrofia + manutenção de força, com ênfase em tronco, força e postura sem negligenciar pernas e core. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "hard",
@@ -1317,7 +1317,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-11965f6-85de-4c0b-8c1e-b76fb450005b",
+    "id": "62000000-c475-5442-6893-b5ef1dc381d7",
     "title": "Foco tronco e força Avançado - Sessão Legs",
     "description": "Plano avançado para hipertrofia + manutenção de força, com ênfase em tronco, força e postura sem negligenciar pernas e core. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "hard",
@@ -1325,7 +1325,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-5318378-85e7-4933-80c5-76449d0f01d2",
+    "id": "62000000-7dbc-07f8-9369-370494973930",
     "title": "Foco tronco e força Avançado - Sessão Upper",
     "description": "Plano avançado para hipertrofia + manutenção de força, com ênfase em tronco, força e postura sem negligenciar pernas e core. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "hard",
@@ -1333,7 +1333,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-a2803b0-e03e-4492-8f2d-1af87a6a55a2",
+    "id": "62000000-8142-224f-8fb9-6fac4db88dc9",
     "title": "Foco tronco e força Avançado - Sessão Lower",
     "description": "Plano avançado para hipertrofia + manutenção de força, com ênfase em tronco, força e postura sem negligenciar pernas e core. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "hard",
@@ -1341,7 +1341,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-29497b8-3ba9-4300-8f83-ce3c44427f51",
+    "id": "62000000-1b7f-6d6d-ec75-d7f01c024bb4",
     "title": "Foco glúteos e pernas Iniciante - Sessão A",
     "description": "Plano iniciante para perda de peso + base muscular, com ênfase em glúteos e pernas com tronco completo e ajustes por sintomas. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "easy",
@@ -1349,7 +1349,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-dbf54be-34a4-48d3-8f28-f49c292014bc",
+    "id": "62000000-ab47-88bf-1a41-c2caf69cee55",
     "title": "Foco glúteos e pernas Iniciante - Sessão B",
     "description": "Plano iniciante para perda de peso + base muscular, com ênfase em glúteos e pernas com tronco completo e ajustes por sintomas. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "easy",
@@ -1357,7 +1357,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-cbed04a-9589-433d-89e7-195d04585e78",
+    "id": "62000000-5a87-81cd-ff77-c4cfc164a229",
     "title": "Foco glúteos e pernas Iniciante - Sessão C",
     "description": "Plano iniciante para perda de peso + base muscular, com ênfase em glúteos e pernas com tronco completo e ajustes por sintomas. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "easy",
@@ -1365,7 +1365,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-4e9f6a8-b8ec-436a-8dc3-8d47a3fde8bf",
+    "id": "62000000-dfb1-dbda-aed8-f624959a9478",
     "title": "Foco glúteos e pernas Intermediário - Sessão Lower A",
     "description": "Plano intermediário para recomposição + ênfase glúteos/pernas, com ênfase em glúteos e pernas com tronco completo e ajustes por sintomas. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "medium",
@@ -1373,7 +1373,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-66c4b32-f031-4a47-857c-3f71d2d2be73",
+    "id": "62000000-0981-8294-23f7-7035824ff72a",
     "title": "Foco glúteos e pernas Intermediário - Sessão Upper A",
     "description": "Plano intermediário para recomposição + ênfase glúteos/pernas, com ênfase em glúteos e pernas com tronco completo e ajustes por sintomas. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "medium",
@@ -1381,7 +1381,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-2d321fb-13e0-4517-8989-4697a3213f5c",
+    "id": "62000000-8ef5-92b2-87d8-3891316778c6",
     "title": "Foco glúteos e pernas Intermediário - Sessão Lower B",
     "description": "Plano intermediário para recomposição + ênfase glúteos/pernas, com ênfase em glúteos e pernas com tronco completo e ajustes por sintomas. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "medium",
@@ -1389,7 +1389,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-fbcbf31-78ab-4308-85f4-cb301af58e99",
+    "id": "62000000-2a15-6f28-1260-96974a74aa12",
     "title": "Foco glúteos e pernas Intermediário - Sessão Upper B",
     "description": "Plano intermediário para recomposição + ênfase glúteos/pernas, com ênfase em glúteos e pernas com tronco completo e ajustes por sintomas. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "medium",
@@ -1397,7 +1397,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-048a789-b1bd-4e22-837f-274943fc3be1",
+    "id": "62000000-f289-d857-ac35-bf1bbaf18893",
     "title": "Foco glúteos e pernas Avançado - Sessão Lower A — glúteos",
     "description": "Plano avançado para hipertrofia equilibrada + ênfase glúteos/pernas, com ênfase em glúteos e pernas com tronco completo e ajustes por sintomas. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "hard",
@@ -1405,7 +1405,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-6307859-5f6c-408a-8bb5-f98f0370ef2b",
+    "id": "62000000-d5b0-4127-1bb8-57a06e4514d9",
     "title": "Foco glúteos e pernas Avançado - Sessão Upper A",
     "description": "Plano avançado para hipertrofia equilibrada + ênfase glúteos/pernas, com ênfase em glúteos e pernas com tronco completo e ajustes por sintomas. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "hard",
@@ -1413,7 +1413,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-7fe0c74-cd1f-4909-8427-7d2e77d9deb8",
+    "id": "62000000-9ead-d9cb-127e-2937e4650873",
     "title": "Foco glúteos e pernas Avançado - Sessão Lower B — quadríceps",
     "description": "Plano avançado para hipertrofia equilibrada + ênfase glúteos/pernas, com ênfase em glúteos e pernas com tronco completo e ajustes por sintomas. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "hard",
@@ -1421,7 +1421,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-bffb572-1164-4c50-89dc-dcf9d2afa6ee",
+    "id": "62000000-dcee-c90f-8a3e-587362b23e97",
     "title": "Foco glúteos e pernas Avançado - Sessão Upper B",
     "description": "Plano avançado para hipertrofia equilibrada + ênfase glúteos/pernas, com ênfase em glúteos e pernas com tronco completo e ajustes por sintomas. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "hard",
@@ -1429,7 +1429,7 @@ export const guideWorkouts = [
     "category": "strength"
   },
   {
-    "id": "62000000-e3a6405-59d4-4882-897c-86a6dbd46e8d",
+    "id": "62000000-892d-da67-3eb9-25446d95cddd",
     "title": "Foco glúteos e pernas Avançado - Sessão Lower C — posteriores",
     "description": "Plano avançado para hipertrofia equilibrada + ênfase glúteos/pernas, com ênfase em glúteos e pernas com tronco completo e ajustes por sintomas. Não existe treino exclusivo por gênero; escolha pelo objetivo.",
     "difficulty": "hard",
@@ -1440,1884 +1440,1884 @@ export const guideWorkouts = [
 
 export const guideWorkoutExercises = [
   {
-    "workoutId": "62000000-7576e62-5048-4376-8f44-1da1b0e6db09",
-    "exerciseId": "60000000-113a1bb-fe52-4ff5-87c0-187a3edfa6c9",
+    "workoutId": "62000000-19f1-175b-7ac3-fab7f1128dcc",
+    "exerciseId": "60000000-7679-c46f-a8ca-006df15ccde9",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-7576e62-5048-4376-8f44-1da1b0e6db09",
-    "exerciseId": "60000000-06abd6d-caa9-4393-8401-d32c27bb0574",
+    "workoutId": "62000000-19f1-175b-7ac3-fab7f1128dcc",
+    "exerciseId": "60000000-fc0b-6132-010c-4b516625b048",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-7576e62-5048-4376-8f44-1da1b0e6db09",
-    "exerciseId": "60000000-778fc34-89a2-4f4d-88fb-656996111f5c",
+    "workoutId": "62000000-19f1-175b-7ac3-fab7f1128dcc",
+    "exerciseId": "60000000-a75d-d2b7-4027-350ab97794eb",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-7576e62-5048-4376-8f44-1da1b0e6db09",
-    "exerciseId": "60000000-69e7183-70f3-42f1-8e9a-4b45e764edff",
+    "workoutId": "62000000-19f1-175b-7ac3-fab7f1128dcc",
+    "exerciseId": "60000000-92c5-795e-872e-3040b25b9075",
     "sortOrder": 4,
     "targetSets": 2,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-7576e62-5048-4376-8f44-1da1b0e6db09",
-    "exerciseId": "60000000-878674c-1e69-4804-8452-f2290fe34ce0",
+    "workoutId": "62000000-19f1-175b-7ac3-fab7f1128dcc",
+    "exerciseId": "60000000-134b-075e-64b0-c28008f2888b",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-7576e62-5048-4376-8f44-1da1b0e6db09",
-    "exerciseId": "60000000-c743efe-c034-4063-8157-49fee3e36cee",
+    "workoutId": "62000000-19f1-175b-7ac3-fab7f1128dcc",
+    "exerciseId": "60000000-b513-f68e-f3fb-4aa8cdfa5d10",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 20
   },
   {
-    "workoutId": "62000000-c2d7c7a-7442-45d4-8f67-d8492290fd94",
-    "exerciseId": "60000000-e3957ed-2806-4c00-8018-757bec7a9ffa",
+    "workoutId": "62000000-6f39-2235-b21b-3cadca1ecfe0",
+    "exerciseId": "60000000-b669-9434-baca-d03b9f97a608",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-c2d7c7a-7442-45d4-8f67-d8492290fd94",
-    "exerciseId": "60000000-2d9752b-9c16-40af-8234-3679587867ef",
+    "workoutId": "62000000-6f39-2235-b21b-3cadca1ecfe0",
+    "exerciseId": "60000000-efe4-39d4-3fe2-0ff94c2d645b",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-c2d7c7a-7442-45d4-8f67-d8492290fd94",
-    "exerciseId": "60000000-a3a917c-5988-4288-871d-97b1c944b4b0",
+    "workoutId": "62000000-6f39-2235-b21b-3cadca1ecfe0",
+    "exerciseId": "60000000-eb92-839d-b84e-5185a92420b9",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-c2d7c7a-7442-45d4-8f67-d8492290fd94",
-    "exerciseId": "60000000-ac13e55-b3f4-4e54-8f76-61ccb2f154e0",
+    "workoutId": "62000000-6f39-2235-b21b-3cadca1ecfe0",
+    "exerciseId": "60000000-6a05-2a8e-cf5f-1cd89b93a6c6",
     "sortOrder": 4,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-c2d7c7a-7442-45d4-8f67-d8492290fd94",
-    "exerciseId": "60000000-f1d01bf-d61d-49ba-811b-545dc8801a85",
+    "workoutId": "62000000-6f39-2235-b21b-3cadca1ecfe0",
+    "exerciseId": "60000000-62d2-a3c2-c2f5-1d64a9adf598",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-c2d7c7a-7442-45d4-8f67-d8492290fd94",
-    "exerciseId": "60000000-dfd7fcd-6852-483e-80f7-32c5d1a00f57",
+    "workoutId": "62000000-6f39-2235-b21b-3cadca1ecfe0",
+    "exerciseId": "60000000-fd4e-3fc7-3096-8b7717c5b5ba",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-6f9fb65-7883-4032-8c1e-88a2e72e88d5",
-    "exerciseId": "60000000-113a1bb-fe52-4ff5-87c0-187a3edfa6c9",
+    "workoutId": "62000000-8dae-5081-a114-7f86a5fc8984",
+    "exerciseId": "60000000-7679-c46f-a8ca-006df15ccde9",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-6f9fb65-7883-4032-8c1e-88a2e72e88d5",
-    "exerciseId": "60000000-4792e03-c0b5-40ea-8e39-2faed9ac9384",
+    "workoutId": "62000000-8dae-5081-a114-7f86a5fc8984",
+    "exerciseId": "60000000-f654-c4ca-e5d2-348299d05fa6",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-6f9fb65-7883-4032-8c1e-88a2e72e88d5",
-    "exerciseId": "60000000-2d9752b-9c16-40af-8234-3679587867ef",
+    "workoutId": "62000000-8dae-5081-a114-7f86a5fc8984",
+    "exerciseId": "60000000-efe4-39d4-3fe2-0ff94c2d645b",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-6f9fb65-7883-4032-8c1e-88a2e72e88d5",
-    "exerciseId": "60000000-ac13e55-b3f4-4e54-8f76-61ccb2f154e0",
+    "workoutId": "62000000-8dae-5081-a114-7f86a5fc8984",
+    "exerciseId": "60000000-6a05-2a8e-cf5f-1cd89b93a6c6",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-6f9fb65-7883-4032-8c1e-88a2e72e88d5",
-    "exerciseId": "60000000-5009596-706b-4225-8cac-0415ff9cc9cc",
+    "workoutId": "62000000-8dae-5081-a114-7f86a5fc8984",
+    "exerciseId": "60000000-990d-a402-ea54-40ced2628ed3",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-6f9fb65-7883-4032-8c1e-88a2e72e88d5",
-    "exerciseId": "60000000-34a9f70-985e-4a54-8257-4f5079a5e404",
+    "workoutId": "62000000-8dae-5081-a114-7f86a5fc8984",
+    "exerciseId": "60000000-7096-7d71-6a14-f87969584191",
     "sortOrder": 6,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-6f9fb65-7883-4032-8c1e-88a2e72e88d5",
-    "exerciseId": "60000000-b8b6e16-fe5c-48ef-8c10-7e457e1e642a",
+    "workoutId": "62000000-8dae-5081-a114-7f86a5fc8984",
+    "exerciseId": "60000000-e5cf-9389-aba1-4b5ceb3ddaa2",
     "sortOrder": 7,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-1011331-95d0-4ce5-841b-261555feb2bb",
-    "exerciseId": "60000000-e3957ed-2806-4c00-8018-757bec7a9ffa",
+    "workoutId": "62000000-a730-cf22-d570-4e3f30e13ab7",
+    "exerciseId": "60000000-b669-9434-baca-d03b9f97a608",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-1011331-95d0-4ce5-841b-261555feb2bb",
-    "exerciseId": "60000000-778fc34-89a2-4f4d-88fb-656996111f5c",
+    "workoutId": "62000000-a730-cf22-d570-4e3f30e13ab7",
+    "exerciseId": "60000000-a75d-d2b7-4027-350ab97794eb",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-1011331-95d0-4ce5-841b-261555feb2bb",
-    "exerciseId": "61000000-2bb9aef-8a79-4e91-8c59-f0e0da3c5f5d",
+    "workoutId": "62000000-a730-cf22-d570-4e3f30e13ab7",
+    "exerciseId": "61000000-4a77-528e-86d3-a917d08cf364",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-1011331-95d0-4ce5-841b-261555feb2bb",
-    "exerciseId": "60000000-3ae6e62-61ca-458e-8e45-415b23b11adb",
+    "workoutId": "62000000-a730-cf22-d570-4e3f30e13ab7",
+    "exerciseId": "60000000-ef83-4e08-a047-40a31826fdc5",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-1011331-95d0-4ce5-841b-261555feb2bb",
-    "exerciseId": "60000000-d72fa30-99d1-47ea-85f6-f28f09cf0daa",
+    "workoutId": "62000000-a730-cf22-d570-4e3f30e13ab7",
+    "exerciseId": "60000000-f4d4-feb8-13e9-ef30d557c78d",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-1011331-95d0-4ce5-841b-261555feb2bb",
-    "exerciseId": "60000000-972e7aa-d9bb-405d-8d87-774120fb3aca",
+    "workoutId": "62000000-a730-cf22-d570-4e3f30e13ab7",
+    "exerciseId": "60000000-bdf1-63c1-e4c4-49375143f6f8",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-1011331-95d0-4ce5-841b-261555feb2bb",
-    "exerciseId": "60000000-f72bd4c-7fdc-47a2-82b6-8cf9500ec5fb",
+    "workoutId": "62000000-a730-cf22-d570-4e3f30e13ab7",
+    "exerciseId": "60000000-dd2a-1fb7-ed21-12749d8d2015",
     "sortOrder": 7,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-c43d513-6a13-406c-8e61-15f397a38876",
-    "exerciseId": "60000000-371bd55-2297-4c5c-88d5-679588fea126",
+    "workoutId": "62000000-2814-a694-fc16-3746863a9e9e",
+    "exerciseId": "60000000-8bbe-592e-745f-61eac1ca58d7",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-c43d513-6a13-406c-8e61-15f397a38876",
-    "exerciseId": "60000000-7f59ded-7da6-46be-8377-17d92261a1e1",
+    "workoutId": "62000000-2814-a694-fc16-3746863a9e9e",
+    "exerciseId": "60000000-36cf-7d24-f878-2f69e35a6d7d",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-c43d513-6a13-406c-8e61-15f397a38876",
-    "exerciseId": "60000000-a586386-cf26-4c31-85c4-b9e1dd624501",
+    "workoutId": "62000000-2814-a694-fc16-3746863a9e9e",
+    "exerciseId": "60000000-a93a-bf73-a67e-b5395333abce",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-c43d513-6a13-406c-8e61-15f397a38876",
-    "exerciseId": "60000000-7ff0c02-35b0-4b0f-81b0-f70cafdab487",
+    "workoutId": "62000000-2814-a694-fc16-3746863a9e9e",
+    "exerciseId": "60000000-a26e-15c7-e55e-62be01c25b0a",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-c43d513-6a13-406c-8e61-15f397a38876",
-    "exerciseId": "60000000-a7294a1-9e6c-44a6-8309-3ce2a30a2091",
+    "workoutId": "62000000-2814-a694-fc16-3746863a9e9e",
+    "exerciseId": "60000000-a215-4b76-3efe-3e6106970cea",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-c43d513-6a13-406c-8e61-15f397a38876",
-    "exerciseId": "60000000-c96747d-b01d-4cdf-8990-f4c395a27c08",
+    "workoutId": "62000000-2814-a694-fc16-3746863a9e9e",
+    "exerciseId": "60000000-290d-3e26-be56-dcc1392ce540",
     "sortOrder": 6,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-c43d513-6a13-406c-8e61-15f397a38876",
-    "exerciseId": "60000000-7992b58-f763-4896-8de5-e3f59390086c",
+    "workoutId": "62000000-2814-a694-fc16-3746863a9e9e",
+    "exerciseId": "60000000-2765-18d1-65a4-209686fb4341",
     "sortOrder": 7,
     "targetSets": 2,
     "targetReps": 20
   },
   {
-    "workoutId": "62000000-34eb484-aa62-43c7-8f72-e42dc361be6f",
-    "exerciseId": "60000000-16d7cfa-b04f-429c-8fbe-94db8d36a00e",
+    "workoutId": "62000000-b05d-e8af-4303-96694b1449f6",
+    "exerciseId": "60000000-9549-6404-a7cf-ef5c2011e036",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 4
   },
   {
-    "workoutId": "62000000-34eb484-aa62-43c7-8f72-e42dc361be6f",
-    "exerciseId": "60000000-2d9752b-9c16-40af-8234-3679587867ef",
+    "workoutId": "62000000-b05d-e8af-4303-96694b1449f6",
+    "exerciseId": "60000000-efe4-39d4-3fe2-0ff94c2d645b",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-34eb484-aa62-43c7-8f72-e42dc361be6f",
-    "exerciseId": "60000000-a3a917c-5988-4288-871d-97b1c944b4b0",
+    "workoutId": "62000000-b05d-e8af-4303-96694b1449f6",
+    "exerciseId": "60000000-eb92-839d-b84e-5185a92420b9",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-34eb484-aa62-43c7-8f72-e42dc361be6f",
-    "exerciseId": "60000000-778fc34-89a2-4f4d-88fb-656996111f5c",
+    "workoutId": "62000000-b05d-e8af-4303-96694b1449f6",
+    "exerciseId": "60000000-a75d-d2b7-4027-350ab97794eb",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-34eb484-aa62-43c7-8f72-e42dc361be6f",
-    "exerciseId": "60000000-878674c-1e69-4804-8452-f2290fe34ce0",
+    "workoutId": "62000000-b05d-e8af-4303-96694b1449f6",
+    "exerciseId": "60000000-134b-075e-64b0-c28008f2888b",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-34eb484-aa62-43c7-8f72-e42dc361be6f",
-    "exerciseId": "61000000-ad5c88b-7cdc-4434-8d7d-5fca450c68fb",
+    "workoutId": "62000000-b05d-e8af-4303-96694b1449f6",
+    "exerciseId": "61000000-2546-b24b-710b-6ab7fcd037b9",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-34eb484-aa62-43c7-8f72-e42dc361be6f",
-    "exerciseId": "61000000-85ecbad-6e4a-4b80-8949-21eb1a5ffd39",
+    "workoutId": "62000000-b05d-e8af-4303-96694b1449f6",
+    "exerciseId": "61000000-ed84-24f5-503e-6bfcd5480df5",
     "sortOrder": 7,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-cff93e7-a7ac-4afd-836f-6c37771dd3a6",
-    "exerciseId": "60000000-6d70206-f89a-4304-843e-4b337115a155",
+    "workoutId": "62000000-ecbd-0839-7fd8-3b8e44721069",
+    "exerciseId": "60000000-5db3-63ba-96a5-ac5a20b07695",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 4
   },
   {
-    "workoutId": "62000000-cff93e7-a7ac-4afd-836f-6c37771dd3a6",
-    "exerciseId": "60000000-69e7183-70f3-42f1-8e9a-4b45e764edff",
+    "workoutId": "62000000-ecbd-0839-7fd8-3b8e44721069",
+    "exerciseId": "60000000-92c5-795e-872e-3040b25b9075",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-cff93e7-a7ac-4afd-836f-6c37771dd3a6",
-    "exerciseId": "60000000-113a1bb-fe52-4ff5-87c0-187a3edfa6c9",
+    "workoutId": "62000000-ecbd-0839-7fd8-3b8e44721069",
+    "exerciseId": "60000000-7679-c46f-a8ca-006df15ccde9",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-cff93e7-a7ac-4afd-836f-6c37771dd3a6",
-    "exerciseId": "60000000-ac13e55-b3f4-4e54-8f76-61ccb2f154e0",
+    "workoutId": "62000000-ecbd-0839-7fd8-3b8e44721069",
+    "exerciseId": "60000000-6a05-2a8e-cf5f-1cd89b93a6c6",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-cff93e7-a7ac-4afd-836f-6c37771dd3a6",
-    "exerciseId": "60000000-34a9f70-985e-4a54-8257-4f5079a5e404",
+    "workoutId": "62000000-ecbd-0839-7fd8-3b8e44721069",
+    "exerciseId": "60000000-7096-7d71-6a14-f87969584191",
     "sortOrder": 5,
     "targetSets": 4,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-cff93e7-a7ac-4afd-836f-6c37771dd3a6",
-    "exerciseId": "60000000-b8b6e16-fe5c-48ef-8c10-7e457e1e642a",
+    "workoutId": "62000000-ecbd-0839-7fd8-3b8e44721069",
+    "exerciseId": "60000000-e5cf-9389-aba1-4b5ceb3ddaa2",
     "sortOrder": 6,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-74912aa-e550-447d-8e3b-1abe85ee6a01",
-    "exerciseId": "60000000-951d544-040b-47ec-82dd-addc74a371b7",
+    "workoutId": "62000000-7a55-5ce0-4f02-6381231ab0e2",
+    "exerciseId": "60000000-ed51-dc8f-1ff0-034570c52a69",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-74912aa-e550-447d-8e3b-1abe85ee6a01",
-    "exerciseId": "60000000-e862422-fac3-4053-805e-820f2cc4fd0d",
+    "workoutId": "62000000-7a55-5ce0-4f02-6381231ab0e2",
+    "exerciseId": "60000000-cca9-85ad-e356-61e63dc15dd1",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-74912aa-e550-447d-8e3b-1abe85ee6a01",
-    "exerciseId": "60000000-7f59ded-7da6-46be-8377-17d92261a1e1",
+    "workoutId": "62000000-7a55-5ce0-4f02-6381231ab0e2",
+    "exerciseId": "60000000-36cf-7d24-f878-2f69e35a6d7d",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-74912aa-e550-447d-8e3b-1abe85ee6a01",
-    "exerciseId": "60000000-2f1cb1b-186a-4da8-834b-53e268f4cd8e",
+    "workoutId": "62000000-7a55-5ce0-4f02-6381231ab0e2",
+    "exerciseId": "60000000-bd4e-06fe-fc66-86491d56a51b",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-74912aa-e550-447d-8e3b-1abe85ee6a01",
-    "exerciseId": "60000000-d72fa30-99d1-47ea-85f6-f28f09cf0daa",
+    "workoutId": "62000000-7a55-5ce0-4f02-6381231ab0e2",
+    "exerciseId": "60000000-f4d4-feb8-13e9-ef30d557c78d",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-74912aa-e550-447d-8e3b-1abe85ee6a01",
-    "exerciseId": "61000000-bb47c49-cfbb-41b2-8030-fb0eaa7f41a6",
+    "workoutId": "62000000-7a55-5ce0-4f02-6381231ab0e2",
+    "exerciseId": "61000000-ffe5-d33e-1258-f17628146b95",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-74912aa-e550-447d-8e3b-1abe85ee6a01",
-    "exerciseId": "60000000-dfd7fcd-6852-483e-80f7-32c5d1a00f57",
+    "workoutId": "62000000-7a55-5ce0-4f02-6381231ab0e2",
+    "exerciseId": "60000000-fd4e-3fc7-3096-8b7717c5b5ba",
     "sortOrder": 7,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-1e268bd-5cf8-47a7-8517-e0fc97ffa68a",
-    "exerciseId": "60000000-e3957ed-2806-4c00-8018-757bec7a9ffa",
+    "workoutId": "62000000-41e3-cb35-ba96-60e5ada9d1da",
+    "exerciseId": "60000000-b669-9434-baca-d03b9f97a608",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-1e268bd-5cf8-47a7-8517-e0fc97ffa68a",
-    "exerciseId": "60000000-3ae6e62-61ca-458e-8e45-415b23b11adb",
+    "workoutId": "62000000-41e3-cb35-ba96-60e5ada9d1da",
+    "exerciseId": "60000000-ef83-4e08-a047-40a31826fdc5",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-1e268bd-5cf8-47a7-8517-e0fc97ffa68a",
-    "exerciseId": "60000000-371bd55-2297-4c5c-88d5-679588fea126",
+    "workoutId": "62000000-41e3-cb35-ba96-60e5ada9d1da",
+    "exerciseId": "60000000-8bbe-592e-745f-61eac1ca58d7",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-1e268bd-5cf8-47a7-8517-e0fc97ffa68a",
-    "exerciseId": "60000000-60ad53f-2e78-473a-84c2-3058b191fa0c",
+    "workoutId": "62000000-41e3-cb35-ba96-60e5ada9d1da",
+    "exerciseId": "60000000-a99a-7af2-c4fd-04062f03463e",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-1e268bd-5cf8-47a7-8517-e0fc97ffa68a",
-    "exerciseId": "60000000-5b3e753-bb75-4c87-88fc-a8d460c172e8",
+    "workoutId": "62000000-41e3-cb35-ba96-60e5ada9d1da",
+    "exerciseId": "60000000-e388-a0a5-263a-3344506aa0bb",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-1e268bd-5cf8-47a7-8517-e0fc97ffa68a",
-    "exerciseId": "60000000-c96747d-b01d-4cdf-8990-f4c395a27c08",
+    "workoutId": "62000000-41e3-cb35-ba96-60e5ada9d1da",
+    "exerciseId": "60000000-290d-3e26-be56-dcc1392ce540",
     "sortOrder": 6,
     "targetSets": 4,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-1e268bd-5cf8-47a7-8517-e0fc97ffa68a",
-    "exerciseId": "60000000-f72bd4c-7fdc-47a2-82b6-8cf9500ec5fb",
+    "workoutId": "62000000-41e3-cb35-ba96-60e5ada9d1da",
+    "exerciseId": "60000000-dd2a-1fb7-ed21-12749d8d2015",
     "sortOrder": 7,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-7f5e3f4-080f-4ee4-8462-2c50b22d3aa8",
-    "exerciseId": "60000000-16d7cfa-b04f-429c-8fbe-94db8d36a00e",
+    "workoutId": "62000000-26bd-9ad2-2ddd-09d6ca4815b4",
+    "exerciseId": "60000000-9549-6404-a7cf-ef5c2011e036",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 5
   },
   {
-    "workoutId": "62000000-7f5e3f4-080f-4ee4-8462-2c50b22d3aa8",
-    "exerciseId": "61000000-a8e18d8-9c9f-4d70-8e9e-6213bb82c654",
+    "workoutId": "62000000-26bd-9ad2-2ddd-09d6ca4815b4",
+    "exerciseId": "61000000-2f22-06c3-46ce-aae1cd32a36b",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-7f5e3f4-080f-4ee4-8462-2c50b22d3aa8",
-    "exerciseId": "60000000-e862422-fac3-4053-805e-820f2cc4fd0d",
+    "workoutId": "62000000-26bd-9ad2-2ddd-09d6ca4815b4",
+    "exerciseId": "60000000-cca9-85ad-e356-61e63dc15dd1",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-7f5e3f4-080f-4ee4-8462-2c50b22d3aa8",
-    "exerciseId": "61000000-544c9ad-a6e3-4215-88c0-264a728ef060",
+    "workoutId": "62000000-26bd-9ad2-2ddd-09d6ca4815b4",
+    "exerciseId": "61000000-b919-9472-afdc-b2e371593318",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-7f5e3f4-080f-4ee4-8462-2c50b22d3aa8",
-    "exerciseId": "61000000-ad5c88b-7cdc-4434-8d7d-5fca450c68fb",
+    "workoutId": "62000000-26bd-9ad2-2ddd-09d6ca4815b4",
+    "exerciseId": "61000000-2546-b24b-710b-6ab7fcd037b9",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-c31204b-5292-472f-8779-63b7f3c78e6e",
-    "exerciseId": "60000000-778fc34-89a2-4f4d-88fb-656996111f5c",
+    "workoutId": "62000000-1876-14b6-1bf8-78d42e04b4d1",
+    "exerciseId": "60000000-a75d-d2b7-4027-350ab97794eb",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-c31204b-5292-472f-8779-63b7f3c78e6e",
-    "exerciseId": "61000000-67f824d-8ea4-497f-86fd-4bbc6e980ad9",
+    "workoutId": "62000000-1876-14b6-1bf8-78d42e04b4d1",
+    "exerciseId": "61000000-fb4b-4402-67bf-92e24b3613c5",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-c31204b-5292-472f-8779-63b7f3c78e6e",
-    "exerciseId": "61000000-146992a-6825-48ec-8982-17f64dbd85d6",
+    "workoutId": "62000000-1876-14b6-1bf8-78d42e04b4d1",
+    "exerciseId": "61000000-b71e-4f43-e199-73145bcaf622",
     "sortOrder": 3,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-c31204b-5292-472f-8779-63b7f3c78e6e",
-    "exerciseId": "60000000-d72fa30-99d1-47ea-85f6-f28f09cf0daa",
+    "workoutId": "62000000-1876-14b6-1bf8-78d42e04b4d1",
+    "exerciseId": "60000000-f4d4-feb8-13e9-ef30d557c78d",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-c31204b-5292-472f-8779-63b7f3c78e6e",
-    "exerciseId": "61000000-4f43708-db6a-446e-84e6-a6dc80242ed2",
+    "workoutId": "62000000-1876-14b6-1bf8-78d42e04b4d1",
+    "exerciseId": "61000000-5525-fb46-3cd5-296807215183",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-c31204b-5292-472f-8779-63b7f3c78e6e",
-    "exerciseId": "60000000-dfd7fcd-6852-483e-80f7-32c5d1a00f57",
+    "workoutId": "62000000-1876-14b6-1bf8-78d42e04b4d1",
+    "exerciseId": "60000000-fd4e-3fc7-3096-8b7717c5b5ba",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-08c3ed8-5de6-4c34-8aed-f2a9a4a34cce",
-    "exerciseId": "61000000-e4ce7fe-d38c-40a8-83ef-13838c7031bf",
+    "workoutId": "62000000-6c32-dbfd-b0fd-4c64db506b40",
+    "exerciseId": "61000000-2cec-e5cf-e1e2-e9f9c0e0ff5b",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-08c3ed8-5de6-4c34-8aed-f2a9a4a34cce",
-    "exerciseId": "61000000-033e1fd-049f-4e1c-8ef5-92c142454b03",
+    "workoutId": "62000000-6c32-dbfd-b0fd-4c64db506b40",
+    "exerciseId": "61000000-d933-2045-7f3e-3878dc90c5d5",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-08c3ed8-5de6-4c34-8aed-f2a9a4a34cce",
-    "exerciseId": "61000000-5a994cc-4f52-49b1-86d5-a21c08c9f628",
+    "workoutId": "62000000-6c32-dbfd-b0fd-4c64db506b40",
+    "exerciseId": "61000000-206f-f602-6271-15776bb2582a",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-08c3ed8-5de6-4c34-8aed-f2a9a4a34cce",
-    "exerciseId": "60000000-ac13e55-b3f4-4e54-8f76-61ccb2f154e0",
+    "workoutId": "62000000-6c32-dbfd-b0fd-4c64db506b40",
+    "exerciseId": "60000000-6a05-2a8e-cf5f-1cd89b93a6c6",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-08c3ed8-5de6-4c34-8aed-f2a9a4a34cce",
-    "exerciseId": "60000000-5b3e753-bb75-4c87-88fc-a8d460c172e8",
+    "workoutId": "62000000-6c32-dbfd-b0fd-4c64db506b40",
+    "exerciseId": "60000000-e388-a0a5-263a-3344506aa0bb",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-08c3ed8-5de6-4c34-8aed-f2a9a4a34cce",
-    "exerciseId": "60000000-34a9f70-985e-4a54-8257-4f5079a5e404",
+    "workoutId": "62000000-6c32-dbfd-b0fd-4c64db506b40",
+    "exerciseId": "60000000-7096-7d71-6a14-f87969584191",
     "sortOrder": 6,
     "targetSets": 4,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-7029829-2ee6-4aa4-8d57-bbcc9a48e325",
-    "exerciseId": "61000000-2bb9aef-8a79-4e91-8c59-f0e0da3c5f5d",
+    "workoutId": "62000000-2fb3-994d-622a-c9ce6a641021",
+    "exerciseId": "61000000-4a77-528e-86d3-a917d08cf364",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-7029829-2ee6-4aa4-8d57-bbcc9a48e325",
-    "exerciseId": "60000000-a586386-cf26-4c31-85c4-b9e1dd624501",
+    "workoutId": "62000000-2fb3-994d-622a-c9ce6a641021",
+    "exerciseId": "60000000-a93a-bf73-a67e-b5395333abce",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-7029829-2ee6-4aa4-8d57-bbcc9a48e325",
-    "exerciseId": "61000000-50ec2b1-6e67-47ed-865a-4ef9d58ca864",
+    "workoutId": "62000000-2fb3-994d-622a-c9ce6a641021",
+    "exerciseId": "61000000-053a-ba4f-2c66-99d4e6ec7eea",
     "sortOrder": 3,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-7029829-2ee6-4aa4-8d57-bbcc9a48e325",
-    "exerciseId": "61000000-497f08b-1251-413a-805c-b1ffa8956111",
+    "workoutId": "62000000-2fb3-994d-622a-c9ce6a641021",
+    "exerciseId": "61000000-d12d-ec73-099d-db52babcbb87",
     "sortOrder": 4,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-7029829-2ee6-4aa4-8d57-bbcc9a48e325",
-    "exerciseId": "61000000-7784339-a5c2-41c2-8638-7a8ee41a6ce6",
+    "workoutId": "62000000-2fb3-994d-622a-c9ce6a641021",
+    "exerciseId": "61000000-2461-269d-cb40-6d00bc6cc4d5",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-7029829-2ee6-4aa4-8d57-bbcc9a48e325",
-    "exerciseId": "61000000-bb47c49-cfbb-41b2-8030-fb0eaa7f41a6",
+    "workoutId": "62000000-2fb3-994d-622a-c9ce6a641021",
+    "exerciseId": "61000000-ffe5-d33e-1258-f17628146b95",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-7029829-2ee6-4aa4-8d57-bbcc9a48e325",
-    "exerciseId": "61000000-5350398-086a-437e-8230-34a1d4c6b2cf",
+    "workoutId": "62000000-2fb3-994d-622a-c9ce6a641021",
+    "exerciseId": "61000000-0c9c-404f-3148-3abc75696fd3",
     "sortOrder": 7,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-2b66124-3a2d-4667-8356-efadb6503684",
-    "exerciseId": "61000000-0c4e5ef-7a56-466e-80f5-04f43524f15d",
+    "workoutId": "62000000-130d-6bac-0fd4-581c88d95d8d",
+    "exerciseId": "61000000-af15-5002-0bac-0076b53e361b",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 5
   },
   {
-    "workoutId": "62000000-2b66124-3a2d-4667-8356-efadb6503684",
-    "exerciseId": "61000000-9a580b0-1405-4926-810b-9543802b4bd6",
+    "workoutId": "62000000-130d-6bac-0fd4-581c88d95d8d",
+    "exerciseId": "61000000-8402-9ceb-4638-d02e8cfaef73",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-2b66124-3a2d-4667-8356-efadb6503684",
-    "exerciseId": "61000000-96beef9-c8d7-4dbb-8a59-516e35439dcf",
+    "workoutId": "62000000-130d-6bac-0fd4-581c88d95d8d",
+    "exerciseId": "61000000-7c43-dcdb-e2b5-17fa006a943d",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-2b66124-3a2d-4667-8356-efadb6503684",
-    "exerciseId": "60000000-60ad53f-2e78-473a-84c2-3058b191fa0c",
+    "workoutId": "62000000-130d-6bac-0fd4-581c88d95d8d",
+    "exerciseId": "60000000-a99a-7af2-c4fd-04062f03463e",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-2b66124-3a2d-4667-8356-efadb6503684",
-    "exerciseId": "61000000-e754fbf-daa3-44c7-8253-e3032643b487",
+    "workoutId": "62000000-130d-6bac-0fd4-581c88d95d8d",
+    "exerciseId": "61000000-559e-3f1d-568d-133d5ecf1468",
     "sortOrder": 5,
     "targetSets": 4,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-2b66124-3a2d-4667-8356-efadb6503684",
-    "exerciseId": "61000000-c09f8f6-4d45-4887-84f2-46bfa02bd0e1",
+    "workoutId": "62000000-130d-6bac-0fd4-581c88d95d8d",
+    "exerciseId": "61000000-dd61-1b2b-d9c7-128e107be936",
     "sortOrder": 6,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-8c4a6d1-b80c-421d-8b90-1235215b7f46",
-    "exerciseId": "61000000-023959c-d846-47c0-8988-2656e5a9ea51",
+    "workoutId": "62000000-48ac-cb3a-7771-43bf39c42315",
+    "exerciseId": "61000000-2704-b34a-f1a4-4e2419e7522a",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 5
   },
   {
-    "workoutId": "62000000-8c4a6d1-b80c-421d-8b90-1235215b7f46",
-    "exerciseId": "61000000-a8e18d8-9c9f-4d70-8e9e-6213bb82c654",
+    "workoutId": "62000000-48ac-cb3a-7771-43bf39c42315",
+    "exerciseId": "61000000-2f22-06c3-46ce-aae1cd32a36b",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-8c4a6d1-b80c-421d-8b90-1235215b7f46",
-    "exerciseId": "61000000-e2fe617-91e5-4726-80d8-8f3f8d16f295",
+    "workoutId": "62000000-48ac-cb3a-7771-43bf39c42315",
+    "exerciseId": "61000000-1ec6-a7e9-07b6-bf8382c1fbb2",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-8c4a6d1-b80c-421d-8b90-1235215b7f46",
-    "exerciseId": "61000000-7784339-a5c2-41c2-8638-7a8ee41a6ce6",
+    "workoutId": "62000000-48ac-cb3a-7771-43bf39c42315",
+    "exerciseId": "61000000-2461-269d-cb40-6d00bc6cc4d5",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-8c4a6d1-b80c-421d-8b90-1235215b7f46",
-    "exerciseId": "61000000-ad5c88b-7cdc-4434-8d7d-5fca450c68fb",
+    "workoutId": "62000000-48ac-cb3a-7771-43bf39c42315",
+    "exerciseId": "61000000-2546-b24b-710b-6ab7fcd037b9",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-fd29543-8c85-45f5-8cc7-be5c6f7cd455",
-    "exerciseId": "61000000-99ec07f-2f1a-4dc3-8da5-3930bf52838a",
+    "workoutId": "62000000-0a67-7adb-2d82-500a1faecdbb",
+    "exerciseId": "61000000-8f07-346f-6c7d-81372f8826c2",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-fd29543-8c85-45f5-8cc7-be5c6f7cd455",
-    "exerciseId": "61000000-67f824d-8ea4-497f-86fd-4bbc6e980ad9",
+    "workoutId": "62000000-0a67-7adb-2d82-500a1faecdbb",
+    "exerciseId": "61000000-fb4b-4402-67bf-92e24b3613c5",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-fd29543-8c85-45f5-8cc7-be5c6f7cd455",
-    "exerciseId": "61000000-097c33b-ea36-4bd8-8c90-70c2d6e3a679",
+    "workoutId": "62000000-0a67-7adb-2d82-500a1faecdbb",
+    "exerciseId": "61000000-789d-269f-2f0b-3edc4b713e5b",
     "sortOrder": 3,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-fd29543-8c85-45f5-8cc7-be5c6f7cd455",
-    "exerciseId": "60000000-d72fa30-99d1-47ea-85f6-f28f09cf0daa",
+    "workoutId": "62000000-0a67-7adb-2d82-500a1faecdbb",
+    "exerciseId": "60000000-f4d4-feb8-13e9-ef30d557c78d",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-fd29543-8c85-45f5-8cc7-be5c6f7cd455",
-    "exerciseId": "61000000-4f43708-db6a-446e-84e6-a6dc80242ed2",
+    "workoutId": "62000000-0a67-7adb-2d82-500a1faecdbb",
+    "exerciseId": "61000000-5525-fb46-3cd5-296807215183",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-244ef22-b061-4ea1-82be-37260c8ba968",
-    "exerciseId": "61000000-0c4e5ef-7a56-466e-80f5-04f43524f15d",
+    "workoutId": "62000000-08cb-0d26-61f5-80f770c4371b",
+    "exerciseId": "61000000-af15-5002-0bac-0076b53e361b",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 5
   },
   {
-    "workoutId": "62000000-244ef22-b061-4ea1-82be-37260c8ba968",
-    "exerciseId": "61000000-033e1fd-049f-4e1c-8ef5-92c142454b03",
+    "workoutId": "62000000-08cb-0d26-61f5-80f770c4371b",
+    "exerciseId": "61000000-d933-2045-7f3e-3878dc90c5d5",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-244ef22-b061-4ea1-82be-37260c8ba968",
-    "exerciseId": "61000000-5a994cc-4f52-49b1-86d5-a21c08c9f628",
+    "workoutId": "62000000-08cb-0d26-61f5-80f770c4371b",
+    "exerciseId": "61000000-206f-f602-6271-15776bb2582a",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-244ef22-b061-4ea1-82be-37260c8ba968",
-    "exerciseId": "60000000-ac13e55-b3f4-4e54-8f76-61ccb2f154e0",
+    "workoutId": "62000000-08cb-0d26-61f5-80f770c4371b",
+    "exerciseId": "60000000-6a05-2a8e-cf5f-1cd89b93a6c6",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-244ef22-b061-4ea1-82be-37260c8ba968",
-    "exerciseId": "60000000-34a9f70-985e-4a54-8257-4f5079a5e404",
+    "workoutId": "62000000-08cb-0d26-61f5-80f770c4371b",
+    "exerciseId": "60000000-7096-7d71-6a14-f87969584191",
     "sortOrder": 5,
     "targetSets": 4,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-374c6aa-7bf4-45ca-87b3-e62876859c4b",
-    "exerciseId": "61000000-2bb9aef-8a79-4e91-8c59-f0e0da3c5f5d",
+    "workoutId": "62000000-f7ac-6d0a-8c6f-a0932d4a444e",
+    "exerciseId": "61000000-4a77-528e-86d3-a917d08cf364",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-374c6aa-7bf4-45ca-87b3-e62876859c4b",
-    "exerciseId": "60000000-7f59ded-7da6-46be-8377-17d92261a1e1",
+    "workoutId": "62000000-f7ac-6d0a-8c6f-a0932d4a444e",
+    "exerciseId": "60000000-36cf-7d24-f878-2f69e35a6d7d",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-374c6aa-7bf4-45ca-87b3-e62876859c4b",
-    "exerciseId": "61000000-e140606-a03b-43ae-8631-7b9d9f73c3ba",
+    "workoutId": "62000000-f7ac-6d0a-8c6f-a0932d4a444e",
+    "exerciseId": "61000000-92e6-d685-d39b-7cbc36b5b158",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-374c6aa-7bf4-45ca-87b3-e62876859c4b",
-    "exerciseId": "61000000-544c9ad-a6e3-4215-88c0-264a728ef060",
+    "workoutId": "62000000-f7ac-6d0a-8c6f-a0932d4a444e",
+    "exerciseId": "61000000-b919-9472-afdc-b2e371593318",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-374c6aa-7bf4-45ca-87b3-e62876859c4b",
-    "exerciseId": "61000000-bb47c49-cfbb-41b2-8030-fb0eaa7f41a6",
+    "workoutId": "62000000-f7ac-6d0a-8c6f-a0932d4a444e",
+    "exerciseId": "61000000-ffe5-d33e-1258-f17628146b95",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-214f0dc-7603-45af-8275-3cb34b687ba7",
-    "exerciseId": "60000000-a586386-cf26-4c31-85c4-b9e1dd624501",
-    "sortOrder": 1,
-    "targetSets": 3,
-    "targetReps": 6
-  },
-  {
-    "workoutId": "62000000-214f0dc-7603-45af-8275-3cb34b687ba7",
-    "exerciseId": "61000000-497f08b-1251-413a-805c-b1ffa8956111",
-    "sortOrder": 2,
-    "targetSets": 3,
-    "targetReps": 8
-  },
-  {
-    "workoutId": "62000000-214f0dc-7603-45af-8275-3cb34b687ba7",
-    "exerciseId": "61000000-9bfc240-0a0a-462a-85cf-aa33faa199ee",
-    "sortOrder": 3,
-    "targetSets": 2,
-    "targetReps": 10
-  },
-  {
-    "workoutId": "62000000-214f0dc-7603-45af-8275-3cb34b687ba7",
-    "exerciseId": "60000000-316fa40-d854-4afd-8392-6b40992b572a",
-    "sortOrder": 4,
-    "targetSets": 3,
-    "targetReps": 12
-  },
-  {
-    "workoutId": "62000000-214f0dc-7603-45af-8275-3cb34b687ba7",
-    "exerciseId": "61000000-85ecbad-6e4a-4b80-8949-21eb1a5ffd39",
-    "sortOrder": 5,
-    "targetSets": 3,
-    "targetReps": 10
-  },
-  {
-    "workoutId": "62000000-d8f0b97-79c4-4ceb-8ca1-29f371fab202",
-    "exerciseId": "61000000-e4ce7fe-d38c-40a8-83ef-13838c7031bf",
+    "workoutId": "62000000-e9fe-cfc3-b395-f64906a8b6bc",
+    "exerciseId": "60000000-a93a-bf73-a67e-b5395333abce",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-d8f0b97-79c4-4ceb-8ca1-29f371fab202",
-    "exerciseId": "61000000-9a580b0-1405-4926-810b-9543802b4bd6",
+    "workoutId": "62000000-e9fe-cfc3-b395-f64906a8b6bc",
+    "exerciseId": "61000000-d12d-ec73-099d-db52babcbb87",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-d8f0b97-79c4-4ceb-8ca1-29f371fab202",
-    "exerciseId": "61000000-96beef9-c8d7-4dbb-8a59-516e35439dcf",
+    "workoutId": "62000000-e9fe-cfc3-b395-f64906a8b6bc",
+    "exerciseId": "61000000-4f63-e33d-64f6-8623399495d2",
+    "sortOrder": 3,
+    "targetSets": 2,
+    "targetReps": 10
+  },
+  {
+    "workoutId": "62000000-e9fe-cfc3-b395-f64906a8b6bc",
+    "exerciseId": "60000000-b20c-0616-aaa8-1926ef81bd4c",
+    "sortOrder": 4,
+    "targetSets": 3,
+    "targetReps": 12
+  },
+  {
+    "workoutId": "62000000-e9fe-cfc3-b395-f64906a8b6bc",
+    "exerciseId": "61000000-ed84-24f5-503e-6bfcd5480df5",
+    "sortOrder": 5,
+    "targetSets": 3,
+    "targetReps": 10
+  },
+  {
+    "workoutId": "62000000-fa81-4cd8-ef5d-db67a7893518",
+    "exerciseId": "61000000-2cec-e5cf-e1e2-e9f9c0e0ff5b",
+    "sortOrder": 1,
+    "targetSets": 3,
+    "targetReps": 6
+  },
+  {
+    "workoutId": "62000000-fa81-4cd8-ef5d-db67a7893518",
+    "exerciseId": "61000000-8402-9ceb-4638-d02e8cfaef73",
+    "sortOrder": 2,
+    "targetSets": 3,
+    "targetReps": 8
+  },
+  {
+    "workoutId": "62000000-fa81-4cd8-ef5d-db67a7893518",
+    "exerciseId": "61000000-7c43-dcdb-e2b5-17fa006a943d",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-d8f0b97-79c4-4ceb-8ca1-29f371fab202",
-    "exerciseId": "60000000-60ad53f-2e78-473a-84c2-3058b191fa0c",
+    "workoutId": "62000000-fa81-4cd8-ef5d-db67a7893518",
+    "exerciseId": "60000000-a99a-7af2-c4fd-04062f03463e",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-d8f0b97-79c4-4ceb-8ca1-29f371fab202",
-    "exerciseId": "60000000-5b3e753-bb75-4c87-88fc-a8d460c172e8",
+    "workoutId": "62000000-fa81-4cd8-ef5d-db67a7893518",
+    "exerciseId": "60000000-e388-a0a5-263a-3344506aa0bb",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-d8f0b97-79c4-4ceb-8ca1-29f371fab202",
-    "exerciseId": "61000000-e754fbf-daa3-44c7-8253-e3032643b487",
+    "workoutId": "62000000-fa81-4cd8-ef5d-db67a7893518",
+    "exerciseId": "61000000-559e-3f1d-568d-133d5ecf1468",
     "sortOrder": 6,
     "targetSets": 4,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-f701c61-7d8a-49f5-867c-5c6aef699931",
-    "exerciseId": "60000000-113a1bb-fe52-4ff5-87c0-187a3edfa6c9",
+    "workoutId": "62000000-fc6e-5140-ddf3-b298dcee824b",
+    "exerciseId": "60000000-7679-c46f-a8ca-006df15ccde9",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-f701c61-7d8a-49f5-867c-5c6aef699931",
-    "exerciseId": "60000000-06abd6d-caa9-4393-8401-d32c27bb0574",
+    "workoutId": "62000000-fc6e-5140-ddf3-b298dcee824b",
+    "exerciseId": "60000000-fc0b-6132-010c-4b516625b048",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-f701c61-7d8a-49f5-867c-5c6aef699931",
-    "exerciseId": "60000000-778fc34-89a2-4f4d-88fb-656996111f5c",
+    "workoutId": "62000000-fc6e-5140-ddf3-b298dcee824b",
+    "exerciseId": "60000000-a75d-d2b7-4027-350ab97794eb",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-f701c61-7d8a-49f5-867c-5c6aef699931",
-    "exerciseId": "60000000-ac13e55-b3f4-4e54-8f76-61ccb2f154e0",
+    "workoutId": "62000000-fc6e-5140-ddf3-b298dcee824b",
+    "exerciseId": "60000000-6a05-2a8e-cf5f-1cd89b93a6c6",
     "sortOrder": 4,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-f701c61-7d8a-49f5-867c-5c6aef699931",
-    "exerciseId": "60000000-878674c-1e69-4804-8452-f2290fe34ce0",
+    "workoutId": "62000000-fc6e-5140-ddf3-b298dcee824b",
+    "exerciseId": "60000000-134b-075e-64b0-c28008f2888b",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-f701c61-7d8a-49f5-867c-5c6aef699931",
-    "exerciseId": "61000000-ea0b1d6-94bb-43b3-8c55-670b9e0802c1",
+    "workoutId": "62000000-fc6e-5140-ddf3-b298dcee824b",
+    "exerciseId": "61000000-17e6-160a-0608-ad829fc254d0",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 20
   },
   {
-    "workoutId": "62000000-9dc99f3-30e0-40d0-8ec0-8660a2173d3a",
-    "exerciseId": "60000000-5a22e36-a2bc-442e-8c13-6be2a68f0659",
+    "workoutId": "62000000-1847-690f-638c-c4d471396066",
+    "exerciseId": "60000000-2f1a-2b49-5ea8-09fb2eeb8601",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-9dc99f3-30e0-40d0-8ec0-8660a2173d3a",
-    "exerciseId": "60000000-2d9752b-9c16-40af-8234-3679587867ef",
+    "workoutId": "62000000-1847-690f-638c-c4d471396066",
+    "exerciseId": "60000000-efe4-39d4-3fe2-0ff94c2d645b",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-9dc99f3-30e0-40d0-8ec0-8660a2173d3a",
-    "exerciseId": "60000000-a3a917c-5988-4288-871d-97b1c944b4b0",
+    "workoutId": "62000000-1847-690f-638c-c4d471396066",
+    "exerciseId": "60000000-eb92-839d-b84e-5185a92420b9",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-9dc99f3-30e0-40d0-8ec0-8660a2173d3a",
-    "exerciseId": "61000000-b9584e1-5e45-48e4-88a4-8ff40f935e9e",
+    "workoutId": "62000000-1847-690f-638c-c4d471396066",
+    "exerciseId": "61000000-3755-9849-977f-538f7f2a6bca",
     "sortOrder": 4,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-9dc99f3-30e0-40d0-8ec0-8660a2173d3a",
-    "exerciseId": "60000000-dfd7fcd-6852-483e-80f7-32c5d1a00f57",
+    "workoutId": "62000000-1847-690f-638c-c4d471396066",
+    "exerciseId": "60000000-fd4e-3fc7-3096-8b7717c5b5ba",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-9dc99f3-30e0-40d0-8ec0-8660a2173d3a",
-    "exerciseId": "60000000-b8b6e16-fe5c-48ef-8c10-7e457e1e642a",
+    "workoutId": "62000000-1847-690f-638c-c4d471396066",
+    "exerciseId": "60000000-e5cf-9389-aba1-4b5ceb3ddaa2",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-c0c0e0e-86d1-4a8e-8baa-3d4601369e8a",
-    "exerciseId": "60000000-e3957ed-2806-4c00-8018-757bec7a9ffa",
+    "workoutId": "62000000-0013-dca1-32e8-90b802a973ce",
+    "exerciseId": "60000000-b669-9434-baca-d03b9f97a608",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-c0c0e0e-86d1-4a8e-8baa-3d4601369e8a",
-    "exerciseId": "60000000-951d544-040b-47ec-82dd-addc74a371b7",
+    "workoutId": "62000000-0013-dca1-32e8-90b802a973ce",
+    "exerciseId": "60000000-ed51-dc8f-1ff0-034570c52a69",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-c0c0e0e-86d1-4a8e-8baa-3d4601369e8a",
-    "exerciseId": "60000000-7f59ded-7da6-46be-8377-17d92261a1e1",
+    "workoutId": "62000000-0013-dca1-32e8-90b802a973ce",
+    "exerciseId": "60000000-36cf-7d24-f878-2f69e35a6d7d",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-c0c0e0e-86d1-4a8e-8baa-3d4601369e8a",
-    "exerciseId": "60000000-7ff0c02-35b0-4b0f-81b0-f70cafdab487",
+    "workoutId": "62000000-0013-dca1-32e8-90b802a973ce",
+    "exerciseId": "60000000-a26e-15c7-e55e-62be01c25b0a",
     "sortOrder": 4,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-c0c0e0e-86d1-4a8e-8baa-3d4601369e8a",
-    "exerciseId": "61000000-ad5c88b-7cdc-4434-8d7d-5fca450c68fb",
+    "workoutId": "62000000-0013-dca1-32e8-90b802a973ce",
+    "exerciseId": "61000000-2546-b24b-710b-6ab7fcd037b9",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-c0c0e0e-86d1-4a8e-8baa-3d4601369e8a",
-    "exerciseId": "60000000-52eed1b-c23a-48a5-8a01-55bbcf9a3ce8",
+    "workoutId": "62000000-0013-dca1-32e8-90b802a973ce",
+    "exerciseId": "60000000-90fc-bc51-9001-6ca8bb985d4c",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 20
   },
   {
-    "workoutId": "62000000-a1bd144-451a-464e-8850-624c1d3e7b3d",
-    "exerciseId": "60000000-16d7cfa-b04f-429c-8fbe-94db8d36a00e",
+    "workoutId": "62000000-4489-a6c8-1ede-94a1867254b4",
+    "exerciseId": "60000000-9549-6404-a7cf-ef5c2011e036",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 5
   },
   {
-    "workoutId": "62000000-a1bd144-451a-464e-8850-624c1d3e7b3d",
-    "exerciseId": "61000000-67f824d-8ea4-497f-86fd-4bbc6e980ad9",
+    "workoutId": "62000000-4489-a6c8-1ede-94a1867254b4",
+    "exerciseId": "61000000-fb4b-4402-67bf-92e24b3613c5",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-a1bd144-451a-464e-8850-624c1d3e7b3d",
-    "exerciseId": "61000000-a8e18d8-9c9f-4d70-8e9e-6213bb82c654",
+    "workoutId": "62000000-4489-a6c8-1ede-94a1867254b4",
+    "exerciseId": "61000000-2f22-06c3-46ce-aae1cd32a36b",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-a1bd144-451a-464e-8850-624c1d3e7b3d",
-    "exerciseId": "61000000-99ec07f-2f1a-4dc3-8da5-3930bf52838a",
+    "workoutId": "62000000-4489-a6c8-1ede-94a1867254b4",
+    "exerciseId": "61000000-8f07-346f-6c7d-81372f8826c2",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-a1bd144-451a-464e-8850-624c1d3e7b3d",
-    "exerciseId": "61000000-7784339-a5c2-41c2-8638-7a8ee41a6ce6",
+    "workoutId": "62000000-4489-a6c8-1ede-94a1867254b4",
+    "exerciseId": "61000000-2461-269d-cb40-6d00bc6cc4d5",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-a1bd144-451a-464e-8850-624c1d3e7b3d",
-    "exerciseId": "61000000-ad5c88b-7cdc-4434-8d7d-5fca450c68fb",
+    "workoutId": "62000000-4489-a6c8-1ede-94a1867254b4",
+    "exerciseId": "61000000-2546-b24b-710b-6ab7fcd037b9",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-a1bd144-451a-464e-8850-624c1d3e7b3d",
-    "exerciseId": "61000000-85ecbad-6e4a-4b80-8949-21eb1a5ffd39",
+    "workoutId": "62000000-4489-a6c8-1ede-94a1867254b4",
+    "exerciseId": "61000000-ed84-24f5-503e-6bfcd5480df5",
     "sortOrder": 7,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-a981051-80a3-47ee-8ded-8a499d8b73d0",
-    "exerciseId": "61000000-0c4e5ef-7a56-466e-80f5-04f43524f15d",
+    "workoutId": "62000000-4f8f-84fc-acc7-c0e18f78240e",
+    "exerciseId": "61000000-af15-5002-0bac-0076b53e361b",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 5
   },
   {
-    "workoutId": "62000000-a981051-80a3-47ee-8ded-8a499d8b73d0",
-    "exerciseId": "61000000-033e1fd-049f-4e1c-8ef5-92c142454b03",
+    "workoutId": "62000000-4f8f-84fc-acc7-c0e18f78240e",
+    "exerciseId": "61000000-d933-2045-7f3e-3878dc90c5d5",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-a981051-80a3-47ee-8ded-8a499d8b73d0",
-    "exerciseId": "61000000-5a994cc-4f52-49b1-86d5-a21c08c9f628",
+    "workoutId": "62000000-4f8f-84fc-acc7-c0e18f78240e",
+    "exerciseId": "61000000-206f-f602-6271-15776bb2582a",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-a981051-80a3-47ee-8ded-8a499d8b73d0",
-    "exerciseId": "60000000-ac13e55-b3f4-4e54-8f76-61ccb2f154e0",
+    "workoutId": "62000000-4f8f-84fc-acc7-c0e18f78240e",
+    "exerciseId": "60000000-6a05-2a8e-cf5f-1cd89b93a6c6",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-a981051-80a3-47ee-8ded-8a499d8b73d0",
-    "exerciseId": "60000000-34a9f70-985e-4a54-8257-4f5079a5e404",
+    "workoutId": "62000000-4f8f-84fc-acc7-c0e18f78240e",
+    "exerciseId": "60000000-7096-7d71-6a14-f87969584191",
     "sortOrder": 5,
     "targetSets": 4,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-a981051-80a3-47ee-8ded-8a499d8b73d0",
-    "exerciseId": "60000000-b8b6e16-fe5c-48ef-8c10-7e457e1e642a",
+    "workoutId": "62000000-4f8f-84fc-acc7-c0e18f78240e",
+    "exerciseId": "60000000-e5cf-9389-aba1-4b5ceb3ddaa2",
     "sortOrder": 6,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-8bc46dd-93c3-4408-8ab9-44de23acb6d8",
-    "exerciseId": "61000000-497f08b-1251-413a-805c-b1ffa8956111",
+    "workoutId": "62000000-a779-a7a4-6192-21e2c8ba366a",
+    "exerciseId": "61000000-d12d-ec73-099d-db52babcbb87",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-8bc46dd-93c3-4408-8ab9-44de23acb6d8",
-    "exerciseId": "60000000-e862422-fac3-4053-805e-820f2cc4fd0d",
+    "workoutId": "62000000-a779-a7a4-6192-21e2c8ba366a",
+    "exerciseId": "60000000-cca9-85ad-e356-61e63dc15dd1",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-8bc46dd-93c3-4408-8ab9-44de23acb6d8",
-    "exerciseId": "60000000-7f59ded-7da6-46be-8377-17d92261a1e1",
+    "workoutId": "62000000-a779-a7a4-6192-21e2c8ba366a",
+    "exerciseId": "60000000-36cf-7d24-f878-2f69e35a6d7d",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-8bc46dd-93c3-4408-8ab9-44de23acb6d8",
-    "exerciseId": "60000000-2f1cb1b-186a-4da8-834b-53e268f4cd8e",
+    "workoutId": "62000000-a779-a7a4-6192-21e2c8ba366a",
+    "exerciseId": "60000000-bd4e-06fe-fc66-86491d56a51b",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-8bc46dd-93c3-4408-8ab9-44de23acb6d8",
-    "exerciseId": "60000000-d72fa30-99d1-47ea-85f6-f28f09cf0daa",
+    "workoutId": "62000000-a779-a7a4-6192-21e2c8ba366a",
+    "exerciseId": "60000000-f4d4-feb8-13e9-ef30d557c78d",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-8bc46dd-93c3-4408-8ab9-44de23acb6d8",
-    "exerciseId": "61000000-bb47c49-cfbb-41b2-8030-fb0eaa7f41a6",
+    "workoutId": "62000000-a779-a7a4-6192-21e2c8ba366a",
+    "exerciseId": "61000000-ffe5-d33e-1258-f17628146b95",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-8bc46dd-93c3-4408-8ab9-44de23acb6d8",
-    "exerciseId": "60000000-dfd7fcd-6852-483e-80f7-32c5d1a00f57",
+    "workoutId": "62000000-a779-a7a4-6192-21e2c8ba366a",
+    "exerciseId": "60000000-fd4e-3fc7-3096-8b7717c5b5ba",
     "sortOrder": 7,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-fa6cfe9-ff02-4e7c-884d-620639675c61",
-    "exerciseId": "61000000-e4ce7fe-d38c-40a8-83ef-13838c7031bf",
+    "workoutId": "62000000-3646-15dc-c226-4a12fec8748d",
+    "exerciseId": "61000000-2cec-e5cf-e1e2-e9f9c0e0ff5b",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-fa6cfe9-ff02-4e7c-884d-620639675c61",
-    "exerciseId": "61000000-9a580b0-1405-4926-810b-9543802b4bd6",
+    "workoutId": "62000000-3646-15dc-c226-4a12fec8748d",
+    "exerciseId": "61000000-8402-9ceb-4638-d02e8cfaef73",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-fa6cfe9-ff02-4e7c-884d-620639675c61",
-    "exerciseId": "61000000-96beef9-c8d7-4dbb-8a59-516e35439dcf",
+    "workoutId": "62000000-3646-15dc-c226-4a12fec8748d",
+    "exerciseId": "61000000-7c43-dcdb-e2b5-17fa006a943d",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-fa6cfe9-ff02-4e7c-884d-620639675c61",
-    "exerciseId": "60000000-60ad53f-2e78-473a-84c2-3058b191fa0c",
+    "workoutId": "62000000-3646-15dc-c226-4a12fec8748d",
+    "exerciseId": "60000000-a99a-7af2-c4fd-04062f03463e",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-fa6cfe9-ff02-4e7c-884d-620639675c61",
-    "exerciseId": "60000000-5b3e753-bb75-4c87-88fc-a8d460c172e8",
+    "workoutId": "62000000-3646-15dc-c226-4a12fec8748d",
+    "exerciseId": "60000000-e388-a0a5-263a-3344506aa0bb",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-fa6cfe9-ff02-4e7c-884d-620639675c61",
-    "exerciseId": "61000000-e754fbf-daa3-44c7-8253-e3032643b487",
+    "workoutId": "62000000-3646-15dc-c226-4a12fec8748d",
+    "exerciseId": "61000000-559e-3f1d-568d-133d5ecf1468",
     "sortOrder": 6,
     "targetSets": 4,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-fa6cfe9-ff02-4e7c-884d-620639675c61",
-    "exerciseId": "60000000-f72bd4c-7fdc-47a2-82b6-8cf9500ec5fb",
+    "workoutId": "62000000-3646-15dc-c226-4a12fec8748d",
+    "exerciseId": "60000000-dd2a-1fb7-ed21-12749d8d2015",
     "sortOrder": 7,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-aca36c7-7a16-4147-8edd-a24490678a69",
-    "exerciseId": "61000000-023959c-d846-47c0-8988-2656e5a9ea51",
+    "workoutId": "62000000-75f8-f65e-cec0-a6decd1e7fda",
+    "exerciseId": "61000000-2704-b34a-f1a4-4e2419e7522a",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 4
   },
   {
-    "workoutId": "62000000-aca36c7-7a16-4147-8edd-a24490678a69",
-    "exerciseId": "61000000-a8e18d8-9c9f-4d70-8e9e-6213bb82c654",
+    "workoutId": "62000000-75f8-f65e-cec0-a6decd1e7fda",
+    "exerciseId": "61000000-2f22-06c3-46ce-aae1cd32a36b",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-aca36c7-7a16-4147-8edd-a24490678a69",
-    "exerciseId": "61000000-e2fe617-91e5-4726-80d8-8f3f8d16f295",
+    "workoutId": "62000000-75f8-f65e-cec0-a6decd1e7fda",
+    "exerciseId": "61000000-1ec6-a7e9-07b6-bf8382c1fbb2",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-aca36c7-7a16-4147-8edd-a24490678a69",
-    "exerciseId": "61000000-544c9ad-a6e3-4215-88c0-264a728ef060",
+    "workoutId": "62000000-75f8-f65e-cec0-a6decd1e7fda",
+    "exerciseId": "61000000-b919-9472-afdc-b2e371593318",
     "sortOrder": 4,
     "targetSets": 4,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-aca36c7-7a16-4147-8edd-a24490678a69",
-    "exerciseId": "61000000-ad5c88b-7cdc-4434-8d7d-5fca450c68fb",
+    "workoutId": "62000000-75f8-f65e-cec0-a6decd1e7fda",
+    "exerciseId": "61000000-2546-b24b-710b-6ab7fcd037b9",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-aca36c7-7a16-4147-8edd-a24490678a69",
-    "exerciseId": "61000000-bb47c49-cfbb-41b2-8030-fb0eaa7f41a6",
+    "workoutId": "62000000-75f8-f65e-cec0-a6decd1e7fda",
+    "exerciseId": "61000000-ffe5-d33e-1258-f17628146b95",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-561f110-589d-49c3-89c3-b8c5ae0bbd75",
-    "exerciseId": "61000000-e4e713b-69ae-45f3-87b7-76a2d01e4a5d",
+    "workoutId": "62000000-0a49-7105-d669-5cf867bb763a",
+    "exerciseId": "61000000-54c2-3a0a-bc21-13c0be0288fe",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 5
   },
   {
-    "workoutId": "62000000-561f110-589d-49c3-89c3-b8c5ae0bbd75",
-    "exerciseId": "60000000-8689bd3-10f8-4def-83f3-8eb8da2d356a",
+    "workoutId": "62000000-0a49-7105-d669-5cf867bb763a",
+    "exerciseId": "60000000-ef6f-d88f-86a9-4263f1528799",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-561f110-589d-49c3-89c3-b8c5ae0bbd75",
-    "exerciseId": "61000000-9bfc240-0a0a-462a-85cf-aa33faa199ee",
+    "workoutId": "62000000-0a49-7105-d669-5cf867bb763a",
+    "exerciseId": "61000000-4f63-e33d-64f6-8623399495d2",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-561f110-589d-49c3-89c3-b8c5ae0bbd75",
-    "exerciseId": "60000000-d72fa30-99d1-47ea-85f6-f28f09cf0daa",
+    "workoutId": "62000000-0a49-7105-d669-5cf867bb763a",
+    "exerciseId": "60000000-f4d4-feb8-13e9-ef30d557c78d",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-561f110-589d-49c3-89c3-b8c5ae0bbd75",
-    "exerciseId": "61000000-4f43708-db6a-446e-84e6-a6dc80242ed2",
+    "workoutId": "62000000-0a49-7105-d669-5cf867bb763a",
+    "exerciseId": "61000000-5525-fb46-3cd5-296807215183",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-561f110-589d-49c3-89c3-b8c5ae0bbd75",
-    "exerciseId": "61000000-5350398-086a-437e-8230-34a1d4c6b2cf",
+    "workoutId": "62000000-0a49-7105-d669-5cf867bb763a",
+    "exerciseId": "61000000-0c9c-404f-3148-3abc75696fd3",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-11965f6-85de-4c0b-8c1e-b76fb450005b",
-    "exerciseId": "61000000-0c4e5ef-7a56-466e-80f5-04f43524f15d",
+    "workoutId": "62000000-c475-5442-6893-b5ef1dc381d7",
+    "exerciseId": "61000000-af15-5002-0bac-0076b53e361b",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 4
   },
   {
-    "workoutId": "62000000-11965f6-85de-4c0b-8c1e-b76fb450005b",
-    "exerciseId": "61000000-033e1fd-049f-4e1c-8ef5-92c142454b03",
+    "workoutId": "62000000-c475-5442-6893-b5ef1dc381d7",
+    "exerciseId": "61000000-d933-2045-7f3e-3878dc90c5d5",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-11965f6-85de-4c0b-8c1e-b76fb450005b",
-    "exerciseId": "61000000-5a994cc-4f52-49b1-86d5-a21c08c9f628",
+    "workoutId": "62000000-c475-5442-6893-b5ef1dc381d7",
+    "exerciseId": "61000000-206f-f602-6271-15776bb2582a",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-11965f6-85de-4c0b-8c1e-b76fb450005b",
-    "exerciseId": "60000000-ac13e55-b3f4-4e54-8f76-61ccb2f154e0",
+    "workoutId": "62000000-c475-5442-6893-b5ef1dc381d7",
+    "exerciseId": "60000000-6a05-2a8e-cf5f-1cd89b93a6c6",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-11965f6-85de-4c0b-8c1e-b76fb450005b",
-    "exerciseId": "60000000-34a9f70-985e-4a54-8257-4f5079a5e404",
+    "workoutId": "62000000-c475-5442-6893-b5ef1dc381d7",
+    "exerciseId": "60000000-7096-7d71-6a14-f87969584191",
     "sortOrder": 5,
     "targetSets": 4,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-11965f6-85de-4c0b-8c1e-b76fb450005b",
-    "exerciseId": "60000000-f72bd4c-7fdc-47a2-82b6-8cf9500ec5fb",
+    "workoutId": "62000000-c475-5442-6893-b5ef1dc381d7",
+    "exerciseId": "60000000-dd2a-1fb7-ed21-12749d8d2015",
     "sortOrder": 6,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-5318378-85e7-4933-80c5-76449d0f01d2",
-    "exerciseId": "61000000-2bb9aef-8a79-4e91-8c59-f0e0da3c5f5d",
+    "workoutId": "62000000-7dbc-07f8-9369-370494973930",
+    "exerciseId": "61000000-4a77-528e-86d3-a917d08cf364",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-5318378-85e7-4933-80c5-76449d0f01d2",
-    "exerciseId": "61000000-67f824d-8ea4-497f-86fd-4bbc6e980ad9",
+    "workoutId": "62000000-7dbc-07f8-9369-370494973930",
+    "exerciseId": "61000000-fb4b-4402-67bf-92e24b3613c5",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-5318378-85e7-4933-80c5-76449d0f01d2",
-    "exerciseId": "61000000-50ec2b1-6e67-47ed-865a-4ef9d58ca864",
+    "workoutId": "62000000-7dbc-07f8-9369-370494973930",
+    "exerciseId": "61000000-053a-ba4f-2c66-99d4e6ec7eea",
     "sortOrder": 3,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-5318378-85e7-4933-80c5-76449d0f01d2",
-    "exerciseId": "61000000-146992a-6825-48ec-8982-17f64dbd85d6",
+    "workoutId": "62000000-7dbc-07f8-9369-370494973930",
+    "exerciseId": "61000000-b71e-4f43-e199-73145bcaf622",
     "sortOrder": 4,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-5318378-85e7-4933-80c5-76449d0f01d2",
-    "exerciseId": "61000000-7784339-a5c2-41c2-8638-7a8ee41a6ce6",
+    "workoutId": "62000000-7dbc-07f8-9369-370494973930",
+    "exerciseId": "61000000-2461-269d-cb40-6d00bc6cc4d5",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-5318378-85e7-4933-80c5-76449d0f01d2",
-    "exerciseId": "60000000-dfd7fcd-6852-483e-80f7-32c5d1a00f57",
+    "workoutId": "62000000-7dbc-07f8-9369-370494973930",
+    "exerciseId": "60000000-fd4e-3fc7-3096-8b7717c5b5ba",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-5318378-85e7-4933-80c5-76449d0f01d2",
-    "exerciseId": "61000000-ad5c88b-7cdc-4434-8d7d-5fca450c68fb",
+    "workoutId": "62000000-7dbc-07f8-9369-370494973930",
+    "exerciseId": "61000000-2546-b24b-710b-6ab7fcd037b9",
     "sortOrder": 7,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-a2803b0-e03e-4492-8f2d-1af87a6a55a2",
-    "exerciseId": "61000000-e4ce7fe-d38c-40a8-83ef-13838c7031bf",
+    "workoutId": "62000000-8142-224f-8fb9-6fac4db88dc9",
+    "exerciseId": "61000000-2cec-e5cf-e1e2-e9f9c0e0ff5b",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-a2803b0-e03e-4492-8f2d-1af87a6a55a2",
-    "exerciseId": "61000000-9a580b0-1405-4926-810b-9543802b4bd6",
+    "workoutId": "62000000-8142-224f-8fb9-6fac4db88dc9",
+    "exerciseId": "61000000-8402-9ceb-4638-d02e8cfaef73",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-a2803b0-e03e-4492-8f2d-1af87a6a55a2",
-    "exerciseId": "61000000-96beef9-c8d7-4dbb-8a59-516e35439dcf",
+    "workoutId": "62000000-8142-224f-8fb9-6fac4db88dc9",
+    "exerciseId": "61000000-7c43-dcdb-e2b5-17fa006a943d",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-a2803b0-e03e-4492-8f2d-1af87a6a55a2",
-    "exerciseId": "60000000-60ad53f-2e78-473a-84c2-3058b191fa0c",
+    "workoutId": "62000000-8142-224f-8fb9-6fac4db88dc9",
+    "exerciseId": "60000000-a99a-7af2-c4fd-04062f03463e",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-a2803b0-e03e-4492-8f2d-1af87a6a55a2",
-    "exerciseId": "60000000-5b3e753-bb75-4c87-88fc-a8d460c172e8",
+    "workoutId": "62000000-8142-224f-8fb9-6fac4db88dc9",
+    "exerciseId": "60000000-e388-a0a5-263a-3344506aa0bb",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-a2803b0-e03e-4492-8f2d-1af87a6a55a2",
-    "exerciseId": "61000000-e754fbf-daa3-44c7-8253-e3032643b487",
+    "workoutId": "62000000-8142-224f-8fb9-6fac4db88dc9",
+    "exerciseId": "61000000-559e-3f1d-568d-133d5ecf1468",
     "sortOrder": 6,
     "targetSets": 4,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-29497b8-3ba9-4300-8f83-ce3c44427f51",
-    "exerciseId": "60000000-113a1bb-fe52-4ff5-87c0-187a3edfa6c9",
+    "workoutId": "62000000-1b7f-6d6d-ec75-d7f01c024bb4",
+    "exerciseId": "60000000-7679-c46f-a8ca-006df15ccde9",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-29497b8-3ba9-4300-8f83-ce3c44427f51",
-    "exerciseId": "60000000-2d9752b-9c16-40af-8234-3679587867ef",
+    "workoutId": "62000000-1b7f-6d6d-ec75-d7f01c024bb4",
+    "exerciseId": "60000000-efe4-39d4-3fe2-0ff94c2d645b",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-29497b8-3ba9-4300-8f83-ce3c44427f51",
-    "exerciseId": "60000000-06abd6d-caa9-4393-8401-d32c27bb0574",
+    "workoutId": "62000000-1b7f-6d6d-ec75-d7f01c024bb4",
+    "exerciseId": "60000000-fc0b-6132-010c-4b516625b048",
     "sortOrder": 3,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-29497b8-3ba9-4300-8f83-ce3c44427f51",
-    "exerciseId": "60000000-ac13e55-b3f4-4e54-8f76-61ccb2f154e0",
+    "workoutId": "62000000-1b7f-6d6d-ec75-d7f01c024bb4",
+    "exerciseId": "60000000-6a05-2a8e-cf5f-1cd89b93a6c6",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-29497b8-3ba9-4300-8f83-ce3c44427f51",
-    "exerciseId": "60000000-0a50e48-145a-4625-811b-990f1fa57074",
+    "workoutId": "62000000-1b7f-6d6d-ec75-d7f01c024bb4",
+    "exerciseId": "60000000-6f6d-3845-1786-deebb65b487c",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 15
   },
   {
-    "workoutId": "62000000-29497b8-3ba9-4300-8f83-ce3c44427f51",
-    "exerciseId": "60000000-b8b6e16-fe5c-48ef-8c10-7e457e1e642a",
+    "workoutId": "62000000-1b7f-6d6d-ec75-d7f01c024bb4",
+    "exerciseId": "60000000-e5cf-9389-aba1-4b5ceb3ddaa2",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-dbf54be-34a4-48d3-8f28-f49c292014bc",
-    "exerciseId": "60000000-5a22e36-a2bc-442e-8c13-6be2a68f0659",
+    "workoutId": "62000000-ab47-88bf-1a41-c2caf69cee55",
+    "exerciseId": "60000000-2f1a-2b49-5ea8-09fb2eeb8601",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-dbf54be-34a4-48d3-8f28-f49c292014bc",
-    "exerciseId": "61000000-b9584e1-5e45-48e4-88a4-8ff40f935e9e",
+    "workoutId": "62000000-ab47-88bf-1a41-c2caf69cee55",
+    "exerciseId": "61000000-3755-9849-977f-538f7f2a6bca",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-dbf54be-34a4-48d3-8f28-f49c292014bc",
-    "exerciseId": "60000000-778fc34-89a2-4f4d-88fb-656996111f5c",
+    "workoutId": "62000000-ab47-88bf-1a41-c2caf69cee55",
+    "exerciseId": "60000000-a75d-d2b7-4027-350ab97794eb",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-dbf54be-34a4-48d3-8f28-f49c292014bc",
-    "exerciseId": "61000000-a8e18d8-9c9f-4d70-8e9e-6213bb82c654",
+    "workoutId": "62000000-ab47-88bf-1a41-c2caf69cee55",
+    "exerciseId": "61000000-2f22-06c3-46ce-aae1cd32a36b",
     "sortOrder": 4,
     "targetSets": 2,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-dbf54be-34a4-48d3-8f28-f49c292014bc",
-    "exerciseId": "60000000-878674c-1e69-4804-8452-f2290fe34ce0",
+    "workoutId": "62000000-ab47-88bf-1a41-c2caf69cee55",
+    "exerciseId": "60000000-134b-075e-64b0-c28008f2888b",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-dbf54be-34a4-48d3-8f28-f49c292014bc",
-    "exerciseId": "61000000-ea0b1d6-94bb-43b3-8c55-670b9e0802c1",
+    "workoutId": "62000000-ab47-88bf-1a41-c2caf69cee55",
+    "exerciseId": "61000000-17e6-160a-0608-ad829fc254d0",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 20
   },
   {
-    "workoutId": "62000000-cbed04a-9589-433d-89e7-195d04585e78",
-    "exerciseId": "60000000-e3957ed-2806-4c00-8018-757bec7a9ffa",
+    "workoutId": "62000000-5a87-81cd-ff77-c4cfc164a229",
+    "exerciseId": "60000000-b669-9434-baca-d03b9f97a608",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-cbed04a-9589-433d-89e7-195d04585e78",
-    "exerciseId": "60000000-7ff0c02-35b0-4b0f-81b0-f70cafdab487",
+    "workoutId": "62000000-5a87-81cd-ff77-c4cfc164a229",
+    "exerciseId": "60000000-a26e-15c7-e55e-62be01c25b0a",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-cbed04a-9589-433d-89e7-195d04585e78",
-    "exerciseId": "60000000-a586386-cf26-4c31-85c4-b9e1dd624501",
+    "workoutId": "62000000-5a87-81cd-ff77-c4cfc164a229",
+    "exerciseId": "60000000-a93a-bf73-a67e-b5395333abce",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-cbed04a-9589-433d-89e7-195d04585e78",
-    "exerciseId": "60000000-7f59ded-7da6-46be-8377-17d92261a1e1",
+    "workoutId": "62000000-5a87-81cd-ff77-c4cfc164a229",
+    "exerciseId": "60000000-36cf-7d24-f878-2f69e35a6d7d",
     "sortOrder": 4,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-cbed04a-9589-433d-89e7-195d04585e78",
-    "exerciseId": "60000000-4afa6fa-e83a-4660-8ca9-fdc5474d37bd",
+    "workoutId": "62000000-5a87-81cd-ff77-c4cfc164a229",
+    "exerciseId": "60000000-166a-faf2-1105-973d9c716389",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-cbed04a-9589-433d-89e7-195d04585e78",
-    "exerciseId": "60000000-1c384cd-14ee-4db3-85d6-2e4d86f1f519",
+    "workoutId": "62000000-5a87-81cd-ff77-c4cfc164a229",
+    "exerciseId": "60000000-a2e0-e934-6714-f9019ce41c26",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-4e9f6a8-b8ec-436a-8dc3-8d47a3fde8bf",
-    "exerciseId": "61000000-f0243ff-e682-4b27-8153-6e746a201aa9",
+    "workoutId": "62000000-dfb1-dbda-aed8-f624959a9478",
+    "exerciseId": "61000000-9acc-48a0-a27b-b7997019b29f",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-4e9f6a8-b8ec-436a-8dc3-8d47a3fde8bf",
-    "exerciseId": "61000000-9a580b0-1405-4926-810b-9543802b4bd6",
+    "workoutId": "62000000-dfb1-dbda-aed8-f624959a9478",
+    "exerciseId": "61000000-8402-9ceb-4638-d02e8cfaef73",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-4e9f6a8-b8ec-436a-8dc3-8d47a3fde8bf",
-    "exerciseId": "61000000-96beef9-c8d7-4dbb-8a59-516e35439dcf",
+    "workoutId": "62000000-dfb1-dbda-aed8-f624959a9478",
+    "exerciseId": "61000000-7c43-dcdb-e2b5-17fa006a943d",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-4e9f6a8-b8ec-436a-8dc3-8d47a3fde8bf",
-    "exerciseId": "60000000-ac13e55-b3f4-4e54-8f76-61ccb2f154e0",
+    "workoutId": "62000000-dfb1-dbda-aed8-f624959a9478",
+    "exerciseId": "60000000-6a05-2a8e-cf5f-1cd89b93a6c6",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-4e9f6a8-b8ec-436a-8dc3-8d47a3fde8bf",
-    "exerciseId": "61000000-a9da51d-7371-4c3c-8342-e5cc8575f897",
+    "workoutId": "62000000-dfb1-dbda-aed8-f624959a9478",
+    "exerciseId": "61000000-713b-8cbb-9434-35570fbe8714",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 15
   },
   {
-    "workoutId": "62000000-4e9f6a8-b8ec-436a-8dc3-8d47a3fde8bf",
-    "exerciseId": "60000000-34a9f70-985e-4a54-8257-4f5079a5e404",
+    "workoutId": "62000000-dfb1-dbda-aed8-f624959a9478",
+    "exerciseId": "60000000-7096-7d71-6a14-f87969584191",
     "sortOrder": 6,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-66c4b32-f031-4a47-857c-3f71d2d2be73",
-    "exerciseId": "60000000-778fc34-89a2-4f4d-88fb-656996111f5c",
+    "workoutId": "62000000-0981-8294-23f7-7035824ff72a",
+    "exerciseId": "60000000-a75d-d2b7-4027-350ab97794eb",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-66c4b32-f031-4a47-857c-3f71d2d2be73",
-    "exerciseId": "61000000-a8e18d8-9c9f-4d70-8e9e-6213bb82c654",
+    "workoutId": "62000000-0981-8294-23f7-7035824ff72a",
+    "exerciseId": "61000000-2f22-06c3-46ce-aae1cd32a36b",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-66c4b32-f031-4a47-857c-3f71d2d2be73",
-    "exerciseId": "61000000-67f824d-8ea4-497f-86fd-4bbc6e980ad9",
+    "workoutId": "62000000-0981-8294-23f7-7035824ff72a",
+    "exerciseId": "61000000-fb4b-4402-67bf-92e24b3613c5",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-66c4b32-f031-4a47-857c-3f71d2d2be73",
-    "exerciseId": "60000000-e862422-fac3-4053-805e-820f2cc4fd0d",
+    "workoutId": "62000000-0981-8294-23f7-7035824ff72a",
+    "exerciseId": "60000000-cca9-85ad-e356-61e63dc15dd1",
     "sortOrder": 4,
     "targetSets": 2,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-66c4b32-f031-4a47-857c-3f71d2d2be73",
-    "exerciseId": "61000000-7784339-a5c2-41c2-8638-7a8ee41a6ce6",
+    "workoutId": "62000000-0981-8294-23f7-7035824ff72a",
+    "exerciseId": "61000000-2461-269d-cb40-6d00bc6cc4d5",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-66c4b32-f031-4a47-857c-3f71d2d2be73",
-    "exerciseId": "61000000-ad5c88b-7cdc-4434-8d7d-5fca450c68fb",
+    "workoutId": "62000000-0981-8294-23f7-7035824ff72a",
+    "exerciseId": "61000000-2546-b24b-710b-6ab7fcd037b9",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-66c4b32-f031-4a47-857c-3f71d2d2be73",
-    "exerciseId": "60000000-dfd7fcd-6852-483e-80f7-32c5d1a00f57",
+    "workoutId": "62000000-0981-8294-23f7-7035824ff72a",
+    "exerciseId": "60000000-fd4e-3fc7-3096-8b7717c5b5ba",
     "sortOrder": 7,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-2d321fb-13e0-4517-8989-4697a3213f5c",
-    "exerciseId": "61000000-033e1fd-049f-4e1c-8ef5-92c142454b03",
+    "workoutId": "62000000-8ef5-92b2-87d8-3891316778c6",
+    "exerciseId": "61000000-d933-2045-7f3e-3878dc90c5d5",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-2d321fb-13e0-4517-8989-4697a3213f5c",
-    "exerciseId": "61000000-5a994cc-4f52-49b1-86d5-a21c08c9f628",
+    "workoutId": "62000000-8ef5-92b2-87d8-3891316778c6",
+    "exerciseId": "61000000-206f-f602-6271-15776bb2582a",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-2d321fb-13e0-4517-8989-4697a3213f5c",
-    "exerciseId": "60000000-53f74b4-d8f2-4892-8c05-68fb63c2da05",
+    "workoutId": "62000000-8ef5-92b2-87d8-3891316778c6",
+    "exerciseId": "60000000-06e9-601b-663b-ba9fc47a48af",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-2d321fb-13e0-4517-8989-4697a3213f5c",
-    "exerciseId": "60000000-60ad53f-2e78-473a-84c2-3058b191fa0c",
+    "workoutId": "62000000-8ef5-92b2-87d8-3891316778c6",
+    "exerciseId": "60000000-a99a-7af2-c4fd-04062f03463e",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-2d321fb-13e0-4517-8989-4697a3213f5c",
-    "exerciseId": "60000000-4afa6fa-e83a-4660-8ca9-fdc5474d37bd",
+    "workoutId": "62000000-8ef5-92b2-87d8-3891316778c6",
+    "exerciseId": "60000000-166a-faf2-1105-973d9c716389",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-2d321fb-13e0-4517-8989-4697a3213f5c",
-    "exerciseId": "61000000-e754fbf-daa3-44c7-8253-e3032643b487",
+    "workoutId": "62000000-8ef5-92b2-87d8-3891316778c6",
+    "exerciseId": "61000000-559e-3f1d-568d-133d5ecf1468",
     "sortOrder": 6,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-fbcbf31-78ab-4308-85f4-cb301af58e99",
-    "exerciseId": "60000000-a586386-cf26-4c31-85c4-b9e1dd624501",
+    "workoutId": "62000000-2a15-6f28-1260-96974a74aa12",
+    "exerciseId": "60000000-a93a-bf73-a67e-b5395333abce",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-fbcbf31-78ab-4308-85f4-cb301af58e99",
-    "exerciseId": "60000000-06abd6d-caa9-4393-8401-d32c27bb0574",
+    "workoutId": "62000000-2a15-6f28-1260-96974a74aa12",
+    "exerciseId": "60000000-fc0b-6132-010c-4b516625b048",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-fbcbf31-78ab-4308-85f4-cb301af58e99",
-    "exerciseId": "61000000-146992a-6825-48ec-8982-17f64dbd85d6",
+    "workoutId": "62000000-2a15-6f28-1260-96974a74aa12",
+    "exerciseId": "61000000-b71e-4f43-e199-73145bcaf622",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-fbcbf31-78ab-4308-85f4-cb301af58e99",
-    "exerciseId": "61000000-e140606-a03b-43ae-8631-7b9d9f73c3ba",
+    "workoutId": "62000000-2a15-6f28-1260-96974a74aa12",
+    "exerciseId": "61000000-92e6-d685-d39b-7cbc36b5b158",
     "sortOrder": 4,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-fbcbf31-78ab-4308-85f4-cb301af58e99",
-    "exerciseId": "60000000-d72fa30-99d1-47ea-85f6-f28f09cf0daa",
+    "workoutId": "62000000-2a15-6f28-1260-96974a74aa12",
+    "exerciseId": "60000000-f4d4-feb8-13e9-ef30d557c78d",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-fbcbf31-78ab-4308-85f4-cb301af58e99",
-    "exerciseId": "61000000-5350398-086a-437e-8230-34a1d4c6b2cf",
+    "workoutId": "62000000-2a15-6f28-1260-96974a74aa12",
+    "exerciseId": "61000000-0c9c-404f-3148-3abc75696fd3",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-fbcbf31-78ab-4308-85f4-cb301af58e99",
-    "exerciseId": "61000000-bb47c49-cfbb-41b2-8030-fb0eaa7f41a6",
+    "workoutId": "62000000-2a15-6f28-1260-96974a74aa12",
+    "exerciseId": "61000000-ffe5-d33e-1258-f17628146b95",
     "sortOrder": 7,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-048a789-b1bd-4e22-837f-274943fc3be1",
-    "exerciseId": "61000000-9a580b0-1405-4926-810b-9543802b4bd6",
+    "workoutId": "62000000-f289-d857-ac35-bf1bbaf18893",
+    "exerciseId": "61000000-8402-9ceb-4638-d02e8cfaef73",
     "sortOrder": 1,
     "targetSets": 4,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-048a789-b1bd-4e22-837f-274943fc3be1",
-    "exerciseId": "61000000-96beef9-c8d7-4dbb-8a59-516e35439dcf",
+    "workoutId": "62000000-f289-d857-ac35-bf1bbaf18893",
+    "exerciseId": "61000000-7c43-dcdb-e2b5-17fa006a943d",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-048a789-b1bd-4e22-837f-274943fc3be1",
-    "exerciseId": "61000000-033e1fd-049f-4e1c-8ef5-92c142454b03",
+    "workoutId": "62000000-f289-d857-ac35-bf1bbaf18893",
+    "exerciseId": "61000000-d933-2045-7f3e-3878dc90c5d5",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-048a789-b1bd-4e22-837f-274943fc3be1",
-    "exerciseId": "61000000-a9da51d-7371-4c3c-8342-e5cc8575f897",
+    "workoutId": "62000000-f289-d857-ac35-bf1bbaf18893",
+    "exerciseId": "61000000-713b-8cbb-9434-35570fbe8714",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 15
   },
   {
-    "workoutId": "62000000-048a789-b1bd-4e22-837f-274943fc3be1",
-    "exerciseId": "60000000-34a9f70-985e-4a54-8257-4f5079a5e404",
+    "workoutId": "62000000-f289-d857-ac35-bf1bbaf18893",
+    "exerciseId": "60000000-7096-7d71-6a14-f87969584191",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-6307859-5f6c-408a-8bb5-f98f0370ef2b",
-    "exerciseId": "61000000-99ec07f-2f1a-4dc3-8da5-3930bf52838a",
+    "workoutId": "62000000-d5b0-4127-1bb8-57a06e4514d9",
+    "exerciseId": "61000000-8f07-346f-6c7d-81372f8826c2",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-6307859-5f6c-408a-8bb5-f98f0370ef2b",
-    "exerciseId": "61000000-a8e18d8-9c9f-4d70-8e9e-6213bb82c654",
+    "workoutId": "62000000-d5b0-4127-1bb8-57a06e4514d9",
+    "exerciseId": "61000000-2f22-06c3-46ce-aae1cd32a36b",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-6307859-5f6c-408a-8bb5-f98f0370ef2b",
-    "exerciseId": "61000000-67f824d-8ea4-497f-86fd-4bbc6e980ad9",
+    "workoutId": "62000000-d5b0-4127-1bb8-57a06e4514d9",
+    "exerciseId": "61000000-fb4b-4402-67bf-92e24b3613c5",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-6307859-5f6c-408a-8bb5-f98f0370ef2b",
-    "exerciseId": "61000000-7784339-a5c2-41c2-8638-7a8ee41a6ce6",
+    "workoutId": "62000000-d5b0-4127-1bb8-57a06e4514d9",
+    "exerciseId": "61000000-2461-269d-cb40-6d00bc6cc4d5",
     "sortOrder": 4,
     "targetSets": 4,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-6307859-5f6c-408a-8bb5-f98f0370ef2b",
-    "exerciseId": "61000000-ad5c88b-7cdc-4434-8d7d-5fca450c68fb",
+    "workoutId": "62000000-d5b0-4127-1bb8-57a06e4514d9",
+    "exerciseId": "61000000-2546-b24b-710b-6ab7fcd037b9",
     "sortOrder": 5,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-6307859-5f6c-408a-8bb5-f98f0370ef2b",
-    "exerciseId": "61000000-85ecbad-6e4a-4b80-8949-21eb1a5ffd39",
+    "workoutId": "62000000-d5b0-4127-1bb8-57a06e4514d9",
+    "exerciseId": "61000000-ed84-24f5-503e-6bfcd5480df5",
     "sortOrder": 6,
     "targetSets": 2,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-7fe0c74-cd1f-4909-8427-7d2e77d9deb8",
-    "exerciseId": "61000000-b75f88e-779d-4225-8576-9e0b548cc6a8",
+    "workoutId": "62000000-9ead-d9cb-127e-2937e4650873",
+    "exerciseId": "61000000-1108-794a-bbae-d62e28887277",
     "sortOrder": 1,
     "targetSets": 4,
     "targetReps": 5
   },
   {
-    "workoutId": "62000000-7fe0c74-cd1f-4909-8427-7d2e77d9deb8",
-    "exerciseId": "61000000-5a994cc-4f52-49b1-86d5-a21c08c9f628",
+    "workoutId": "62000000-9ead-d9cb-127e-2937e4650873",
+    "exerciseId": "61000000-206f-f602-6271-15776bb2582a",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-7fe0c74-cd1f-4909-8427-7d2e77d9deb8",
-    "exerciseId": "60000000-53f74b4-d8f2-4892-8c05-68fb63c2da05",
+    "workoutId": "62000000-9ead-d9cb-127e-2937e4650873",
+    "exerciseId": "60000000-06e9-601b-663b-ba9fc47a48af",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-7fe0c74-cd1f-4909-8427-7d2e77d9deb8",
-    "exerciseId": "60000000-5b3e753-bb75-4c87-88fc-a8d460c172e8",
+    "workoutId": "62000000-9ead-d9cb-127e-2937e4650873",
+    "exerciseId": "60000000-e388-a0a5-263a-3344506aa0bb",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-7fe0c74-cd1f-4909-8427-7d2e77d9deb8",
-    "exerciseId": "60000000-ac13e55-b3f4-4e54-8f76-61ccb2f154e0",
+    "workoutId": "62000000-9ead-d9cb-127e-2937e4650873",
+    "exerciseId": "60000000-6a05-2a8e-cf5f-1cd89b93a6c6",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-bffb572-1164-4c50-89dc-dcf9d2afa6ee",
-    "exerciseId": "61000000-63884e6-c103-4821-85fa-2b36456e4d1e",
+    "workoutId": "62000000-dcee-c90f-8a3e-587362b23e97",
+    "exerciseId": "61000000-0d9c-1101-173e-f8ed6fc70515",
     "sortOrder": 1,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-bffb572-1164-4c50-89dc-dcf9d2afa6ee",
-    "exerciseId": "61000000-d86134e-4012-4ce2-88c8-cfd3c1adfce2",
+    "workoutId": "62000000-dcee-c90f-8a3e-587362b23e97",
+    "exerciseId": "61000000-7816-fe20-7f20-cedc8eafb75b",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-bffb572-1164-4c50-89dc-dcf9d2afa6ee",
-    "exerciseId": "61000000-146992a-6825-48ec-8982-17f64dbd85d6",
+    "workoutId": "62000000-dcee-c90f-8a3e-587362b23e97",
+    "exerciseId": "61000000-b71e-4f43-e199-73145bcaf622",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-bffb572-1164-4c50-89dc-dcf9d2afa6ee",
-    "exerciseId": "61000000-e140606-a03b-43ae-8631-7b9d9f73c3ba",
+    "workoutId": "62000000-dcee-c90f-8a3e-587362b23e97",
+    "exerciseId": "61000000-92e6-d685-d39b-7cbc36b5b158",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-bffb572-1164-4c50-89dc-dcf9d2afa6ee",
-    "exerciseId": "60000000-d72fa30-99d1-47ea-85f6-f28f09cf0daa",
+    "workoutId": "62000000-dcee-c90f-8a3e-587362b23e97",
+    "exerciseId": "60000000-f4d4-feb8-13e9-ef30d557c78d",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-bffb572-1164-4c50-89dc-dcf9d2afa6ee",
-    "exerciseId": "61000000-77b91d3-3bbe-4e63-8152-463277c6a379",
+    "workoutId": "62000000-dcee-c90f-8a3e-587362b23e97",
+    "exerciseId": "61000000-c697-b460-bbbc-4b7e97eb8817",
     "sortOrder": 6,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-e3a6405-59d4-4882-897c-86a6dbd46e8d",
-    "exerciseId": "61000000-033e1fd-049f-4e1c-8ef5-92c142454b03",
+    "workoutId": "62000000-892d-da67-3eb9-25446d95cddd",
+    "exerciseId": "61000000-d933-2045-7f3e-3878dc90c5d5",
     "sortOrder": 1,
     "targetSets": 4,
     "targetReps": 6
   },
   {
-    "workoutId": "62000000-e3a6405-59d4-4882-897c-86a6dbd46e8d",
-    "exerciseId": "61000000-9a580b0-1405-4926-810b-9543802b4bd6",
+    "workoutId": "62000000-892d-da67-3eb9-25446d95cddd",
+    "exerciseId": "61000000-8402-9ceb-4638-d02e8cfaef73",
     "sortOrder": 2,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-e3a6405-59d4-4882-897c-86a6dbd46e8d",
-    "exerciseId": "60000000-60ad53f-2e78-473a-84c2-3058b191fa0c",
+    "workoutId": "62000000-892d-da67-3eb9-25446d95cddd",
+    "exerciseId": "60000000-a99a-7af2-c4fd-04062f03463e",
     "sortOrder": 3,
     "targetSets": 3,
     "targetReps": 8
   },
   {
-    "workoutId": "62000000-e3a6405-59d4-4882-897c-86a6dbd46e8d",
-    "exerciseId": "60000000-c43167d-b6e9-4587-8eb7-46a1f4ba62bd",
+    "workoutId": "62000000-892d-da67-3eb9-25446d95cddd",
+    "exerciseId": "60000000-6f82-f0a8-3c0d-f4d5579cbfaa",
     "sortOrder": 4,
     "targetSets": 3,
     "targetReps": 10
   },
   {
-    "workoutId": "62000000-e3a6405-59d4-4882-897c-86a6dbd46e8d",
-    "exerciseId": "60000000-4afa6fa-e83a-4660-8ca9-fdc5474d37bd",
+    "workoutId": "62000000-892d-da67-3eb9-25446d95cddd",
+    "exerciseId": "60000000-166a-faf2-1105-973d9c716389",
     "sortOrder": 5,
     "targetSets": 3,
     "targetReps": 12
   },
   {
-    "workoutId": "62000000-e3a6405-59d4-4882-897c-86a6dbd46e8d",
-    "exerciseId": "61000000-e754fbf-daa3-44c7-8253-e3032643b487",
+    "workoutId": "62000000-892d-da67-3eb9-25446d95cddd",
+    "exerciseId": "61000000-559e-3f1d-568d-133d5ecf1468",
     "sortOrder": 6,
     "targetSets": 3,
     "targetReps": 8
