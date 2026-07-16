@@ -101,6 +101,15 @@ function buildWeeklyXp(events: XpEvent[] = [], referenceDate = new Date()): Week
   });
 }
 
+function greetingForNow(date = new Date()) {
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  if (hour < 4 || (hour === 4 && minute < 30)) return "Boa noite";
+  if (hour < 12) return "Bom dia";
+  if (hour < 18) return "Boa tarde";
+  return "Boa noite";
+}
+
 function difficultyLabel(value?: string) {
   if (value === "easy") return "leve";
   if (value === "medium") return "moderado";
@@ -268,7 +277,7 @@ export function Dashboard() {
 
   return (
     <div className="mx-auto w-full max-w-[1480px] px-3 py-4 sm:px-6 lg:px-8 lg:py-7">
-      <PageHeader title={`Bom dia, ${greetingName}`} description="Seu plano está equilibrado. Escolha uma ação pequena e deixe o resto para depois." />
+      <PageHeader title={`${greetingForNow()}, ${greetingName}`} description="Seu plano está equilibrado. Escolha uma ação pequena e deixe o resto para depois." />
       <DashboardToast message={toast} />
 
       <section className="mb-4 grid gap-4 xl:grid-cols-[1.7fr_1fr]">

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, Dumbbell, Eye, EyeOff, HeartPulse, Salad, ShieldCheck, Sparkles, Target } from "lucide-react";
 import { FormEvent, useEffect, useState } from "react";
 import { ApiClientError, loginUser, registerUser, requestPasswordReset, useAuthSession } from "@/lib/auth-client";
-import { updateMe, updateNotificationPreferences } from "@/lib/level-fit-api";
+import { addMeasurement, updateMe, updateNotificationPreferences } from "@/lib/level-fit-api";
 import { activityOptions } from "@/lib/mock-data";
 import { LevelFitLogo } from "./level-fit-logo";
 
@@ -211,9 +211,10 @@ export function RegisterPage() {
           Gênero <span className="font-medium text-[var(--text-dim)]">(opcional)</span>
           <select id="gender" name="gender" className="field mt-2" defaultValue="" autoComplete="sex">
             <option value="">Prefiro não informar</option>
-            <option value="female">Feminino</option>
-            <option value="male">Masculino</option>
-            <option value="non_binary">Não binário</option>
+            <option value="male_cis">Homem cis</option>
+            <option value="female_cis">Mulher cis</option>
+            <option value="male_trans">Homem trans</option>
+            <option value="female_trans">Mulher trans</option>
           </select>
         </label>
         <label htmlFor="register-email" className="block text-sm font-bold text-[var(--text-muted)]">
@@ -263,6 +264,11 @@ export function OnboardingPage() {
   const [step, setStep] = useState(1);
   const [goal, setGoal] = useState("consistency");
   const [activity, setActivity] = useState("returning");
+  const [age, setAge] = useState("");
+  const [heightCm, setHeightCm] = useState("");
+  const [weightKg, setWeightKg] = useState("");
+  const [modality, setModality] = useState("academia");
+  const [customModality, setCustomModality] = useState("");
   const [workoutTime, setWorkoutTime] = useState("18:30");
   const [reminders, setReminders] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -285,12 +291,24 @@ export function OnboardingPage() {
     setError(null);
     setSaving(true);
     try {
+      const ageNumber = Number(age);
+      const birthDate = ageNumber >= 10 && ageNumber <= 100 ? `${new Date().getFullYear() - ageNumber}-01-01` : undefined;
+      const heightNumber = Number(heightCm);
+      const weightNumber = Number(weightKg);
       await Promise.all([
-        updateMe({ fitnessGoal: goal, activityLevel: activity }),
+        updateMe({
+          fitnessGoal: goal,
+          activityLevel: activity,
+          birthDate,
+          heightCm: heightNumber >= 80 && heightNumber <= 250 ? heightNumber : undefined,
+        }),
         updateNotificationPreferences({
           workoutRemindersEnabled: reminders,
           preferredWorkoutTime: reminders ? workoutTime : undefined,
         }),
+        weightNumber >= 20 && weightNumber <= 500
+          ? addMeasurement({ weightKg: weightNumber, notes: `Check-in inicial. Modalidade: ${modality === "other" ? customModality || "outra" : modality}.` })
+          : Promise.resolve(),
       ]);
       window.location.assign("/");
     } catch (err) {
@@ -319,10 +337,12 @@ export function OnboardingPage() {
 
         {step === 3 && <div className="mt-8 space-y-4"><div className="app-card p-5"><label htmlFor="workout-time" className="text-sm font-bold text-white">Horário preferido de treino</label><input id="workout-time" type="time" className="field mt-3" value={workoutTime} onChange={(event) => setWorkoutTime(event.target.value)} /></div><div className="app-card flex items-center gap-4 p-5"><span className="grid size-11 place-items-center rounded-[7px] bg-[rgba(183,255,42,0.1)] text-[var(--lime)]"><Sparkles size={22} /></span><div className="flex-1"><p className="text-sm font-bold text-white">Lembrete gentil</p><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">No máximo uma vez no horário escolhido.</p></div><button role="switch" aria-checked={reminders} onClick={() => setReminders((value) => !value)} className={`relative h-7 w-12 rounded-full ${reminders ? "bg-[var(--lime)]" : "bg-[var(--surface-soft)]"}`}><span className={`absolute top-1 size-[18px] rounded-full transition-transform ${reminders ? "left-1 translate-x-5 bg-[var(--lime-ink)]" : "left-1 bg-[var(--text-muted)]"}`} /></button></div><div className="flex gap-3 border-l-2 border-[var(--cyan)] bg-[rgba(34,211,238,0.06)] p-4 text-xs leading-5 text-[var(--text-muted)]"><ShieldCheck size={19} className="shrink-0 text-[var(--cyan)]" /> Dados de saúde são privados. Ranking e compartilhamento permanecem desativados.</div></div>}
 
+        {step === 3 && <div className="mt-4 space-y-4"><div className="app-card p-5"><p className="text-sm font-bold text-white">Dados iniciais opcionais</p><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Ajudam a ajustar o plano sem aparecer no ranking.</p><div className="mt-4 grid gap-3 sm:grid-cols-3"><input className="field" type="number" min={10} max={100} placeholder="Idade" value={age} onChange={(event) => setAge(event.target.value)} /><input className="field" type="number" min={80} max={250} placeholder="Altura cm" value={heightCm} onChange={(event) => setHeightCm(event.target.value)} /><input className="field" type="number" min={20} max={500} step="0.1" placeholder="Peso kg" value={weightKg} onChange={(event) => setWeightKg(event.target.value)} /></div></div><div className="app-card p-5"><label htmlFor="modality" className="text-sm font-bold text-white">Modalidade principal</label><select id="modality" className="field mt-3" value={modality} onChange={(event) => setModality(event.target.value)}><option value="academia">Academia</option><option value="casa">Treino em casa</option><option value="corrida">Corrida ou caminhada</option><option value="luta">Luta ou arte marcial</option><option value="esporte">Esporte</option><option value="other">Outra</option></select>{modality === "other" && <input className="field mt-3" placeholder="Qual modalidade?" value={customModality} onChange={(event) => setCustomModality(event.target.value)} />}</div></div>}
+
         {error && <div className="mt-6 border-l-2 border-[var(--danger)] bg-[rgba(244,63,94,0.08)] p-3 text-sm leading-5 text-white" role="alert">{error}</div>}
 
         <div className="mt-8 flex items-center justify-between gap-3 sm:mt-10">
-          <button onClick={() => step > 1 ? setStep((value) => value - 1) : router.push("/register")} disabled={saving} className="secondary-button disabled:opacity-60"><ArrowLeft size={18} /> Voltar</button>
+          <button onClick={() => step > 1 ? setStep((value) => value - 1) : router.replace("/")} disabled={saving} className="secondary-button disabled:opacity-60"><ArrowLeft size={18} /> Voltar</button>
           <button onClick={finish} disabled={saving || session.loading} className="primary-button disabled:opacity-60">{saving ? "Salvando..." : step < 3 ? "Continuar" : "Entrar no LevelFit"} <ArrowRight size={18} /></button>
         </div>
       </div>

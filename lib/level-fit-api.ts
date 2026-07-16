@@ -458,7 +458,8 @@ export function updateNotificationPreferences(input: Partial<NotificationPrefere
 
 export function updateMe(input: {
   displayName?: string;
-  gender?: "female" | "male" | "non_binary" | null;
+  gender?: "male_cis" | "female_cis" | "male_trans" | "female_trans" | null;
+  birthDate?: string;
   timezone?: string;
   fitnessGoal?: string;
   activityLevel?: string;

@@ -17,7 +17,7 @@ export class RegisterDto {
   displayName: string;
 
   @IsOptional()
-  @IsIn(["female", "male", "non_binary"])
+  @IsIn(["male_cis", "female_cis", "male_trans", "female_trans"])
   gender?: string;
 
   @IsBoolean()
@@ -62,7 +62,7 @@ export class FirebaseLoginDto {
   displayName?: string;
 
   @IsOptional()
-  @IsIn(["female", "male", "non_binary"])
+  @IsIn(["male_cis", "female_cis", "male_trans", "female_trans"])
   gender?: string;
 
   @IsOptional()

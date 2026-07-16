@@ -1,4 +1,5 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { utcDayRange } from "../../common/date";
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
 import { GamificationService } from "../gamification/gamification.service";
 import type { CreateWorkoutDto, StartWorkoutSessionDto, UpdateWorkoutSessionDto } from "./workouts.dto";
@@ -27,8 +28,14 @@ export class WorkoutsService {
   }
 
   async today(userId: string) {
+    const { start, end } = utcDayRange();
+    await this.prisma.workoutSession.updateMany({
+      where: { userId, status: { in: ["planned", "in_progress"] }, startedAt: { lt: start }, deletedAt: null },
+      data: { status: "cancelled" },
+    });
+
     const inProgress = await this.prisma.workoutSession.findFirst({
-      where: { userId, status: { in: ["planned", "in_progress"] }, deletedAt: null },
+      where: { userId, status: { in: ["planned", "in_progress"] }, startedAt: { gte: start, lt: end }, deletedAt: null },
       include: sessionInclude,
       orderBy: { startedAt: "desc" },
     });
@@ -87,8 +94,19 @@ export class WorkoutsService {
     if (!workout) throw new NotFoundException({ code: "WORKOUT_NOT_FOUND", message: "Treino não encontrado." });
     if (!workout.exercises.length) throw new ConflictException({ code: "WORKOUT_HAS_NO_EXERCISES", message: "Este treino ainda não tem exercícios cadastrados." });
 
-    const active = await this.prisma.workoutSession.findFirst({ where: { userId, status: "in_progress", deletedAt: null }, select: { id: true } });
-    if (active) throw new ConflictException({ code: "SESSION_ALREADY_STARTED", message: "Já existe um treino em andamento." });
+    const { start, end } = utcDayRange();
+    await this.prisma.workoutSession.updateMany({
+      where: { userId, status: { in: ["planned", "in_progress"] }, startedAt: { lt: start }, deletedAt: null },
+      data: { status: "cancelled" },
+    });
+
+    const active = await this.prisma.workoutSession.findFirst({
+      where: { userId, status: { in: ["planned", "in_progress"] }, startedAt: { gte: start, lt: end }, deletedAt: null },
+      include: sessionInclude,
+      orderBy: { startedAt: "desc" },
+    });
+    if (active?.workoutId === workout.id && active.exercises.length) return active;
+    if (active) await this.prisma.workoutSession.update({ where: { id: active.id }, data: { status: "cancelled" } });
 
     return this.prisma.workoutSession.create({
       data: {

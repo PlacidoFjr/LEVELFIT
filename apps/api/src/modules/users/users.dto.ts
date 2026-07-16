@@ -3,7 +3,8 @@ import { IsBoolean, IsEnum, IsIn, IsNumber, IsOptional, IsString, IsTimeZone, Ma
 
 export class UpdateMeDto {
   @IsOptional() @IsString() @MinLength(2) @MaxLength(80) displayName?: string;
-  @IsOptional() @IsIn(["female", "male", "non_binary", null]) gender?: string | null;
+  @IsOptional() @IsIn(["male_cis", "female_cis", "male_trans", "female_trans", null]) gender?: string | null;
+  @IsOptional() @IsString() birthDate?: string;
   @IsOptional() @IsTimeZone() timezone?: string;
   @IsOptional() @IsEnum(FitnessGoal) fitnessGoal?: FitnessGoal;
   @IsOptional() @IsEnum(ActivityLevel) activityLevel?: ActivityLevel;

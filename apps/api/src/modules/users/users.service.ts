@@ -24,6 +24,7 @@ export class UsersService {
     const profileData = {
       ...(dto.displayName !== undefined ? { displayName: dto.displayName.trim() } : {}),
       ...(dto.gender !== undefined ? { gender: dto.gender } : {}),
+      ...(dto.birthDate !== undefined ? { birthDate: new Date(dto.birthDate) } : {}),
       ...(dto.timezone !== undefined ? { timezone: dto.timezone } : {}),
       ...(dto.fitnessGoal !== undefined ? { fitnessGoal: dto.fitnessGoal } : {}),
       ...(dto.activityLevel !== undefined ? { activityLevel: dto.activityLevel } : {}),
