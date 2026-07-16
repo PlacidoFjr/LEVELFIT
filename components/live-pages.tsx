@@ -299,16 +299,26 @@ function searchable(value: string) {
   return value.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 }
 
+function countMatches(value: string, pattern: RegExp) {
+  return (value.match(pattern) ?? []).length;
+}
+
 function workoutMatchesFocus(workout: Workout, focus: WorkoutFocusId) {
   if (focus === "all") return true;
-  const exerciseText = workout.exercises.map((item) => `${item.exercise.name} ${item.exercise.muscleGroup}`).join(" ");
-  const text = searchable(`${workout.title} ${workout.description ?? ""} ${workout.category} ${exerciseText}`);
-  if (focus === "glutes_legs") return /glute|perna|quadriceps|posterior|panturrilha|adutor|abdutor|inferior|agachamento|leg press|afundo|stiff|terra|hip thrust/.test(text);
-  if (focus === "push") return /peito|ombro|triceps|delt|supino|desenvolvimento|paralela|flexao|push|chest press|landmine press/.test(text);
-  if (focus === "pull") return /costas|dorsal|biceps|remada|puxada|barra|pulldown|pull|face pull|rosca/.test(text);
-  if (focus === "core") return /abdome|abdominal|core|prancha|lombar|estabilidade|anti rotacao|paloff|dead bug|bird dog/.test(text);
-  if (focus === "full_body") return workout.category === "full_body" || text.includes("corpo todo");
-  return workout.difficulty === "easy" || text.includes("baixo impacto") || text.includes("sem saltos") || text.includes("sem corrida");
+  const titleText = searchable(`${workout.title} ${workout.description ?? ""} ${workout.category}`);
+  const exerciseText = searchable(workout.exercises.map((item) => `${item.exercise.name} ${item.exercise.muscleGroup}`).join(" "));
+  const lowerScore = countMatches(exerciseText, /glute|perna|quadriceps|posterior|panturrilha|adutor|abdutor|agachamento|leg press|afundo|stiff|terra|hip thrust|rdl|bulgaro|flexora|extensora|hack squat/g);
+  const pushScore = countMatches(exerciseText, /peito|ombro|triceps|delt|supino|desenvolvimento|paralela|flexao|chest press|shoulder press|landmine press|elevacao lateral/g);
+  const pullScore = countMatches(exerciseText, /costas|dorsal|biceps|remada|puxada|barra|pulldown|face pull|rosca/g);
+  const coreScore = countMatches(exerciseText, /abdome|abdominal|core|prancha|lombar|estabilidade|anti rotacao|pallof|dead bug|bird dog|crunch/g);
+  const upperScore = pushScore + pullScore;
+  if (focus === "glutes_legs") return lowerScore >= 3 && lowerScore >= upperScore && !titleText.includes("foco tronco");
+  if (focus === "push") return pushScore >= 3 && pushScore >= pullScore && !titleText.includes("foco gluteos e pernas");
+  if (focus === "pull") return pullScore >= 3 && pullScore >= pushScore && !titleText.includes("foco gluteos e pernas");
+  if (focus === "core") return coreScore >= 1 || titleText.includes("core");
+  if (focus === "full_body") return workout.category === "full_body" || titleText.includes("corpo todo");
+  const allText = `${titleText} ${exerciseText}`;
+  return workout.difficulty === "easy" || allText.includes("baixo impacto") || allText.includes("sem saltos") || allText.includes("sem corrida");
 }
 
 export function WorkoutsLivePage() {
