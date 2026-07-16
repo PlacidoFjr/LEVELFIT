@@ -1,9 +1,11 @@
 import { SessionStatus, WorkoutCategory, WorkoutDifficulty } from "@prisma/client";
 import { Type } from "class-transformer";
-import { ArrayMaxSize, IsArray, IsDateString, IsEnum, IsInt, IsOptional, IsString, IsUUID, Max, MaxLength, Min, MinLength, ValidateNested } from "class-validator";
+import { ArrayMaxSize, IsArray, IsDateString, IsEnum, IsInt, IsOptional, IsString, Matches, Max, MaxLength, Min, MinLength, ValidateNested } from "class-validator";
+
+const uuidLike = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export class WorkoutExerciseDto {
-  @IsUUID() exerciseId: string;
+  @Matches(uuidLike) exerciseId: string;
   @IsInt() @Min(0) @Max(100) sortOrder: number;
   @IsOptional() @IsInt() @Min(1) @Max(20) targetSets?: number;
   @IsOptional() @IsInt() @Min(1) @Max(200) targetReps?: number;
@@ -20,12 +22,12 @@ export class CreateWorkoutDto {
 }
 
 export class StartWorkoutSessionDto {
-  @IsUUID() workoutId: string;
+  @Matches(uuidLike) workoutId: string;
   @IsOptional() @IsDateString() startedAt?: string;
 }
 
 export class SessionExerciseUpdateDto {
-  @IsUUID() exerciseId: string;
+  @Matches(uuidLike) exerciseId: string;
   @IsOptional() @IsInt() @Min(0) @Max(50) setsCompleted?: number;
   @IsOptional() @IsInt() @Min(0) @Max(1000) repsCompleted?: number;
   @IsOptional() @IsInt() @Min(0) @Max(7200) durationSeconds?: number;

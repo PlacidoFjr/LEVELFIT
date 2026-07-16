@@ -315,6 +315,7 @@ export function WorkoutsLivePage() {
   const [error, setError] = useState<string | null>(null);
   const [focus, setFocus] = useState<WorkoutFocusId>("all");
   const [intensity, setIntensity] = useState<WorkoutDifficultyFilter>("all");
+  const [showPlanSettings, setShowPlanSettings] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -369,7 +370,7 @@ export function WorkoutsLivePage() {
 
   return <Screen title="Treino do dia" description="Um plano curto, ajustável e com espaço para descanso." action={<Link href="/settings/notifications" className="secondary-button"><CalendarClock size={18} /> Agenda</Link>}>
     <Notice message={error} tone="danger" />
-    {!loading && workouts.length > 0 && <section id="workout-plan-settings" className="mb-4 app-card p-4 sm:p-5" aria-label="Ajustes do plano de treino">
+    {!loading && workouts.length > 0 && showPlanSettings && <section id="workout-plan-settings" className="mb-4 app-card p-4 sm:p-5" aria-label="Ajustes do plano de treino">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="eyebrow text-[var(--coral)]">Ajuste do plano</p>
@@ -390,7 +391,7 @@ export function WorkoutsLivePage() {
               <h2 className="mt-5 text-2xl font-black text-white">{workout.title}</h2>
               <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--text-muted)]">{workout.description ?? "Movimentos adaptáveis. Pare se sentir dor e reduza a intensidade quando necessário."}</p>
               <div className="mt-5 flex flex-wrap gap-5 text-sm font-bold text-[var(--text-muted)]"><span className="inline-flex items-center gap-2"><Clock3 size={18} /> {workout.estimatedMinutes} minutos</span><span className="inline-flex items-center gap-2"><Activity size={18} /> {workout.exercises.length} exercícios</span><span className="inline-flex items-center gap-2"><Zap size={18} /> 60 XP</span></div>
-              <div className="mt-7 flex flex-col gap-2 sm:flex-row"><button onClick={() => start(workout.id)} disabled={busyId === workout.id} className="primary-button bg-[var(--coral)] text-white disabled:opacity-60">{isWorkoutSession(today) ? "Continuar treino" : "Começar treino"} <ArrowRight size={18} /></button><button type="button" onClick={() => document.getElementById("workout-plan-settings")?.scrollIntoView({ behavior: "smooth", block: "start" })} className="secondary-button"><SlidersHorizontal size={18} /> Ajustar plano</button></div>
+              <div className="mt-7 flex flex-col gap-2 sm:flex-row"><button onClick={() => start(workout.id)} disabled={busyId === workout.id} className="primary-button bg-[var(--coral)] text-white disabled:opacity-60">{isWorkoutSession(today) ? "Continuar treino" : "Começar treino"} <ArrowRight size={18} /></button><button type="button" onClick={() => { setShowPlanSettings((value) => !value); window.setTimeout(() => document.getElementById("workout-plan-settings")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0); }} className="secondary-button"><SlidersHorizontal size={18} /> {showPlanSettings ? "Fechar ajuste" : "Ajustar plano"}</button></div>
             </div>
             <div className="border-t border-[var(--border)] bg-[var(--surface-elevated)] p-5 lg:border-l lg:border-t-0"><p className="eyebrow mb-3">Sequência do treino</p><div className="divide-y divide-[var(--border)]">{workout.exercises.map((exercise, index) => <div key={exercise.id} className="flex min-h-[64px] items-center gap-3"><span className="grid size-8 shrink-0 place-items-center rounded-[6px] bg-[var(--surface-soft)] text-[var(--coral)]"><BicepsFlexed size={17} /></span><span className="min-w-0 flex-1 truncate text-sm font-bold text-white">{exercise.exercise.name}</span><span className="text-xs font-bold text-[var(--text-muted)]">{formatExerciseTarget(exercise)}</span><span className="text-xs text-[var(--text-dim)]">{index + 1}</span></div>)}</div></div>
           </div>
