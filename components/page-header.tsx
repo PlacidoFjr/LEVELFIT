@@ -20,9 +20,7 @@ export function PageHeader({ title, description, action }: { title: string; desc
   const progress = getUserProgress(session.user);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const displayDate = new Date();
-  if (displayDate.getHours() < 4 || (displayDate.getHours() === 4 && displayDate.getMinutes() < 30)) displayDate.setDate(displayDate.getDate() - 1);
-  const currentDate = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long" }).format(displayDate);
+  const currentDate = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long" }).format(new Date());
 
   return (
     <header className="mb-4 flex min-w-0 flex-col gap-3 sm:mb-6 sm:flex-row sm:items-end sm:justify-between">
