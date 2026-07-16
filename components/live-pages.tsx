@@ -231,13 +231,15 @@ function categoryLabel(value: Workout["category"]) {
   return ({ strength: "força", cardio: "cardio", mobility: "mobilidade", full_body: "corpo inteiro", recovery: "recuperação" } as const)[value];
 }
 
-type WorkoutFocusId = "all" | "female" | "male" | "full_body" | "low_impact";
+type WorkoutFocusId = "all" | "glutes_legs" | "push" | "pull" | "core" | "full_body" | "low_impact";
 type WorkoutDifficultyFilter = "all" | Workout["difficulty"];
 
 const workoutFocuses: Array<{ id: WorkoutFocusId; label: string; detail: string }> = [
   { id: "all", label: "Todos", detail: "Biblioteca completa" },
-  { id: "female", label: "Glúteos e pernas", detail: "Foco comum feminino" },
-  { id: "male", label: "Tronco e força", detail: "Foco comum masculino" },
+  { id: "glutes_legs", label: "Glúteos e pernas", detail: "Inferiores, quadríceps e posterior" },
+  { id: "push", label: "Peito, ombros e tríceps", detail: "Empurrar e força de tronco" },
+  { id: "pull", label: "Costas e bíceps", detail: "Puxar, postura e dorsais" },
+  { id: "core", label: "Core e estabilidade", detail: "Abdome, lombar e controle" },
   { id: "full_body", label: "Corpo todo", detail: "Treino equilibrado" },
   { id: "low_impact", label: "Baixo impacto", detail: "Sem saltos ou corrida" },
 ];
@@ -277,7 +279,7 @@ function WorkoutChoicePicker({
         </label>
         <p className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-bold leading-5 text-[var(--text-muted)]">No iPhone, toque no campo para abrir o seletor rolável nativo.</p>
       </div>
-      <div className="mt-4 hidden gap-2 sm:grid sm:grid-cols-2 xl:grid-cols-5">
+      <div className="mt-4 hidden gap-2 sm:grid sm:grid-cols-2 xl:grid-cols-4">
         {workoutFocuses.map((item) => <button key={item.id} type="button" onClick={() => onFocusChange(item.id)} className={`min-h-[74px] rounded-[8px] border px-3 py-3 text-left transition-colors ${focus === item.id ? "border-[var(--lime)] bg-[rgba(183,255,42,0.1)]" : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-strong)]"}`}>
           <span className={`block text-sm font-black ${focus === item.id ? "text-[var(--lime)]" : "text-white"}`}>{item.label}</span>
           <span className="mt-1 block text-xs font-bold leading-4 text-[var(--text-muted)]">{item.detail}</span>
@@ -299,9 +301,12 @@ function searchable(value: string) {
 
 function workoutMatchesFocus(workout: Workout, focus: WorkoutFocusId) {
   if (focus === "all") return true;
-  const text = searchable(`${workout.title} ${workout.description ?? ""} ${workout.category}`);
-  if (focus === "female") return text.includes("inferiores") || text.includes("gluteos") || text.includes("pernas");
-  if (focus === "male") return text.includes("superiores") || text.includes("tronco") || text.includes("peito") || text.includes("costas") || text.includes("bracos") || text.includes("ombros");
+  const exerciseText = workout.exercises.map((item) => `${item.exercise.name} ${item.exercise.muscleGroup}`).join(" ");
+  const text = searchable(`${workout.title} ${workout.description ?? ""} ${workout.category} ${exerciseText}`);
+  if (focus === "glutes_legs") return /glute|perna|quadriceps|posterior|panturrilha|adutor|abdutor|inferior|agachamento|leg press|afundo|stiff|terra|hip thrust/.test(text);
+  if (focus === "push") return /peito|ombro|triceps|delt|supino|desenvolvimento|paralela|flexao|push|chest press|landmine press/.test(text);
+  if (focus === "pull") return /costas|dorsal|biceps|remada|puxada|barra|pulldown|pull|face pull|rosca/.test(text);
+  if (focus === "core") return /abdome|abdominal|core|prancha|lombar|estabilidade|anti rotacao|paloff|dead bug|bird dog/.test(text);
   if (focus === "full_body") return workout.category === "full_body" || text.includes("corpo todo");
   return workout.difficulty === "easy" || text.includes("baixo impacto") || text.includes("sem saltos") || text.includes("sem corrida");
 }
