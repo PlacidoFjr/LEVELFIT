@@ -313,8 +313,8 @@ function workoutMatchesFocus(workout: Workout, focus: WorkoutFocusId) {
   const coreScore = countMatches(exerciseText, /abdome|abdominal|core|prancha|lombar|estabilidade|anti rotacao|pallof|dead bug|bird dog|crunch/g);
   const upperScore = pushScore + pullScore;
   if (focus === "glutes_legs") return lowerScore >= 3 && lowerScore >= upperScore && !titleText.includes("foco tronco");
-  if (focus === "push") return pushScore >= 3 && pushScore >= pullScore && !titleText.includes("foco gluteos e pernas");
-  if (focus === "pull") return pullScore >= 3 && pullScore >= pushScore && !titleText.includes("foco gluteos e pernas");
+  if (focus === "push") return /sessao push|(^|\s)push(\s|$)/.test(titleText) || (pushScore >= 4 && pushScore >= pullScore + 3 && !titleText.includes("upper") && !titleText.includes("full body") && !titleText.includes("foco gluteos e pernas"));
+  if (focus === "pull") return /sessao pull|(^|\s)pull(\s|$)/.test(titleText) || (pullScore >= 4 && pullScore >= pushScore + 3 && !titleText.includes("upper") && !titleText.includes("full body") && !titleText.includes("foco gluteos e pernas"));
   if (focus === "core") return coreScore >= 1 || titleText.includes("core");
   if (focus === "full_body") return workout.category === "full_body" || titleText.includes("corpo todo");
   const allText = `${titleText} ${exerciseText}`;
@@ -331,6 +331,7 @@ export function WorkoutsLivePage() {
   const [focus, setFocus] = useState<WorkoutFocusId>("all");
   const [intensity, setIntensity] = useState<WorkoutDifficultyFilter>("all");
   const [showPlanSettings, setShowPlanSettings] = useState(false);
+  const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
@@ -379,9 +380,10 @@ export function WorkoutsLivePage() {
   const configuredWorkouts = focusedWorkouts.filter((item) => intensity === "all" || item.difficulty === intensity);
   const suggestedWorkouts = configuredWorkouts.length > 0 ? configuredWorkouts : focusedWorkouts;
   const todayWorkout = getWorkoutFromToday(today);
-  const workout = (focus === "all" && intensity === "all" ? todayWorkout : null) ?? suggestedWorkouts[0] ?? todayWorkout ?? workouts[0] ?? null;
-  const optionPool = suggestedWorkouts.length > 1 ? suggestedWorkouts : workouts;
-  const options = optionPool.filter((item) => item.id !== workout?.id).slice(0, 3);
+  const selectedWorkout = selectedWorkoutId ? suggestedWorkouts.find((item) => item.id === selectedWorkoutId) : null;
+  const workout = selectedWorkout ?? (focus === "all" && intensity === "all" ? todayWorkout : null) ?? suggestedWorkouts[0] ?? todayWorkout ?? workouts[0] ?? null;
+  const activeSessionForWorkout = isWorkoutSession(today) && today.workoutId === workout?.id;
+  const options = suggestedWorkouts.filter((item) => item.id !== workout?.id).slice(0, 3);
 
   return <Screen title="Treino do dia" description="Um plano curto, ajustável e com espaço para descanso." action={<Link href="/settings/notifications" className="secondary-button"><CalendarClock size={18} /> Agenda</Link>}>
     <Notice message={error} tone="danger" />
@@ -394,7 +396,7 @@ export function WorkoutsLivePage() {
         </div>
         <Pill tone="cyan">{configuredWorkouts.length || focusedWorkouts.length} opções</Pill>
       </div>
-      <WorkoutChoicePicker focus={focus} intensity={intensity} onFocusChange={setFocus} onIntensityChange={setIntensity} />
+      <WorkoutChoicePicker focus={focus} intensity={intensity} onFocusChange={(value) => { setFocus(value); setSelectedWorkoutId(null); }} onIntensityChange={(value) => { setIntensity(value); setSelectedWorkoutId(null); }} />
       {configuredWorkouts.length === 0 && focusedWorkouts.length > 0 && <p className="mt-3 rounded-[8px] border border-[var(--border)] bg-[rgba(255,214,10,0.06)] px-3 py-2 text-xs font-bold text-[var(--gold)]">Não encontrei esse foco nessa intensidade. Mostrando a opção mais próxima para você não ficar travado.</p>}
     </section>}
     {loading ? <LoadingCard /> : !workout ? <section className="app-card grid min-h-[240px] place-items-center p-6 text-center"><div><Dumbbell className="mx-auto text-[var(--text-dim)]" size={32} /><h2 className="mt-4 font-black text-white">Nenhum treino disponível</h2><p className="mt-2 max-w-md text-sm leading-6 text-[var(--text-muted)]">{error ? "Não conseguimos carregar sua biblioteca de treinos agora." : "A biblioteca de treinos ainda não foi carregada."}</p><button onClick={() => void load()} className="secondary-button mx-auto mt-5">Tentar novamente</button></div></section> : (
@@ -402,19 +404,21 @@ export function WorkoutsLivePage() {
         <section className="app-card overflow-hidden">
           <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
             <div className="p-5 sm:p-7">
-              <div className="flex flex-wrap gap-2"><Pill tone="coral"><Dumbbell size={14} /> {categoryLabel(workout.category).toUpperCase()}</Pill><Pill>{difficultyLabel(workout.difficulty).toUpperCase()}</Pill>{isWorkoutSession(today) && <Pill tone="gold">{today.status === "in_progress" ? "EM ANDAMENTO" : today.status.toUpperCase()}</Pill>}</div>
+              <div className="flex flex-wrap gap-2"><Pill tone="coral"><Dumbbell size={14} /> {categoryLabel(workout.category).toUpperCase()}</Pill><Pill>{difficultyLabel(workout.difficulty).toUpperCase()}</Pill>{activeSessionForWorkout && <Pill tone="gold">{today.status === "in_progress" ? "EM ANDAMENTO" : today.status.toUpperCase()}</Pill>}</div>
               <h2 className="mt-5 text-2xl font-black text-white">{workout.title}</h2>
               <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--text-muted)]">{workout.description ?? "Movimentos adaptáveis. Pare se sentir dor e reduza a intensidade quando necessário."}</p>
               <div className="mt-5 flex flex-wrap gap-5 text-sm font-bold text-[var(--text-muted)]"><span className="inline-flex items-center gap-2"><Clock3 size={18} /> {workout.estimatedMinutes} minutos</span><span className="inline-flex items-center gap-2"><Activity size={18} /> {workout.exercises.length} exercícios</span><span className="inline-flex items-center gap-2"><Zap size={18} /> 60 XP</span></div>
-              <div className="mt-7 flex flex-col gap-2 sm:flex-row"><button onClick={() => start(workout.id)} disabled={busyId === workout.id} className="primary-button bg-[var(--coral)] text-white disabled:opacity-60">{isWorkoutSession(today) ? "Continuar treino" : "Começar treino"} <ArrowRight size={18} /></button><button type="button" onClick={() => { setShowPlanSettings((value) => !value); window.setTimeout(() => document.getElementById("workout-plan-settings")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0); }} className="secondary-button"><SlidersHorizontal size={18} /> {showPlanSettings ? "Fechar ajuste" : "Ajustar plano"}</button></div>
+              <div className="mt-7 flex flex-col gap-2 sm:flex-row"><button onClick={() => start(workout.id)} disabled={busyId === workout.id} className="primary-button bg-[var(--coral)] text-white disabled:opacity-60">{activeSessionForWorkout ? "Continuar treino" : "Começar treino"} <ArrowRight size={18} /></button><button type="button" onClick={() => { setShowPlanSettings((value) => !value); window.setTimeout(() => document.getElementById("workout-plan-settings")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0); }} className="secondary-button"><SlidersHorizontal size={18} /> {showPlanSettings ? "Fechar ajuste" : "Ajustar plano"}</button></div>
             </div>
             <div className="border-t border-[var(--border)] bg-[var(--surface-elevated)] p-5 lg:border-l lg:border-t-0"><p className="eyebrow mb-3">Sequência do treino</p><div className="divide-y divide-[var(--border)]">{workout.exercises.map((exercise, index) => <div key={exercise.id} className="flex min-h-[64px] items-center gap-3"><span className="grid size-8 shrink-0 place-items-center rounded-[6px] bg-[var(--surface-soft)] text-[var(--coral)]"><BicepsFlexed size={17} /></span><span className="min-w-0 flex-1 truncate text-sm font-bold text-white">{exercise.exercise.name}</span><span className="text-xs font-bold text-[var(--text-muted)]">{formatExerciseTarget(exercise)}</span><span className="text-xs text-[var(--text-dim)]">{index + 1}</span></div>)}</div></div>
           </div>
         </section>
-        <h2 className="mb-3 mt-7 text-lg font-black text-white">Outras opções</h2>
-        <div className="grid gap-4 md:grid-cols-3">
-          {options.map((item) => <button key={item.id} onClick={() => start(item.id)} className="app-card flex min-h-[112px] items-center gap-4 p-4 text-left transition-transform hover:-translate-y-0.5"><span className="grid size-11 place-items-center rounded-[7px] bg-[rgba(34,211,238,0.12)] text-[var(--cyan)]"><Activity size={22} /></span><span className="flex-1"><strong className="block text-sm text-white">{item.title}</strong><span className="mt-1 block text-xs text-[var(--text-muted)]">{item.estimatedMinutes} min · {difficultyLabel(item.difficulty)}</span></span><ChevronRight size={18} className="text-[var(--text-dim)]" /></button>)}
-        </div>
+        {options.length > 0 && <>
+          <div className="mb-3 mt-7 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between"><div><h2 className="text-lg font-black text-white">Mais treinos desse foco</h2><p className="mt-1 text-xs font-bold text-[var(--text-muted)]">Toque para trocar a prévia antes de começar.</p></div></div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {options.map((item) => <button key={item.id} type="button" onClick={() => setSelectedWorkoutId(item.id)} className="app-card flex min-h-[112px] items-center gap-4 p-4 text-left transition-transform hover:-translate-y-0.5"><span className="grid size-11 place-items-center rounded-[7px] bg-[rgba(34,211,238,0.12)] text-[var(--cyan)]"><Activity size={22} /></span><span className="flex-1"><strong className="block text-sm text-white">{item.title}</strong><span className="mt-1 block text-xs text-[var(--text-muted)]">{item.estimatedMinutes} min · {difficultyLabel(item.difficulty)}</span></span><ChevronRight size={18} className="text-[var(--text-dim)]" /></button>)}
+          </div>
+        </>}
       </>
     )}
   </Screen>;
