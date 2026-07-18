@@ -43,7 +43,7 @@ function RunPageHeader() {
           <p className="eyebrow text-[var(--cyan)]">LevelFit Run Pro</p>
           <h1 className="mt-2 text-3xl font-black leading-tight text-white sm:text-4xl">Corrida, TAF e performance</h1>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--text-muted)]">
-            Painel para acompanhar atletas, montar treinos de corrida, controlar carga e preparar simulados sem usar GPS nesta fase.
+            Painel para acompanhar atletas, montar treinos de corrida, controlar carga e preparar simulados com visão profissional.
           </p>
         </div>
         <div className="flex shrink-0 flex-wrap gap-2">
@@ -190,7 +190,7 @@ function WeekProgram() {
       <div className="mb-5 flex items-center justify-between gap-3">
         <div>
           <p className="eyebrow text-[var(--cyan)]">Semana de treino</p>
-          <h2 className="mt-2 text-xl font-black text-white">Bloco TAF sem GPS</h2>
+          <h2 className="mt-2 text-xl font-black text-white">Bloco de performance</h2>
         </div>
         <span className="rounded-[5px] bg-[rgba(34,211,238,0.1)] px-2 py-1 text-xs font-black text-[var(--cyan)]">5 dias</span>
       </div>

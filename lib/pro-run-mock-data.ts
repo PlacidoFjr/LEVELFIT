@@ -159,7 +159,7 @@ export const runProgramBlocks = [
 ] as const;
 
 export const runActivity = [
-  { icon: Route, tone: "cyan", title: "7 atletas com treino publicado", detail: "Treinos da semana liberados sem GPS obrigatório." },
+  { icon: Route, tone: "cyan", title: "7 atletas com treino publicado", detail: "Treinos da semana liberados com orientação clara." },
   { icon: Gauge, tone: "gold", title: "3 precisam reduzir carga", detail: "Sinais de fadiga ou dor leve no check-in." },
   { icon: Timer, tone: "lime", title: "8 prontos para simulado", detail: "Readiness acima de 80% e boa frequência." },
   { icon: Activity, tone: "coral", title: "TAF em 21 dias", detail: "Criar bloco de polimento na próxima semana." },
