@@ -32,6 +32,12 @@ services:
         sync: false
       - key: TOKEN_HASH_SECRET
         sync: false
+      - key: OWNER_EMAILS
+        sync: false
+      - key: NUTRITIONIST_EMAILS
+        sync: false
+      - key: RUN_COACH_EMAILS
+        sync: false
       - key: FIREBASE_PROJECT_ID
         sync: false
       - key: FIREBASE_CLIENT_EMAIL

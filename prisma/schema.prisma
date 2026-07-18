@@ -194,6 +194,16 @@ enum PaymentStatus {
   refunded
 }
 
+enum ProfessionalKind {
+  nutrition
+  run
+}
+
+enum ProfessionalConnectionStatus {
+  active
+  revoked
+}
+
 model User {
   id                     String     @id @default(uuid()) @db.Uuid
   email                  String     @unique @db.Citext
@@ -239,6 +249,7 @@ model User {
   payments                Payment[]
   auditLogsAsActor        AuditLog[]                @relation("AuditActor")
   auditLogsAsTarget       AuditLog[]                @relation("AuditTarget")
+  professionalConnections ProfessionalConnection[]
 
   @@index([status])
   @@index([deletedAt])
@@ -928,6 +939,57 @@ model UserPreference {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_preferences")
+}
+
+model ProfessionalInvite {
+  id                String           @id @default(uuid()) @db.Uuid
+  code              String           @unique @db.VarChar(32)
+  kind              ProfessionalKind
+  professionalKey   String           @map("professional_key") @db.VarChar(80)
+  professionalName  String           @map("professional_name") @db.VarChar(120)
+  professionalRole  String           @map("professional_role") @db.VarChar(120)
+  headline          String           @db.VarChar(160)
+  planTitle         String           @map("plan_title") @db.VarChar(160)
+  defaultPermissions String[]        @default([]) @map("default_permissions")
+  isActive          Boolean          @default(true) @map("is_active")
+  expiresAt         DateTime?        @map("expires_at") @db.Timestamptz(6)
+  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt         DateTime?        @map("deleted_at") @db.Timestamptz(6)
+
+  connections ProfessionalConnection[]
+
+  @@index([kind, isActive])
+  @@index([professionalKey])
+  @@map("professional_invites")
+}
+
+model ProfessionalConnection {
+  id                String                       @id @default(uuid()) @db.Uuid
+  userId            String                       @map("user_id") @db.Uuid
+  inviteId          String?                      @map("invite_id") @db.Uuid
+  kind              ProfessionalKind
+  professionalKey   String                       @map("professional_key") @db.VarChar(80)
+  professionalName  String                       @map("professional_name") @db.VarChar(120)
+  professionalRole  String                       @map("professional_role") @db.VarChar(120)
+  status            ProfessionalConnectionStatus @default(active)
+  permissions       String[]                     @default([])
+  planTitle         String                       @map("plan_title") @db.VarChar(160)
+  nextEventLabel    String?                      @map("next_event_label") @db.VarChar(160)
+  notes             String?                      @db.VarChar(500)
+  acceptedAt        DateTime                     @default(now()) @map("accepted_at") @db.Timestamptz(6)
+  revokedAt         DateTime?                    @map("revoked_at") @db.Timestamptz(6)
+  createdAt         DateTime                     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime                     @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt         DateTime?                    @map("deleted_at") @db.Timestamptz(6)
+
+  user   User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invite ProfessionalInvite? @relation(fields: [inviteId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, professionalKey, kind])
+  @@index([userId, status])
+  @@index([kind, professionalKey])
+  @@map("professional_connections")
 }
 
 model Subscription {

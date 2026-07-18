@@ -12,6 +12,8 @@ const quickLinks = [
   { label: "Água", href: "/hydration", keywords: "agua hidratação copo ml lembrete" },
   { label: "Alimentação", href: "/nutrition", keywords: "comida refeição alimento checklist nutricao" },
   { label: "Progresso", href: "/progress", keywords: "medidas peso corpo evolução check-in" },
+  { label: "Meu plano", href: "/my-plan", keywords: "plano profissional nutri taf acompanhamento" },
+  { label: "Profissionais", href: "/professionals", keywords: "nutricionista coach taf convite conexao permissao" },
   { label: "Configurações", href: "/settings", keywords: "conta notificacoes segurança privacidade" },
 ];
 

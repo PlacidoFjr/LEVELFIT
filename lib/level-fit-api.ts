@@ -233,6 +233,55 @@ export type XpSummary = {
   page: { nextCursor: string | null; hasMore: boolean };
 };
 
+export type ProfessionalKind = "nutrition" | "run";
+
+export type ProfessionalConnection = {
+  id: string;
+  kind: ProfessionalKind;
+  professionalKey: string;
+  professionalName: string;
+  professionalRole: string;
+  status: "active" | "revoked";
+  permissions: string[];
+  planTitle: string;
+  nextEventLabel?: string | null;
+  notes?: string | null;
+  acceptedAt: string;
+  revokedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ProfessionalInvitePreview = {
+  code: string;
+  kind: ProfessionalKind;
+  professionalName: string;
+  professionalRole: string;
+  headline: string;
+  planTitle: string;
+  defaultPermissions: string[];
+};
+
+export type AdminOverview = {
+  stats: Array<{ label: string; value: string; detail: string; tone: "lime" | "cyan" | "green" | "gold" | "violet" | "coral" }>;
+  workspaces: Array<{
+    id: string;
+    title: string;
+    owner: string;
+    status: "healthy" | "attention" | "setup";
+    users: number;
+    activeToday: number;
+    retention: number;
+    revenueState: string;
+    nextStep: string;
+  }>;
+  checklist: Array<{ title: string; detail: string; done: boolean }>;
+  timeline: Array<{ tone: "lime" | "cyan" | "green" | "gold" | "violet" | "coral"; title: string; detail: string }>;
+  recentConnections: Array<{ kind: ProfessionalKind; professionalName: string; professionalRole: string; planTitle: string; createdAt: string }>;
+  meta: { generatedAt: string; source: "api" };
+  catalog: { publicWorkouts: number };
+};
+
 export function isWorkoutSession(value: TodayWorkout): value is WorkoutSession {
   return Boolean(value && "workout" in value && "status" in value);
 }
@@ -488,4 +537,35 @@ export function logoutAllDevices() {
     method: "POST",
     body: JSON.stringify({ allDevices: true }),
   }, false);
+}
+
+export function listProfessionalConnections() {
+  return apiRequest<{ data: ProfessionalConnection[] }>("/professional-connections");
+}
+
+export function previewProfessionalInvite(code: string) {
+  const params = new URLSearchParams({ code });
+  return apiRequest<ProfessionalInvitePreview>(`/professional-connections/invite?${params.toString()}`);
+}
+
+export function acceptProfessionalInvite(code: string, permissions: string[]) {
+  return apiRequest<{ connection: ProfessionalConnection }>("/professional-connections/accept", {
+    method: "POST",
+    body: JSON.stringify({ code, permissions }),
+  });
+}
+
+export function updateProfessionalPermissions(id: string, permissions: string[]) {
+  return apiRequest<{ connection: ProfessionalConnection }>(`/professional-connections/${id}/permissions`, {
+    method: "PATCH",
+    body: JSON.stringify({ permissions }),
+  });
+}
+
+export function revokeProfessionalConnection(id: string) {
+  return apiRequest<{ id: string; status: "revoked" }>(`/professional-connections/${id}`, { method: "DELETE" });
+}
+
+export function getAdminOverview() {
+  return apiRequest<AdminOverview>("/admin/overview");
 }

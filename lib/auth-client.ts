@@ -21,6 +21,14 @@ export type AuthUser = {
   email: string;
   displayName?: string | null;
   onboardingCompleted?: boolean;
+  roles?: Array<"USER" | "NUTRITIONIST" | "RUN_COACH" | "OWNER">;
+  defaultRoute?: string;
+  availableWorkspaces?: Array<{
+    type: "user" | "nutri" | "run" | "owner";
+    label: string;
+    description: string;
+    route: string;
+  }>;
   level?: {
     level: number;
     totalXp: number;
@@ -156,6 +164,15 @@ export function getAccessToken() {
   return memoryAccessToken ?? readStorage(ACCESS_TOKEN_KEY);
 }
 
+export function getDefaultRoute(user?: AuthUser | null) {
+  return user?.defaultRoute || "/";
+}
+
+export function getLoginRedirectRoute(user?: AuthUser | null) {
+  const workspaces = user?.availableWorkspaces ?? [];
+  return workspaces.length > 1 ? "/workspace" : getDefaultRoute(user);
+}
+
 function saveSession(response: LoginResponse) {
   memoryAccessToken = response.accessToken;
   memoryCsrfToken = response.csrfToken;
@@ -166,6 +183,9 @@ function saveSession(response: LoginResponse) {
 }
 
 function firebaseError(error: unknown) {
+  if (error instanceof Error && error.message.includes("Firebase Auth nao configurado")) {
+    return new ApiClientError("Firebase Auth não está configurado neste ambiente. Reinicie o servidor local depois de salvar as variáveis NEXT_PUBLIC_FIREBASE_*.", "FIREBASE_CONFIG_MISSING", 503);
+  }
   const code = typeof error === "object" && error && "code" in error ? String((error as { code?: unknown }).code) : "";
   if (code.includes("auth/email-already-in-use")) return new ApiClientError("Este e-mail já está cadastrado. Entre com ele ou recupere sua senha.", "EMAIL_UNAVAILABLE", 409);
   if (code.includes("auth/invalid-credential") || code.includes("auth/user-not-found") || code.includes("auth/wrong-password")) return new ApiClientError("E-mail ou senha inválidos.", "INVALID_CREDENTIALS", 401);
@@ -358,6 +378,9 @@ function toAuthUser(me: Awaited<ReturnType<typeof fetchMe>>): AuthUser {
     email: me.email,
     displayName: me.profile?.displayName ?? me.displayName,
     onboardingCompleted: Boolean(me.profile?.fitnessGoal && me.profile?.activityLevel),
+    roles: me.roles ?? ["USER"],
+    defaultRoute: me.defaultRoute ?? "/",
+    availableWorkspaces: me.availableWorkspaces ?? [{ type: "user", label: "Meu app", description: "Área pessoal de hábitos, treinos e progresso.", route: "/" }],
     level: me.level ?? null,
     streaks: me.streaks ?? [],
   };
