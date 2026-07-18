@@ -10,8 +10,10 @@ import {
   ClipboardList,
   LayoutDashboard,
   Menu,
+  Route,
   Search,
   Settings,
+  ShieldCheck,
   UserPlus,
   UsersRound,
   X,
@@ -22,10 +24,12 @@ import { LevelFitLogo } from "@/components/level-fit-logo";
 const proNav = [
   { href: "/pro", label: "Dashboard", icon: LayoutDashboard },
   { href: "/pro/clients", label: "Clientes", icon: UsersRound },
+  { href: "/pro/run", label: "Run", icon: Route },
   { href: "/pro/agenda", label: "Agenda", icon: CalendarDays },
   { href: "/pro/plans", label: "Planos", icon: ClipboardList },
   { href: "/pro/checkins", label: "Check-ins", icon: CheckSquare },
   { href: "/pro/alerts", label: "Alertas", icon: AlertTriangle },
+  { href: "/pro/admin", label: "Gestão", icon: ShieldCheck },
 ];
 
 function isActive(pathname: string, href: string) {
