@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -18,6 +20,7 @@ import {
   Timer,
   Upload,
 } from "lucide-react";
+import { useState } from "react";
 import {
   runActivity,
   runAthletes,
@@ -67,6 +70,23 @@ const tafAssignmentTargets = [
   { label: "Reta final", value: "5 atletas", detail: "Bloco de 4 semanas" },
   { label: "Iniciantes", value: "7 atletas", detail: "Base e técnica primeiro" },
 ] as const;
+
+type RunNotice = {
+  tone: keyof typeof toneClass;
+  title: string;
+  message: string;
+};
+
+function RunNoticeBanner({ notice }: { notice: RunNotice | null }) {
+  if (!notice) return null;
+
+  return (
+    <div className={`mb-5 rounded-[8px] border border-[var(--border)] p-4 ${toneClass[notice.tone]}`} role="status" aria-live="polite">
+      <p className="text-sm font-black text-white">{notice.title}</p>
+      <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{notice.message}</p>
+    </div>
+  );
+}
 
 function RunPageHeader() {
   return (
@@ -176,7 +196,7 @@ function AthleteRow({ athlete }: { athlete: RunAthlete }) {
   );
 }
 
-function SessionCard({ session }: { session: RunSession }) {
+function SessionCard({ session, onEdit }: { session: RunSession; onEdit?: (session: RunSession) => void }) {
   const iconConfig = {
     base: { icon: Route, tone: "cyan" },
     interval: { icon: Timer, tone: "coral" },
@@ -203,7 +223,7 @@ function SessionCard({ session }: { session: RunSession }) {
         <MiniMetric label="Duração" value={session.duration} />
         <MiniMetric label="Intensidade" value={session.intensity} />
       </div>
-      <button className="secondary-button mt-5 w-full">Editar bloco <ArrowRight size={17} /></button>
+      <button type="button" onClick={() => onEdit?.(session)} className="secondary-button mt-5 w-full">Editar bloco <ArrowRight size={17} /></button>
     </section>
   );
 }
@@ -243,9 +263,17 @@ function WeekProgram() {
   );
 }
 
-function TafTemplateCard({ template }: { template: (typeof tafPlanTemplates)[number] }) {
+function TafTemplateCard({
+  template,
+  selected,
+  onSelect,
+}: {
+  template: (typeof tafPlanTemplates)[number];
+  selected: boolean;
+  onSelect: (template: (typeof tafPlanTemplates)[number]) => void;
+}) {
   return (
-    <article className="rounded-[9px] border border-[var(--border)] bg-[rgba(8,11,15,0.28)] p-4 transition hover:border-[rgba(183,255,42,0.4)] hover:bg-[rgba(183,255,42,0.05)]">
+    <article className={`rounded-[9px] border p-4 transition ${selected ? "border-[rgba(183,255,42,0.7)] bg-[rgba(183,255,42,0.08)]" : "border-[var(--border)] bg-[rgba(8,11,15,0.28)] hover:border-[rgba(183,255,42,0.4)] hover:bg-[rgba(183,255,42,0.05)]"}`}>
       <div className="flex items-start justify-between gap-3">
         <span className="grid size-10 shrink-0 place-items-center rounded-[7px] bg-[rgba(183,255,42,0.1)] text-[var(--lime)]">
           <Target size={20} />
@@ -258,21 +286,40 @@ function TafTemplateCard({ template }: { template: (typeof tafPlanTemplates)[num
         <span className="rounded-[5px] bg-[rgba(255,107,61,0.1)] px-2 py-1 text-[0.68rem] font-black uppercase text-[var(--coral)]">{template.level}</span>
         <span className="rounded-[5px] bg-[rgba(250,204,21,0.1)] px-2 py-1 text-[0.68rem] font-black uppercase text-[var(--gold)]">{template.focus}</span>
       </div>
+      <button type="button" onClick={() => onSelect(template)} className="secondary-button mt-4 w-full">
+        {selected ? "Modelo selecionado" : "Usar modelo"} <ArrowRight size={17} />
+      </button>
     </article>
   );
 }
 
-function TafManualBuilder() {
+function TafManualBuilder({
+  selectedTemplate,
+  editorOpen,
+  onEdit,
+}: {
+  selectedTemplate: string;
+  editorOpen: boolean;
+  onEdit: () => void;
+}) {
   return (
     <section className="app-card premium-card p-5" data-reveal>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="eyebrow text-[var(--lime)]">Criar manualmente</p>
-          <h2 className="mt-2 text-xl font-black text-white">Plano TAF de 8 semanas</h2>
+          <h2 className="mt-2 text-xl font-black text-white">{selectedTemplate}</h2>
           <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">O coach escreve a rotina dentro do painel, ajustando volume, descanso e observações por atleta.</p>
         </div>
-        <button className="secondary-button shrink-0"><ListChecks size={18} /> Editar estrutura</button>
+        <button type="button" onClick={onEdit} className="secondary-button shrink-0"><ListChecks size={18} /> Editar estrutura</button>
       </div>
+
+      {editorOpen && (
+        <div className="mt-5 grid gap-3 rounded-[9px] border border-[rgba(183,255,42,0.32)] bg-[rgba(183,255,42,0.06)] p-4 md:grid-cols-3">
+          <MiniMetric label="Duração" value="8 semanas" />
+          <MiniMetric label="Frequência" value="5 dias/semana" />
+          <MiniMetric label="Foco" value="2 km + força" />
+        </div>
+      )}
 
       <div className="mt-5 grid gap-3 lg:grid-cols-5">
         {tafPlanDays.map((day) => (
@@ -296,7 +343,7 @@ function TafManualBuilder() {
   );
 }
 
-function TafSpreadsheetImport() {
+function TafSpreadsheetImport({ imported, onImport }: { imported: boolean; onImport: () => void }) {
   return (
     <section className="app-card premium-card p-5" data-reveal>
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
@@ -305,8 +352,15 @@ function TafSpreadsheetImport() {
           <h2 className="mt-2 text-xl font-black text-white">Prévia antes de publicar</h2>
           <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">Fluxo preparado para Excel/CSV: o coach importa, revisa inconsistências e só depois publica.</p>
         </div>
-        <button className="primary-button shrink-0"><Upload size={18} /> Importar Excel</button>
+        <button type="button" onClick={onImport} className="primary-button shrink-0"><Upload size={18} /> {imported ? "Planilha importada" : "Importar Excel"}</button>
       </div>
+
+      {imported && (
+        <div className="mt-5 rounded-[8px] border border-[rgba(56,217,121,0.28)] bg-[rgba(56,217,121,0.08)] p-3">
+          <p className="text-sm font-black text-white">Arquivo validado: taf_semana_01.xlsx</p>
+          <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">3 linhas reconhecidas, 1 ponto para revisar e nenhum bloqueio para publicação.</p>
+        </div>
+      )}
 
       <div className="mt-5 overflow-hidden rounded-[9px] border border-[var(--border)]">
         <div className="grid grid-cols-[70px_1fr_1.2fr_100px_120px] gap-3 border-b border-[var(--border)] bg-[rgba(34,211,238,0.06)] px-4 py-3 text-xs font-black uppercase text-[var(--text-dim)] max-md:hidden">
@@ -326,13 +380,25 @@ function TafSpreadsheetImport() {
   );
 }
 
-function TafAssignmentPanel() {
+function TafAssignmentPanel({
+  selectedTemplate,
+  published,
+  onPublish,
+}: {
+  selectedTemplate: string;
+  published: boolean;
+  onPublish: () => void;
+}) {
   return (
     <section className="app-card premium-card h-fit p-5" data-reveal>
       <p className="eyebrow text-[var(--gold)]">Publicar para atletas</p>
       <h2 className="mt-2 text-xl font-black text-white">Atribuição rápida</h2>
       <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">Depois de criar ou importar, o plano pode ir para grupo, atleta individual ou turma de preparação.</p>
       <div className="mt-5 space-y-3">
+        <article className="rounded-[8px] border border-[rgba(34,211,238,0.26)] bg-[rgba(34,211,238,0.08)] p-3">
+          <p className="text-xs font-black uppercase text-[var(--cyan)]">Plano selecionado</p>
+          <p className="mt-1 text-sm font-black text-white">{selectedTemplate}</p>
+        </article>
         {tafAssignmentTargets.map((target) => (
           <article key={target.label} className="rounded-[8px] border border-[var(--border)] bg-[rgba(8,11,15,0.28)] p-3">
             <div className="flex items-center justify-between gap-3">
@@ -343,15 +409,19 @@ function TafAssignmentPanel() {
           </article>
         ))}
       </div>
-      <button className="primary-button mt-5 w-full"><Send size={18} /> Publicar plano TAF</button>
+      <button type="button" onClick={onPublish} className="primary-button mt-5 w-full"><Send size={18} /> {published ? "Plano publicado" : "Publicar plano TAF"}</button>
+      {published && <p className="mt-3 text-xs font-bold leading-5 text-[var(--green)]">Mock: plano enviado para os grupos selecionados e pronto para aparecer no app do atleta.</p>}
     </section>
   );
 }
 
 export function ProRunPage() {
+  const [notice, setNotice] = useState<RunNotice | null>(null);
+
   return (
     <>
       <RunPageHeader />
+      <RunNoticeBanner notice={notice} />
       <RevealGroup>
         <section className="mb-5 grid gap-3 lg:grid-cols-[1.1fr_0.9fr_0.8fr]">
           <div className="app-card premium-card border-[rgba(34,211,238,0.24)] p-4" data-reveal>
@@ -413,7 +483,17 @@ export function ProRunPage() {
         </div>
 
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {runSessions.map((session) => <SessionCard key={session.id} session={session} />)}
+          {runSessions.map((session) => (
+            <SessionCard
+              key={session.id}
+              session={session}
+              onEdit={(selectedSession) => setNotice({
+                tone: "cyan",
+                title: "Bloco aberto para edição",
+                message: `${selectedSession.title} foi carregado no editor mockado. No backend real, aqui salvaremos volume, descanso e observações do coach.`,
+              })}
+            />
+          ))}
         </div>
       </RevealGroup>
     </>
@@ -505,6 +585,54 @@ export function ProRunAgendaPage() {
 }
 
 export function ProRunPlansPage() {
+  const [selectedTemplate, setSelectedTemplate] = useState<string>(tafPlanTemplates[0].title);
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [imported, setImported] = useState(false);
+  const [published, setPublished] = useState(false);
+  const [notice, setNotice] = useState<RunNotice | null>(null);
+
+  function selectTemplate(template: (typeof tafPlanTemplates)[number]) {
+    setSelectedTemplate(template.title);
+    setEditorOpen(true);
+    setPublished(false);
+    setNotice({
+      tone: "lime",
+      title: "Modelo carregado",
+      message: `${template.title} foi aplicado ao editor manual. Agora o coach pode ajustar dias, volume e observações.`,
+    });
+  }
+
+  function createNewPlan() {
+    setSelectedTemplate("Novo plano TAF personalizado");
+    setEditorOpen(true);
+    setPublished(false);
+    setNotice({
+      tone: "cyan",
+      title: "Novo plano iniciado",
+      message: "Estrutura mockada aberta para o coach montar a rotina TAF do zero.",
+    });
+  }
+
+  function importSpreadsheet() {
+    setImported(true);
+    setEditorOpen(true);
+    setPublished(false);
+    setNotice({
+      tone: "green",
+      title: "Planilha importada",
+      message: "Prévia carregada com validação de semanas, blocos e volumes. No backend real, aqui entra o parser Excel/CSV.",
+    });
+  }
+
+  function publishPlan() {
+    setPublished(true);
+    setNotice({
+      tone: "gold",
+      title: "Plano publicado em mock",
+      message: `${selectedTemplate} foi atribuído aos grupos selecionados para demonstração.`,
+    });
+  }
+
   return (
     <>
       <RunSubPageHeader
@@ -513,11 +641,12 @@ export function ProRunPlansPage() {
         description="Crie planos manuais, importe planilhas do coach e publique blocos TAF para atletas ou grupos."
         action={
           <>
-            <button className="secondary-button"><FileSpreadsheet size={18} /> Importar planilha</button>
-            <button className="primary-button"><Plus size={18} /> Novo plano</button>
+            <button type="button" onClick={importSpreadsheet} className="secondary-button"><FileSpreadsheet size={18} /> Importar planilha</button>
+            <button type="button" onClick={createNewPlan} className="primary-button"><Plus size={18} /> Novo plano</button>
           </>
         }
       />
+      <RunNoticeBanner notice={notice} />
       <RevealGroup className="space-y-5">
         <section className="app-card premium-card p-5" data-reveal>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -528,16 +657,34 @@ export function ProRunPlansPage() {
             <span className="w-fit rounded-[5px] bg-[rgba(34,211,238,0.1)] px-2 py-1 text-xs font-black text-[var(--cyan)]">4 bases prontas</span>
           </div>
           <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {tafPlanTemplates.map((template) => <TafTemplateCard key={template.title} template={template} />)}
+            {tafPlanTemplates.map((template) => (
+              <TafTemplateCard
+                key={template.title}
+                template={template}
+                selected={selectedTemplate === template.title}
+                onSelect={selectTemplate}
+              />
+            ))}
           </div>
         </section>
 
         <div className="grid gap-5 xl:grid-cols-[1fr_360px]">
           <div className="space-y-5">
-            <TafManualBuilder />
-            <TafSpreadsheetImport />
+            <TafManualBuilder
+              selectedTemplate={selectedTemplate}
+              editorOpen={editorOpen}
+              onEdit={() => {
+                setEditorOpen((open) => !open);
+                setNotice({
+                  tone: "cyan",
+                  title: editorOpen ? "Editor compacto" : "Editor expandido",
+                  message: editorOpen ? "Os parâmetros foram recolhidos para leitura rápida." : "Parâmetros principais abertos para ajuste visual do plano.",
+                });
+              }}
+            />
+            <TafSpreadsheetImport imported={imported} onImport={importSpreadsheet} />
           </div>
-          <TafAssignmentPanel />
+          <TafAssignmentPanel selectedTemplate={selectedTemplate} published={published} onPublish={publishPlan} />
         </div>
       </RevealGroup>
     </>

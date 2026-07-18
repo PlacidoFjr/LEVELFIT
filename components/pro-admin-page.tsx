@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -8,6 +10,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
+import { useState } from "react";
 import {
   adminStats,
   adminTimeline,
@@ -26,6 +29,17 @@ const toneClass = {
   violet: "text-[var(--violet)] bg-[rgba(167,139,250,0.1)]",
   coral: "text-[var(--coral)] bg-[rgba(255,107,61,0.1)]",
 } as const;
+
+function AdminNotice({ message }: { message: string | null }) {
+  if (!message) return null;
+
+  return (
+    <div className="mb-5 rounded-[8px] border border-[rgba(167,139,250,0.24)] bg-[rgba(167,139,250,0.08)] p-4" role="status" aria-live="polite">
+      <p className="text-sm font-black text-white">Relatório preparado</p>
+      <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{message}</p>
+    </div>
+  );
+}
 
 function AdminHeader() {
   return (
@@ -125,9 +139,12 @@ function MiniMetric({ label, value }: { label: string; value: string }) {
 }
 
 export function ProAdminPage() {
+  const [notice, setNotice] = useState<string | null>(null);
+
   return (
     <>
       <AdminHeader />
+      <AdminNotice message={notice} />
       <RevealGroup>
         <section className="mb-5 grid gap-3 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="app-card premium-card border-[rgba(167,139,250,0.22)] p-5" data-reveal>
@@ -185,7 +202,7 @@ export function ProAdminPage() {
               <p className="eyebrow">Linha de produto</p>
               <h2 className="mt-2 text-xl font-black text-white">O que está acontecendo agora</h2>
             </div>
-            <button className="ghost-button">Abrir relatorio <ArrowRight size={16} /></button>
+            <button type="button" onClick={() => setNotice("Mock: relatório consolidado de produtos, uso e pendências pronto para exportação futura.")} className="ghost-button">Abrir relatório <ArrowRight size={16} /></button>
           </div>
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             {adminTimeline.map(({ icon: Icon, tone, title, detail }) => (

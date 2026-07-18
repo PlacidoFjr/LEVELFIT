@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -19,6 +21,7 @@ import {
   Utensils,
   UsersRound,
 } from "lucide-react";
+import { useState } from "react";
 import {
   appointmentStatusLabel,
   appointments,
@@ -44,6 +47,23 @@ const toneClass = {
   violet: "text-[var(--violet)] bg-[rgba(167,139,250,0.1)]",
   coral: "text-[var(--coral)] bg-[rgba(255,107,61,0.1)]",
 } as const;
+
+type ProNotice = {
+  tone: keyof typeof toneClass;
+  title: string;
+  message: string;
+};
+
+function ProNoticeBanner({ notice }: { notice: ProNotice | null }) {
+  if (!notice) return null;
+
+  return (
+    <div className={`mb-5 rounded-[8px] border border-[var(--border)] p-4 ${toneClass[notice.tone]}`} role="status" aria-live="polite">
+      <p className="text-sm font-black text-white">{notice.title}</p>
+      <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{notice.message}</p>
+    </div>
+  );
+}
 
 function ProPageHeader({ eyebrow, title, description, action }: { eyebrow: string; title: string; description: string; action?: React.ReactNode }) {
   return (
@@ -352,14 +372,22 @@ export function ProDashboardPage() {
 }
 
 export function ProClientsPage() {
+  const [notice, setNotice] = useState<ProNotice | null>(null);
+
   return (
     <>
       <ProPageHeader
         eyebrow="Carteira"
         title="Clientes do nutricionista"
         description="Visão operacional da carteira: status, aderência, último registro, check-ins e próximos retornos."
-        action={<><button className="secondary-button"><MoreHorizontal size={18} /> Filtros</button><button className="primary-button"><Plus size={18} /> Convidar cliente</button></>}
+        action={
+          <>
+            <button type="button" onClick={() => setNotice({ tone: "cyan", title: "Filtros abertos", message: "Mock: status, aderência e retorno podem ser filtrados aqui." })} className="secondary-button"><MoreHorizontal size={18} /> Filtros</button>
+            <button type="button" onClick={() => setNotice({ tone: "lime", title: "Convite preparado", message: "Mock: link de convite do cliente gerado para envio pelo nutricionista." })} className="primary-button"><Plus size={18} /> Convidar cliente</button>
+          </>
+        }
       />
+      <ProNoticeBanner notice={notice} />
       <section className="app-card overflow-hidden">
         <div className="grid gap-3 border-b border-[var(--border)] px-4 py-3 text-xs font-black uppercase text-[var(--text-dim)] md:grid-cols-[minmax(220px,1.2fr)_120px_170px_120px_150px_36px]">
           <span>Cliente</span><span>Status</span><span>Aderência</span><span>Check-ins</span><span>Último registro</span><span />
@@ -371,6 +399,7 @@ export function ProClientsPage() {
 }
 
 export function ProClientDetailPage({ clientId }: { clientId: string }) {
+  const [notice, setNotice] = useState<ProNotice | null>(null);
   const client = getClient(clientId) ?? proClients[0];
   const clientAppointments = appointments.filter((item) => item.clientId === client.id);
 
@@ -380,8 +409,14 @@ export function ProClientDetailPage({ clientId }: { clientId: string }) {
         eyebrow="Cliente"
         title={client.name}
         description={`${client.goal} · ${client.plan}. Dados visíveis conforme permissões autorizadas pelo cliente.`}
-        action={<><button className="secondary-button"><MessageSquareText size={18} /> Adicionar nota</button><button className="primary-button"><FileText size={18} /> Editar plano</button></>}
+        action={
+          <>
+            <button type="button" onClick={() => setNotice({ tone: "cyan", title: "Nota profissional criada", message: `Mock: nova nota aberta para ${client.name}, sem salvar no banco ainda.` })} className="secondary-button"><MessageSquareText size={18} /> Adicionar nota</button>
+            <button type="button" onClick={() => setNotice({ tone: "green", title: "Plano aberto para edição", message: `Mock: ${client.plan} carregado para ajuste de refeições e checklist.` })} className="primary-button"><FileText size={18} /> Editar plano</button>
+          </>
+        }
       />
+      <ProNoticeBanner notice={notice} />
 
       <RevealGroup>
       <section className="app-card premium-card p-5" data-reveal>
@@ -487,14 +522,17 @@ function MealRow({ name, status, note }: ProClient["meals"][number]) {
 }
 
 export function ProAgendaPage() {
+  const [notice, setNotice] = useState<ProNotice | null>(null);
+
   return (
     <>
       <ProPageHeader
         eyebrow="Agenda"
         title="Retornos e consultas"
         description="Agenda simples para organizar retorno presencial, atendimento online, primeira consulta e revisões de plano."
-        action={<button className="primary-button"><Plus size={18} /> Novo retorno</button>}
+        action={<button type="button" onClick={() => setNotice({ tone: "lime", title: "Retorno criado", message: "Mock: novo horário reservado na agenda do nutricionista." })} className="primary-button"><Plus size={18} /> Novo retorno</button>}
       />
+      <ProNoticeBanner notice={notice} />
       <section className="app-card overflow-hidden">
         <div className="border-b border-[var(--border)] p-5">
           <p className="eyebrow">Próximos horários</p>
@@ -507,14 +545,17 @@ export function ProAgendaPage() {
 }
 
 export function ProPlansPage() {
+  const [notice, setNotice] = useState<ProNotice | null>(null);
+
   return (
     <>
       <ProPageHeader
         eyebrow="Planos alimentares"
         title="Modelos e planos ativos"
         description="Base inicial para montar planos por refeição, objetivo, rotina e preferências do cliente."
-        action={<button className="primary-button"><Plus size={18} /> Novo modelo</button>}
+        action={<button type="button" onClick={() => setNotice({ tone: "green", title: "Modelo alimentar iniciado", message: "Mock: estrutura de refeições aberta para criação de um novo modelo." })} className="primary-button"><Plus size={18} /> Novo modelo</button>}
       />
+      <ProNoticeBanner notice={notice} />
       <RevealGroup className="grid gap-5 xl:grid-cols-[1fr_340px]">
         <div className="grid gap-4 md:grid-cols-2">
           {planTemplates.map((plan) => <PlanPreviewCard key={plan.id} plan={plan} />)}
@@ -545,14 +586,17 @@ export function ProPlansPage() {
 }
 
 export function ProCheckinsPage() {
+  const [notice, setNotice] = useState<ProNotice | null>(null);
+
   return (
     <>
       <ProPageHeader
         eyebrow="Check-ins"
         title="Respostas da semana"
         description="Fome, energia, sono, hidratação e observações curtas para ajustar planos sem depender de mensagens soltas."
-        action={<button className="secondary-button"><ClipboardList size={18} /> Configurar perguntas</button>}
+        action={<button type="button" onClick={() => setNotice({ tone: "cyan", title: "Perguntas abertas", message: "Mock: questionário semanal pronto para editar fome, energia, sono e hidratação." })} className="secondary-button"><ClipboardList size={18} /> Configurar perguntas</button>}
       />
+      <ProNoticeBanner notice={notice} />
       <section className="app-card overflow-hidden">
         {proClients.map((client) => (
           <Link key={client.id} href={`/pro/clients/${client.id}`} className="grid gap-3 border-b border-[var(--border)] p-4 last:border-0 hover:bg-[rgba(255,255,255,0.025)] md:grid-cols-[minmax(220px,1fr)_100px_100px_100px_130px_32px] md:items-center">
@@ -574,14 +618,17 @@ function MiniValue({ label, value }: { label: string; value: string }) {
 }
 
 export function ProAlertsPage() {
+  const [notice, setNotice] = useState<ProNotice | null>(null);
+
   return (
     <>
       <ProPageHeader
         eyebrow="Alertas"
         title="Ações prioritárias"
         description="Alertas calculados a partir de ausência de registros, check-ins sensíveis, planos pendentes e oportunidades de reforço positivo."
-        action={<button className="secondary-button"><ShieldCheck size={18} /> Regras de alerta</button>}
+        action={<button type="button" onClick={() => setNotice({ tone: "gold", title: "Regras de alerta abertas", message: "Mock: limites de ausência, queda de aderência e retorno pendente disponíveis para ajuste." })} className="secondary-button"><ShieldCheck size={18} /> Regras de alerta</button>}
       />
+      <ProNoticeBanner notice={notice} />
       <section className="app-card p-5">
         <AlertList />
       </section>
@@ -590,14 +637,17 @@ export function ProAlertsPage() {
 }
 
 export function ProSettingsPage() {
+  const [notice, setNotice] = useState<ProNotice | null>(null);
+
   return (
     <>
       <ProPageHeader
         eyebrow="Configurações"
         title="Preferências do consultório"
         description="Base para identidade profissional, permissões padrão, horários de atendimento e regras de acompanhamento."
-        action={<button className="primary-button"><ShieldCheck size={18} /> Salvar alterações</button>}
+        action={<button type="button" onClick={() => setNotice({ tone: "lime", title: "Alterações salvas em mock", message: "Preferências visuais atualizadas. Depois conectamos esse fluxo ao perfil profissional real." })} className="primary-button"><ShieldCheck size={18} /> Salvar alterações</button>}
       />
+      <ProNoticeBanner notice={notice} />
       <div className="grid gap-5 xl:grid-cols-[1fr_420px]">
         <section className="app-card p-5">
           <p className="eyebrow">Perfil profissional</p>
