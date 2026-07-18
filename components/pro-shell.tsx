@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   AlertTriangle,
+  BriefcaseBusiness,
   CalendarDays,
   CheckSquare,
   ChevronRight,
@@ -18,8 +19,10 @@ import {
   UsersRound,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LevelFitLogo } from "@/components/level-fit-logo";
+import { getDefaultRoute, useAuthSession } from "@/lib/auth-client";
+import type { AuthUser } from "@/lib/auth-client";
 
 const nutriNav = [
   { href: "/pro", label: "Dashboard", icon: LayoutDashboard },
@@ -112,6 +115,15 @@ function getNav(context: ProContext) {
   return nutriNav;
 }
 
+function contextWorkspaceType(context: ProContext) {
+  return context === "owner" ? "owner" : context;
+}
+
+function hasContextAccess(user: AuthUser | null | undefined, context: ProContext) {
+  const workspaceType = contextWorkspaceType(context);
+  return user?.availableWorkspaces?.some((workspace) => workspace.type === workspaceType) ?? false;
+}
+
 function isActive(pathname: string, href: string) {
   if (href === "/pro" || href === "/pro/run" || href === "/pro/admin") return pathname === href;
   return pathname.startsWith(href);
@@ -138,12 +150,67 @@ function ProNavLink({ href, label, icon: Icon, onClick }: ProNavItem & { onClick
   );
 }
 
+function ProWorkspaceSwitcher({ user, currentContext, onClick }: { user?: AuthUser | null; currentContext: ProContext; onClick?: () => void }) {
+  const workspaces = user?.availableWorkspaces ?? [];
+  if (workspaces.length <= 1) return null;
+
+  return (
+    <div className="rounded-[8px] border border-[var(--border)] bg-[rgba(8,11,15,0.35)] p-3">
+      <p className="mb-2 flex items-center gap-2 text-[0.68rem] font-black uppercase text-[var(--text-dim)]">
+        <BriefcaseBusiness size={15} /> Trocar área
+      </p>
+      <div className="space-y-1">
+        {workspaces.map((workspace) => {
+          const active = workspace.type === contextWorkspaceType(currentContext);
+          return (
+            <Link
+              key={workspace.type}
+              href={workspace.route}
+              onClick={onClick}
+              aria-current={active ? "page" : undefined}
+              className={`flex min-h-10 items-center justify-between rounded-[6px] px-2 text-xs font-black transition-colors ${
+                active ? "bg-[rgba(183,255,42,0.12)] text-[var(--lime)]" : "text-white hover:bg-[var(--surface-soft)]"
+              }`}
+            >
+              <span>{workspace.label}</span>
+              <ChevronRight size={15} className={active ? "text-[var(--lime)]" : "text-[var(--text-dim)]"} />
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function ProShell({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const session = useAuthSession();
   const context = getContext(pathname);
   const nav = getNav(context);
   const profile = profileByContext[context];
+  const allowed = hasContextAccess(session.user, context);
+
+  useEffect(() => {
+    if (session.loading) return;
+    if (!session.authenticated) {
+      router.replace("/login");
+      return;
+    }
+    if (!allowed) router.replace(getDefaultRoute(session.user));
+  }, [allowed, router, session.authenticated, session.loading, session.user]);
+
+  if (session.loading || !session.authenticated || !allowed) {
+    return (
+      <main className="grid min-h-screen place-items-center px-4 text-center">
+        <div>
+          <LevelFitLogo className="justify-center text-xl" />
+          <p className="mt-5 text-sm font-bold text-[var(--text-muted)]">Verificando acesso...</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.07),transparent_34%),radial-gradient(circle_at_top_left,rgba(183,255,42,0.07),transparent_28%)]">
@@ -182,6 +249,7 @@ export function ProShell({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className="mt-auto space-y-3">
+          <ProWorkspaceSwitcher user={session.user} currentContext={context} />
           <Link href={profile.primaryHref} className="primary-button w-full">
             <UserPlus size={18} /> {profile.primaryLabel}
           </Link>
@@ -226,6 +294,9 @@ export function ProShell({ children }: { children: React.ReactNode }) {
             <nav className="mt-8 flex flex-col gap-1">
               {nav.map((item) => <ProNavLink key={item.href} {...item} onClick={() => setMenuOpen(false)} />)}
             </nav>
+            <div className="mt-5">
+              <ProWorkspaceSwitcher user={session.user} currentContext={context} onClick={() => setMenuOpen(false)} />
+            </div>
           </div>
         </div>
       )}

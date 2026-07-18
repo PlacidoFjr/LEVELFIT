@@ -1,13 +1,15 @@
 import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import * as argon2 from "argon2";
 import { randomUUID } from "node:crypto";
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
 import type { AuthUser } from "../../common/auth-user";
+import { buildAccessProfile } from "../../common/access-profile";
 import type { DeleteAccountDto, ExportDataDto, UpdateMeDto } from "./users.dto";
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly config: ConfigService) {}
 
   async me(userId: string) {
     const user = await this.prisma.user.findUniqueOrThrow({
@@ -17,7 +19,7 @@ export class UsersService {
         profile: true, preferences: true, notificationPreference: true, level: true, streaks: true,
       },
     });
-    return { ...user, emailVerified: Boolean(user.emailVerifiedAt) };
+    return { ...user, emailVerified: Boolean(user.emailVerifiedAt), ...buildAccessProfile(this.config, user.email) };
   }
 
   async update(userId: string, dto: UpdateMeDto) {

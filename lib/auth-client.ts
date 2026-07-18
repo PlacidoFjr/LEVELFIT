@@ -21,6 +21,14 @@ export type AuthUser = {
   email: string;
   displayName?: string | null;
   onboardingCompleted?: boolean;
+  roles?: Array<"USER" | "NUTRITIONIST" | "RUN_COACH" | "OWNER">;
+  defaultRoute?: string;
+  availableWorkspaces?: Array<{
+    type: "user" | "nutri" | "run" | "owner";
+    label: string;
+    description: string;
+    route: string;
+  }>;
   level?: {
     level: number;
     totalXp: number;
@@ -154,6 +162,10 @@ function saveUser(user: AuthUser) {
 
 export function getAccessToken() {
   return memoryAccessToken ?? readStorage(ACCESS_TOKEN_KEY);
+}
+
+export function getDefaultRoute(user?: AuthUser | null) {
+  return user?.defaultRoute || "/";
 }
 
 function saveSession(response: LoginResponse) {
@@ -358,6 +370,9 @@ function toAuthUser(me: Awaited<ReturnType<typeof fetchMe>>): AuthUser {
     email: me.email,
     displayName: me.profile?.displayName ?? me.displayName,
     onboardingCompleted: Boolean(me.profile?.fitnessGoal && me.profile?.activityLevel),
+    roles: me.roles ?? ["USER"],
+    defaultRoute: me.defaultRoute ?? "/",
+    availableWorkspaces: me.availableWorkspaces ?? [{ type: "user", label: "Meu app", description: "Área pessoal de hábitos, treinos e progresso.", route: "/" }],
     level: me.level ?? null,
     streaks: me.streaks ?? [],
   };

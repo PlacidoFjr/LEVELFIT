@@ -7,6 +7,7 @@ import { asUtcDate } from "../../common/date";
 import { hashContext, hashToken, randomToken } from "../../common/crypto";
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
 import type { AuthUser } from "../../common/auth-user";
+import { buildAccessProfile } from "../../common/access-profile";
 import type { FirebaseLoginDto, LoginDto, RegisterDto, ResetPasswordDto } from "./auth.dto";
 import { FirebaseAdminService } from "./firebase-admin.service";
 
@@ -71,7 +72,7 @@ export class AuthService {
     const issued = await this.createSession(user.id, dto.deviceName, context);
     await this.prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
     await this.prisma.userSecurityEvent.create({ data: { userId: user.id, type: "login_success", ipHash: hashContext(context.ip, this.tokenSecret), userAgentHash: hashContext(context.userAgent, this.tokenSecret) } });
-    return { ...issued, user: { id: user.id, email: user.email, displayName: user.profile?.displayName } };
+    return { ...issued, user: { id: user.id, email: user.email, displayName: user.profile?.displayName, ...buildAccessProfile(this.config, user.email) } };
   }
 
   async loginWithFirebase(dto: FirebaseLoginDto, context: RequestContext) {
@@ -124,7 +125,7 @@ export class AuthService {
 
     const issued = await this.createSession(user.id, dto.deviceName, context);
     await this.prisma.userSecurityEvent.create({ data: { userId: user.id, type: "login_success", ipHash: hashContext(context.ip, this.tokenSecret), userAgentHash: hashContext(context.userAgent, this.tokenSecret), metadata: { provider: "firebase" } } });
-    return { ...issued, user };
+    return { ...issued, user: { ...user, ...buildAccessProfile(this.config, user.email) } };
   }
 
   private async createSession(userId: string, deviceName: string | undefined, context: RequestContext) {

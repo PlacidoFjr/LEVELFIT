@@ -6,6 +6,7 @@ import {
   Apple,
   Award,
   Bell,
+  BriefcaseBusiness,
   ChevronRight,
   CircleUserRound,
   Dumbbell,
@@ -24,6 +25,7 @@ import {
 import { useState } from "react";
 import { useEffect } from "react";
 import { useAuthSession } from "@/lib/auth-client";
+import type { AuthUser } from "@/lib/auth-client";
 import { getUserProgress } from "@/lib/user-progress";
 import { LevelFitLogo } from "./level-fit-logo";
 
@@ -86,6 +88,27 @@ function NavLink({ href, label, icon: Icon, pathname, onClick }: (typeof primary
   );
 }
 
+function WorkspaceLinks({ user, onClick }: { user?: AuthUser | null; onClick?: () => void }) {
+  const workspaces = user?.availableWorkspaces?.filter((workspace) => workspace.type !== "user") ?? [];
+  if (!workspaces.length) return null;
+
+  return (
+    <div className="rounded-[8px] border border-[rgba(183,255,42,0.2)] bg-[rgba(183,255,42,0.06)] p-3">
+      <p className="mb-2 flex items-center gap-2 text-[0.68rem] font-black uppercase text-[var(--lime)]">
+        <BriefcaseBusiness size={15} /> Trocar área
+      </p>
+      <div className="space-y-1">
+        {workspaces.map((workspace) => (
+          <Link key={workspace.type} href={workspace.route} onClick={onClick} className="flex min-h-10 items-center justify-between rounded-[6px] px-2 text-xs font-black text-white hover:bg-[var(--surface-soft)]">
+            <span>{workspace.label}</span>
+            <ChevronRight size={15} className="text-[var(--text-dim)]" />
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -121,6 +144,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {primaryNav.map((item) => <NavLink key={item.href} {...item} pathname={pathname} />)}
         </nav>
         <div className="mt-auto">
+          <div className="mb-4">
+            <WorkspaceLinks user={session.user} />
+          </div>
           <div className="mb-4 rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-3">
             <div className="mb-2 flex items-center justify-between text-xs font-bold text-[var(--text-muted)]">
               <span>Nível {progress.level}</span>
@@ -162,6 +188,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <nav className="mt-8 flex flex-col gap-1" aria-label="Menu completo">
               {[...primaryNav, ...secondaryNav].map((item) => <NavLink key={item.href} {...item} pathname={pathname} onClick={() => setMenuOpen(false)} />)}
             </nav>
+            <div className="mt-5">
+              <WorkspaceLinks user={session.user} onClick={() => setMenuOpen(false)} />
+            </div>
             <Link href="/onboarding" onClick={() => setMenuOpen(false)} className="mt-auto flex items-center gap-3 rounded-[7px] border border-[var(--border)] p-3 text-sm font-bold text-[var(--text-muted)]">
               <Sparkles size={18} /> Rever objetivos <ChevronRight className="ml-auto" size={18} />
             </Link>
