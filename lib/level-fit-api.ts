@@ -312,6 +312,19 @@ export type AdminProfessionalRow = AdminRoleAssignment & {
   professionalRole: string;
 };
 
+export type AdminSecurityEvent = {
+  id: string;
+  action: string;
+  entityType: string;
+  entityId?: string | null;
+  createdAt: string;
+  actorEmail?: string | null;
+  actorName?: string | null;
+  targetEmail?: string | null;
+  targetName?: string | null;
+  metadata: Record<string, unknown>;
+};
+
 export function isWorkoutSession(value: TodayWorkout): value is WorkoutSession {
   return Boolean(value && "workout" in value && "status" in value);
 }
@@ -635,4 +648,8 @@ export function getAdminSettings() {
     nodeEnv: string;
     webOrigin: string | null;
   }>("/admin/settings");
+}
+
+export function getAdminSecurityEvents() {
+  return apiRequest<{ data: AdminSecurityEvent[] }>("/admin/security-events");
 }

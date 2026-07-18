@@ -344,7 +344,7 @@ export function Dashboard() {
           <div>
             <p className="eyebrow text-[var(--lime)]">Meu acompanhamento</p>
             <h2 className="mt-2 text-lg font-black text-white">{activeProfessionalConnections.length ? "Profissionais conectados ao seu plano" : "Use solo ou conecte um profissional"}</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-muted)]">Você controla permissões de Nutri Pro e TAF Pro. Dados sensíveis só são compartilhados quando você autoriza.</p>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-muted)]">Você controla permissões de Nutri Pro e Run Pro. Dados sensíveis só são compartilhados quando você autoriza.</p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Link href="/my-plan" className="secondary-button"><ShieldCheck size={18} /> Meu plano</Link>
@@ -355,7 +355,7 @@ export function Dashboard() {
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             {activeProfessionalConnections.slice(0, 2).map((connection) => (
               <Link key={connection.id} href="/my-plan" className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:border-[var(--lime)]">
-                <p className={`text-xs font-black uppercase ${connection.kind === "nutrition" ? "text-[var(--green)]" : "text-[var(--coral)]"}`}>{connection.kind === "nutrition" ? "Nutri Pro" : "TAF Pro"}</p>
+                <p className={`text-xs font-black uppercase ${connection.kind === "nutrition" ? "text-[var(--green)]" : "text-[var(--coral)]"}`}>{connection.kind === "nutrition" ? "Nutri Pro" : "Run Pro"}</p>
                 <h3 className="mt-2 text-base font-black text-white">{connection.professionalName}</h3>
                 <p className="mt-1 text-xs text-[var(--text-muted)]">{connection.planTitle}</p>
                 <p className="mt-3 text-xs font-bold text-[var(--text-dim)]">{connection.nextEventLabel ?? "Próximo ajuste a combinar"}</p>

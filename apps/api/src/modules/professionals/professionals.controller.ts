@@ -16,8 +16,8 @@ export class ProfessionalsController {
   }
 
   @Get("invite")
-  previewInvite(@Query("code") code = "") {
-    return this.professionals.previewInvite(code);
+  previewInvite(@CurrentUser() user: AuthUser, @Query("code") code = "") {
+    return this.professionals.previewInvite(user.userId, code);
   }
 
   @Post("accept")

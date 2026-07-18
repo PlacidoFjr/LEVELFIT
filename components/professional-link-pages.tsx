@@ -42,7 +42,7 @@ const permissionOptions = [
 
 const kindCopy: Record<ProfessionalKind, { label: string; tone: string; cta: string }> = {
   nutrition: { label: "Nutri Pro", tone: "text-[var(--green)]", cta: "Abrir alimentação" },
-  run: { label: "TAF Pro", tone: "text-[var(--coral)]", cta: "Abrir treinos" },
+  run: { label: "Run Pro", tone: "text-[var(--coral)]", cta: "Abrir treinos" },
 };
 
 function NoticeBlock({ notice }: { notice: Notice }) {
@@ -213,7 +213,7 @@ export function ProfessionalsPage() {
 
   return (
     <div className="mx-auto w-full max-w-[1480px] px-3 py-4 sm:px-6 lg:px-8 lg:py-7">
-      <PageHeader title="Profissionais conectados" description="Conecte Nutri Pro ou TAF Pro apenas quando quiser compartilhar seus dados com alguém de confiança." />
+      <PageHeader title="Profissionais conectados" description="Conecte Nutri Pro ou Run Pro apenas quando quiser compartilhar seus dados com alguém de confiança." />
       <NoticeBlock notice={notice} />
       <section className="grid gap-4 xl:grid-cols-[0.95fr_1.4fr]">
         <form onSubmit={handlePreview} className="app-card p-4 sm:p-5">
@@ -247,7 +247,7 @@ export function ProfessionalsPage() {
             <section className="app-card p-5 text-center">
               <span className="mx-auto grid size-12 place-items-center rounded-[8px] bg-[var(--surface-soft)] text-[var(--lime)]"><UserCheck size={24} /></span>
               <h2 className="mt-4 text-xl font-black text-white">Nenhum profissional conectado</h2>
-              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-muted)]">Você pode continuar usando o LevelFit solo. Quando receber um código de Nutri ou TAF, conecte por aqui.</p>
+              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--text-muted)]">Você pode continuar usando o LevelFit solo. Quando receber um código de Nutri ou Run Pro, conecte por aqui.</p>
             </section>
           )}
         </div>
@@ -258,7 +258,7 @@ export function ProfessionalsPage() {
 
 function TrackCard({ title, label, description, items, href, active }: { title: string; label: string; description: string; items: string[]; href: string; active: boolean }) {
   return (
-    <article className={`app-card p-4 sm:p-5 ${active ? "border-[rgba(183,255,42,0.35)]" : ""}`}>
+    <article className={`app-card flex h-full flex-col p-4 sm:p-5 ${active ? "border-[rgba(183,255,42,0.35)]" : ""}`}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className={`text-xs font-black uppercase ${active ? "text-[var(--lime)]" : "text-[var(--text-dim)]"}`}>{label}</p>
@@ -270,7 +270,7 @@ function TrackCard({ title, label, description, items, href, active }: { title: 
       <div className="mt-4 grid gap-2">
         {items.map((item) => <div key={item} className="flex min-h-10 items-center gap-2 rounded-[7px] border border-[var(--border)] bg-[var(--surface)] px-3 text-sm font-bold text-white"><Check size={16} className="text-[var(--lime)]" /> {item}</div>)}
       </div>
-      <Link href={href} className="ghost-button mt-4 w-full justify-center">Abrir área <ArrowRight size={17} /></Link>
+      <Link href={href} className="ghost-button mt-auto w-full justify-center">Abrir área <ArrowRight size={17} /></Link>
     </article>
   );
 }
@@ -323,7 +323,7 @@ export function MyPlanPage() {
             active={Boolean(nutri)}
           />
           <TrackCard
-            title={run?.planTitle ?? "TAF Pro"}
+            title={run?.planTitle ?? "Run Pro"}
             label="Treino e corrida"
             description={run ? `${run.professionalName} acompanha seu treino e evolução TAF autorizados.` : "Conecte um coach para receber rotina TAF sem GPS nesta fase."}
             items={run ? ["Treinos TAF", "Check-ins de execução", run.nextEventLabel ?? "Sessão a combinar"] : ["Aguardando código", "Planilhas e rotinas do coach", "Histórico controlado por você"]}

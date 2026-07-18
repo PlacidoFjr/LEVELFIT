@@ -8,6 +8,7 @@ import {
   getAdminProducts,
   getAdminProfessionals,
   getAdminRoles,
+  getAdminSecurityEvents,
   getAdminSettings,
   getAdminUsers,
   grantAdminRole,
@@ -17,6 +18,7 @@ import {
   type AdminProfessionalRow,
   type AdminRoleAssignment,
   type AdminRoleName,
+  type AdminSecurityEvent,
   type AdminUserRow,
 } from "@/lib/level-fit-api";
 
@@ -320,7 +322,7 @@ export function AdminSettingsPage() {
   useEffect(() => { getAdminSettings().then(setSettings).catch(() => setMessage("Nao foi possivel carregar configuracoes.")); }, []);
   return (
     <>
-      <AdminHeader eyebrow="Tecnico" title="Configuracao da Gestao" description="Leitura segura das configuracoes que determinam acesso e ambiente. Segredos continuam fora da interface." />
+      <AdminHeader eyebrow="Tecnico" title="Configuracao da Gestao" description="Leitura protegida das configuracoes que determinam acesso e ambiente. Segredos continuam fora da interface." />
       <Notice message={message} tone="error" />
       {settings ? (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -335,11 +337,68 @@ export function AdminSettingsPage() {
         <div className="flex items-start gap-3">
           <ShieldCheck className="mt-1 text-[var(--lime)]" size={22} />
           <div>
-            <h2 className="text-xl font-black text-white">Como revogar com seguranca</h2>
+            <h2 className="text-xl font-black text-white">Como revogar acesso</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">Papeis manuais sao revogados na aba Papeis. Papeis vindos do Render precisam ser removidos das variaveis de ambiente para evitar bloqueio acidental do dono.</p>
           </div>
         </div>
       </section>
+    </>
+  );
+}
+
+function securityLabel(action: string) {
+  return {
+    professional_invite_previewed: "Codigo verificado",
+    professional_invite_preview_failed: "Codigo recusado",
+    professional_connection_accepted: "Convite aceito",
+    professional_permissions_updated: "Permissoes alteradas",
+    professional_connection_revoked: "Conexao revogada",
+    admin_role_granted: "Papel concedido",
+    admin_role_revoked: "Papel revogado",
+  }[action] ?? action;
+}
+
+function securityTone(action: string) {
+  if (action.includes("failed") || action.includes("revoked")) return "text-[var(--coral)] bg-[rgba(255,107,61,0.1)]";
+  if (action.includes("accepted") || action.includes("granted")) return "text-[var(--lime)] bg-[rgba(183,255,42,0.1)]";
+  return "text-[var(--cyan)] bg-[rgba(34,211,238,0.1)]";
+}
+
+export function AdminSecurityPage() {
+  const [events, setEvents] = useState<AdminSecurityEvent[]>([]);
+  const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    getAdminSecurityEvents().then((result) => setEvents(result.data)).catch(() => setMessage("Nao foi possivel carregar eventos de auditoria."));
+  }, []);
+
+  return (
+    <>
+      <AdminHeader
+        eyebrow="Auditoria"
+        title="Convites Nutri Pro e Run Pro"
+        description="Acompanhe verificacoes de codigo, aceite de convites, mudancas de permissao e revogacoes de Nutri Pro e Run Pro."
+      />
+      <Notice message={message} tone="error" />
+      <section className="app-card overflow-hidden">
+        {events.map((event) => (
+          <article key={event.id} className="grid gap-3 border-b border-[var(--border)] p-4 last:border-b-0 lg:grid-cols-[190px_1fr_210px] lg:items-center">
+            <span className={`w-fit rounded-[6px] px-3 py-1 text-xs font-black uppercase ${securityTone(event.action)}`}>{securityLabel(event.action)}</span>
+            <div>
+              <p className="text-sm font-black text-white">{event.actorName ?? event.actorEmail ?? "Usuario"}</p>
+              <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">
+                {event.targetEmail ? `Alvo: ${event.targetEmail}` : event.entityType}
+                {" · "}
+                {event.metadata?.kind ? `Produto: ${String(event.metadata.kind) === "run" ? "Run Pro" : "Nutri Pro"}` : "Produto: Gestao"}
+              </p>
+            </div>
+            <time className="text-xs font-bold text-[var(--text-dim)]" dateTime={event.createdAt}>
+              {new Date(event.createdAt).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
+            </time>
+          </article>
+        ))}
+      </section>
+      {!events.length && <EmptyState text="Nenhum evento de auditoria registrado ainda." />}
     </>
   );
 }

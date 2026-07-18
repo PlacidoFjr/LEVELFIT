@@ -512,7 +512,7 @@ export function ProRunAthletesPage() {
         description="Acompanhamento de objetivos, prontidão, carga semanal e próximos treinos de corrida ou TAF."
         action={
           <>
-            <button type="button" onClick={() => setNotice({ tone: "lime", title: "Convite TAF preparado", message: "Envie o código LF-TAF-284. O aluno aceita em Profissionais conectados e escolhe as permissões." })} className="secondary-button"><Plus size={18} /> Convidar atleta</button>
+            <button type="button" onClick={() => setNotice({ tone: "lime", title: "Convite Run Pro pronto", message: "Envie o código LF-TAF-284. O aluno aceita em Profissionais conectados, escolhe as permissões e o evento aparece na Gestão." })} className="secondary-button"><Plus size={18} /> Convidar atleta</button>
             <Link href="/pro/run/agenda" className="primary-button"><Plus size={18} /> Agendar avaliação</Link>
           </>
         }
@@ -537,6 +537,19 @@ export function ProRunAthletesPage() {
                   <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{athlete.risk ?? "Criar avaliação inicial e liberar primeiro bloco."}</p>
                 </article>
               ))}
+            </div>
+            <div className="mt-5 rounded-[8px] border border-[rgba(34,211,238,0.24)] bg-[rgba(34,211,238,0.07)] p-4">
+              <p className="eyebrow text-[var(--cyan)]">Convite Run Pro</p>
+              <h3 className="mt-2 text-lg font-black text-white">Código do coach</h3>
+              <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
+                Use esse fluxo para conectar aluno/atleta ao Run Pro. O aluno confirma no app, escolhe permissões e a Gestão acompanha o evento.
+              </p>
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <code className="rounded-[7px] border border-[var(--border)] bg-[rgba(8,11,15,0.48)] px-3 py-2 text-sm font-black text-[var(--cyan)]">LF-TAF-284</code>
+                <button type="button" onClick={() => setNotice({ tone: "lime", title: "Convite Run Pro pronto", message: "Envie o código LF-TAF-284. O aluno aceita em Profissionais conectados, escolhe as permissões e o evento aparece na Gestão." })} className="secondary-button justify-center">
+                  <Send size={17} /> Preparar convite
+                </button>
+              </div>
             </div>
           </section>
         </div>

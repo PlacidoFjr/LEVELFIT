@@ -397,7 +397,7 @@ export function WorkoutsLivePage() {
     {runConnection && <section className="app-card mb-4 border-[rgba(255,107,61,0.28)] p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="eyebrow text-[var(--coral)]">TAF Pro conectado</p>
+          <p className="eyebrow text-[var(--coral)]">Run Pro conectado</p>
           <h2 className="mt-2 text-lg font-black text-white">{runConnection.planTitle}</h2>
           <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{runConnection.professionalName} acompanha apenas os dados autorizados por você.</p>
         </div>

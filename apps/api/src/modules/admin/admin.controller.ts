@@ -49,4 +49,9 @@ export class AdminController {
   settings() {
     return this.admin.settings();
   }
+
+  @Get("security-events")
+  securityEvents() {
+    return this.admin.securityEvents();
+  }
 }

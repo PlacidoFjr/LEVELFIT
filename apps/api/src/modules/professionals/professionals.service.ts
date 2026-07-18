@@ -34,13 +34,33 @@ export class ProfessionalsService {
     return { data: connections };
   }
 
-  async previewInvite(code: string) {
-    const invite = await this.prisma.professionalInvite.findUnique({
-      where: { code: normalizeCode(code) },
-    });
+  async previewInvite(userId: string, code: string) {
+    const normalizedCode = normalizeCode(code);
+    const invite = await this.prisma.professionalInvite.findUnique({ where: { code: normalizedCode } });
+
     if (!invite || !invite.isActive || invite.deletedAt || (invite.expiresAt && invite.expiresAt <= new Date())) {
-      throw new NotFoundException({ code: "INVITE_NOT_FOUND", message: "Convite não encontrado ou expirado." });
+      await this.prisma.auditLog.create({
+        data: {
+          actorUserId: userId,
+          targetUserId: userId,
+          action: "professional_invite_preview_failed",
+          entityType: "professional_invite",
+          metadata: { codePrefix: normalizedCode.slice(0, 7), reason: "not_found_or_expired" },
+        },
+      });
+      throw new NotFoundException({ code: "INVITE_NOT_FOUND", message: "Convite nao encontrado ou expirado." });
     }
+
+    await this.prisma.auditLog.create({
+      data: {
+        actorUserId: userId,
+        targetUserId: userId,
+        action: "professional_invite_previewed",
+        entityType: "professional_invite",
+        entityId: invite.id,
+        metadata: { kind: invite.kind, professionalKey: invite.professionalKey, codePrefix: invite.code.slice(0, 7) },
+      },
+    });
 
     return {
       code: invite.code,
@@ -54,16 +74,14 @@ export class ProfessionalsService {
   }
 
   async accept(userId: string, dto: AcceptProfessionalInviteDto) {
-    const invite = await this.prisma.professionalInvite.findUnique({
-      where: { code: normalizeCode(dto.code) },
-    });
+    const invite = await this.prisma.professionalInvite.findUnique({ where: { code: normalizeCode(dto.code) } });
     if (!invite || !invite.isActive || invite.deletedAt || (invite.expiresAt && invite.expiresAt <= new Date())) {
-      throw new NotFoundException({ code: "INVITE_NOT_FOUND", message: "Convite não encontrado ou expirado." });
+      throw new NotFoundException({ code: "INVITE_NOT_FOUND", message: "Convite nao encontrado ou expirado." });
     }
 
     const permissions = sanitizePermissions(dto.permissions, invite.defaultPermissions);
-    if (!permissions.length) throw new BadRequestException({ code: "PERMISSIONS_REQUIRED", message: "Escolha pelo menos uma permissão." });
-    const nextEventLabel = invite.kind === "nutrition" ? "Próximo retorno a combinar" : "Próxima sessão TAF a combinar";
+    if (!permissions.length) throw new BadRequestException({ code: "PERMISSIONS_REQUIRED", message: "Escolha pelo menos uma permissao." });
+    const nextEventLabel = invite.kind === "nutrition" ? "Proximo retorno a combinar" : "Proxima sessao TAF a combinar";
 
     const connection = await this.prisma.$transaction(async (tx) => {
       const saved = await tx.professionalConnection.upsert({
@@ -112,16 +130,13 @@ export class ProfessionalsService {
 
   async updatePermissions(userId: string, connectionId: string, dto: UpdateProfessionalPermissionsDto) {
     const permissions = sanitizePermissions(dto.permissions, []);
-    if (!permissions.length) throw new BadRequestException({ code: "PERMISSIONS_REQUIRED", message: "Escolha pelo menos uma permissão." });
+    if (!permissions.length) throw new BadRequestException({ code: "PERMISSIONS_REQUIRED", message: "Escolha pelo menos uma permissao." });
 
     const existing = await this.prisma.professionalConnection.findFirst({ where: { id: connectionId, userId, deletedAt: null } });
-    if (!existing) throw new NotFoundException({ code: "CONNECTION_NOT_FOUND", message: "Conexão profissional não encontrada." });
+    if (!existing) throw new NotFoundException({ code: "CONNECTION_NOT_FOUND", message: "Conexao profissional nao encontrada." });
 
     const connection = await this.prisma.$transaction(async (tx) => {
-      const updated = await tx.professionalConnection.update({
-        where: { id: existing.id },
-        data: { permissions },
-      });
+      const updated = await tx.professionalConnection.update({ where: { id: existing.id }, data: { permissions } });
       await tx.auditLog.create({
         data: {
           actorUserId: userId,
@@ -140,14 +155,11 @@ export class ProfessionalsService {
 
   async revoke(userId: string, connectionId: string) {
     const existing = await this.prisma.professionalConnection.findFirst({ where: { id: connectionId, userId, deletedAt: null } });
-    if (!existing) throw new NotFoundException({ code: "CONNECTION_NOT_FOUND", message: "Conexão profissional não encontrada." });
+    if (!existing) throw new NotFoundException({ code: "CONNECTION_NOT_FOUND", message: "Conexao profissional nao encontrada." });
 
     const now = new Date();
     await this.prisma.$transaction([
-      this.prisma.professionalConnection.update({
-        where: { id: existing.id },
-        data: { status: "revoked", revokedAt: now },
-      }),
+      this.prisma.professionalConnection.update({ where: { id: existing.id }, data: { status: "revoked", revokedAt: now } }),
       this.prisma.auditLog.create({
         data: {
           actorUserId: userId,

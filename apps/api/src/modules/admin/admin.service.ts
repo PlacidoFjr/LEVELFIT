@@ -230,6 +230,42 @@ export class AdminService {
     };
   }
 
+  async securityEvents() {
+    const actions = [
+      "professional_invite_previewed",
+      "professional_invite_preview_failed",
+      "professional_connection_accepted",
+      "professional_permissions_updated",
+      "professional_connection_revoked",
+      "admin_role_granted",
+      "admin_role_revoked",
+    ];
+    const events = await this.prisma.auditLog.findMany({
+      where: { action: { in: actions } },
+      orderBy: { createdAt: "desc" },
+      take: 80,
+      include: {
+        actor: { select: { email: true, profile: { select: { displayName: true } } } },
+        target: { select: { email: true, profile: { select: { displayName: true } } } },
+      },
+    });
+
+    return {
+      data: events.map((event) => ({
+        id: event.id,
+        action: event.action,
+        entityType: event.entityType,
+        entityId: event.entityId,
+        createdAt: event.createdAt,
+        actorEmail: event.actor?.email ?? null,
+        actorName: event.actor?.profile?.displayName ?? null,
+        targetEmail: event.target?.email ?? null,
+        targetName: event.target?.profile?.displayName ?? null,
+        metadata: event.metadata,
+      })),
+    };
+  }
+
   private async countProfessionalRoles() {
     const manual = await this.prisma.userRoleAssignment.count({ where: { revokedAt: null, role: { in: ["NUTRITIONIST", "RUN_COACH"] } } });
     const env = this.envRoleRows().filter((item) => item.role === "NUTRITIONIST" || item.role === "RUN_COACH").length;

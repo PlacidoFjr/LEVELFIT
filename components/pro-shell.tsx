@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { LevelFitLogo } from "@/components/level-fit-logo";
+import { WorkspaceSwitcherPanel } from "@/components/workspace-switcher-panel";
 import { getDefaultRoute, useAuthSession } from "@/lib/auth-client";
 import type { AuthUser } from "@/lib/auth-client";
 
@@ -47,6 +48,7 @@ const ownerNav = [
   { href: "/pro/admin/users", label: "Usuarios", icon: UsersRound, section: "Acessos" },
   { href: "/pro/admin/professionals", label: "Profissionais", icon: BriefcaseBusiness, section: "Acessos" },
   { href: "/pro/admin/roles", label: "Papeis", icon: LockKeyhole, section: "Acessos" },
+  { href: "/pro/admin/security", label: "Auditoria", icon: ShieldCheck, section: "Tecnico" },
   { href: "/pro/admin/settings", label: "Configuracao", icon: Settings, section: "Tecnico" },
   { href: "/pro", label: "Nutri Pro", icon: ClipboardList, section: "Ambientes Pro" },
   { href: "/pro/run", label: "Run Pro", icon: Route, section: "Ambientes Pro" },
@@ -177,38 +179,6 @@ function ProNavList({ context, nav, onClick }: { context: ProContext; nav: ProNa
   );
 }
 
-function ProWorkspaceSwitcher({ user, currentContext, onClick }: { user?: AuthUser | null; currentContext: ProContext; onClick?: () => void }) {
-  const workspaces = user?.availableWorkspaces ?? [];
-  if (workspaces.length <= 1) return null;
-
-  return (
-    <div className="rounded-[8px] border border-[var(--border)] bg-[rgba(8,11,15,0.35)] p-3">
-      <p className="mb-2 flex items-center gap-2 text-[0.68rem] font-black uppercase text-[var(--text-dim)]">
-        <BriefcaseBusiness size={15} /> Trocar area
-      </p>
-      <div className="space-y-1">
-        {workspaces.map((workspace) => {
-          const active = workspace.type === contextWorkspaceType(currentContext);
-          return (
-            <Link
-              key={workspace.type}
-              href={workspace.route}
-              onClick={onClick}
-              aria-current={active ? "page" : undefined}
-              className={`flex min-h-10 items-center justify-between rounded-[6px] px-2 text-xs font-black transition-colors ${
-                active ? "bg-[rgba(183,255,42,0.12)] text-[var(--lime)]" : "text-white hover:bg-[var(--surface-soft)]"
-              }`}
-            >
-              <span>{workspace.label}</span>
-              <ChevronRight size={15} className={active ? "text-[var(--lime)]" : "text-[var(--text-dim)]"} />
-            </Link>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 export function ProShell({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -278,7 +248,7 @@ export function ProShell({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className="mt-auto space-y-3">
-          <ProWorkspaceSwitcher user={session.user} currentContext={context} />
+          <WorkspaceSwitcherPanel workspaces={session.user?.availableWorkspaces ?? []} activeType={contextWorkspaceType(context)} />
           <Link href={profile.primaryHref} className="primary-button w-full">
             <UserPlus size={18} /> {profile.primaryLabel}
           </Link>
@@ -324,7 +294,7 @@ export function ProShell({ children }: { children: React.ReactNode }) {
               <ProNavList context={context} nav={nav} onClick={() => setMenuOpen(false)} />
             </nav>
             <div className="mt-5">
-              <ProWorkspaceSwitcher user={session.user} currentContext={context} onClick={() => setMenuOpen(false)} />
+              <WorkspaceSwitcherPanel workspaces={session.user?.availableWorkspaces ?? []} activeType={contextWorkspaceType(context)} onClick={() => setMenuOpen(false)} />
             </div>
           </div>
         </div>
