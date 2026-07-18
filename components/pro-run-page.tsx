@@ -501,6 +501,7 @@ export function ProRunPage() {
 }
 
 export function ProRunAthletesPage() {
+  const [notice, setNotice] = useState<RunNotice | null>(null);
   const attentionAthletes = runAthletes.filter((athlete) => athlete.status === "attention" || athlete.status === "new");
 
   return (
@@ -509,8 +510,14 @@ export function ProRunAthletesPage() {
         eyebrow="Carteira Run"
         title="Atletas e alunos"
         description="Acompanhamento de objetivos, prontidão, carga semanal e próximos treinos de corrida ou TAF."
-        action={<Link href="/pro/run/agenda" className="primary-button"><Plus size={18} /> Agendar avaliação</Link>}
+        action={
+          <>
+            <button type="button" onClick={() => setNotice({ tone: "lime", title: "Convite TAF preparado", message: "Envie o código LF-TAF-284. O aluno aceita em Profissionais conectados e escolhe as permissões." })} className="secondary-button"><Plus size={18} /> Convidar atleta</button>
+            <Link href="/pro/run/agenda" className="primary-button"><Plus size={18} /> Agendar avaliação</Link>
+          </>
+        }
       />
+      <RunNoticeBanner notice={notice} />
       <RevealGroup>
         <div className="grid gap-5 xl:grid-cols-[1fr_360px]">
           <section className="app-card overflow-hidden" data-reveal>

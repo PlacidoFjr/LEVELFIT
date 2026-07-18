@@ -383,7 +383,7 @@ export function ProClientsPage() {
         action={
           <>
             <button type="button" onClick={() => setNotice({ tone: "cyan", title: "Filtros abertos", message: "Mock: status, aderência e retorno podem ser filtrados aqui." })} className="secondary-button"><MoreHorizontal size={18} /> Filtros</button>
-            <button type="button" onClick={() => setNotice({ tone: "lime", title: "Convite preparado", message: "Mock: link de convite do cliente gerado para envio pelo nutricionista." })} className="primary-button"><Plus size={18} /> Convidar cliente</button>
+            <button type="button" onClick={() => setNotice({ tone: "lime", title: "Convite preparado", message: "Envie o código LF-NUTRI-382. O cliente aceita em Profissionais conectados e escolhe as permissões." })} className="primary-button"><Plus size={18} /> Convidar cliente</button>
           </>
         }
       />

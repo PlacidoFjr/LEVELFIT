@@ -64,6 +64,7 @@ import {
   isWorkoutSession,
   listMissions,
   listAchievements,
+  listProfessionalConnections,
   listMeasurements,
   listNotifications,
   listRanking,
@@ -87,6 +88,7 @@ import {
   type NotificationPreferences,
   type NutritionGoal,
   type NutritionToday,
+  type ProfessionalConnection,
   type RankingEntry,
   type TodayWorkout,
   type UserMission,
@@ -332,12 +334,13 @@ export function WorkoutsLivePage() {
   const [intensity, setIntensity] = useState<WorkoutDifficultyFilter>("all");
   const [showPlanSettings, setShowPlanSettings] = useState(false);
   const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(null);
+  const [runConnection, setRunConnection] = useState<ProfessionalConnection | null>(null);
 
   async function load() {
     setLoading(true);
     setError(null);
     try {
-      const [todayResult, listResult] = await Promise.allSettled([getTodayWorkout(), listWorkouts()]);
+      const [todayResult, listResult, connectionResult] = await Promise.allSettled([getTodayWorkout(), listWorkouts(), listProfessionalConnections()]);
 
       if (todayResult.status === "fulfilled") {
         setToday(todayResult.value);
@@ -351,6 +354,10 @@ export function WorkoutsLivePage() {
       } else {
         setWorkouts([]);
         setError(errorMessage(listResult.reason));
+      }
+
+      if (connectionResult.status === "fulfilled") {
+        setRunConnection(connectionResult.value.data.find((item) => item.kind === "run" && item.status === "active") ?? null);
       }
     } finally {
       setLoading(false);
@@ -387,6 +394,16 @@ export function WorkoutsLivePage() {
 
   return <Screen title="Treino do dia" description="Um plano curto, ajustável e com espaço para descanso." action={<Link href="/settings/notifications" className="secondary-button"><CalendarClock size={18} /> Agenda</Link>}>
     <Notice message={error} tone="danger" />
+    {runConnection && <section className="app-card mb-4 border-[rgba(255,107,61,0.28)] p-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="eyebrow text-[var(--coral)]">TAF Pro conectado</p>
+          <h2 className="mt-2 text-lg font-black text-white">{runConnection.planTitle}</h2>
+          <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{runConnection.professionalName} acompanha apenas os dados autorizados por você.</p>
+        </div>
+        <Link href="/my-plan" className="secondary-button"><ShieldCheck size={18} /> Ver plano</Link>
+      </div>
+    </section>}
     {!loading && workouts.length > 0 && showPlanSettings && <section id="workout-plan-settings" className="mb-4 app-card p-4 sm:p-5" aria-label="Ajustes do plano de treino">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>

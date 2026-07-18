@@ -11,6 +11,7 @@ import { HydrationModule } from "./modules/hydration/hydration.module";
 import { MissionsModule } from "./modules/missions/missions.module";
 import { NotificationsModule } from "./modules/notifications/notifications.module";
 import { NutritionModule } from "./modules/nutrition/nutrition.module";
+import { ProfessionalsModule } from "./modules/professionals/professionals.module";
 import { ProgressModule } from "./modules/progress/progress.module";
 import { UsersModule } from "./modules/users/users.module";
 import { WorkoutsModule } from "./modules/workouts/workouts.module";
@@ -32,6 +33,7 @@ import { WorkoutsModule } from "./modules/workouts/workouts.module";
     GamificationModule,
     ProgressModule,
     NotificationsModule,
+    ProfessionalsModule,
     HealthModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],

@@ -10,9 +10,11 @@ import {
   Dumbbell,
   Flame,
   GlassWater,
+  Handshake,
   HeartPulse,
   Plus,
   Salad,
+  ShieldCheck,
   Sparkles,
   Trophy,
   Zap,
@@ -27,10 +29,12 @@ import {
   completeMission as completeMissionApi,
   getHydrationToday,
   getNutritionToday,
+  listProfessionalConnections,
   getTodayWorkout,
   getWorkoutFromToday,
   getXpSummary,
   listMissions,
+  type ProfessionalConnection,
   type XpEvent,
   type UserMission,
 } from "@/lib/level-fit-api";
@@ -145,6 +149,7 @@ export function Dashboard() {
   const [foodDone, setFoodDone] = useState<NutritionCheckId[]>([]);
   const [workoutSummary, setWorkoutSummary] = useState({ title: "Treino do dia", minutes: 20, difficulty: "ajustável", exerciseCount: 1 });
   const [weeklyXp, setWeeklyXp] = useState<WeeklyXpPoint[]>(() => buildWeeklyXp());
+  const [professionalConnections, setProfessionalConnections] = useState<ProfessionalConnection[]>([]);
   const [optimisticXp, setOptimisticXp] = useState({ baseTotalXp: progress.totalXp, amount: 0 });
   const [toast, setToast] = useState<string | null>(null);
 
@@ -168,6 +173,7 @@ export function Dashboard() {
   const waterProgress = Math.min(100, Math.round((water / waterGoal) * 100));
   const nutritionProgress = Math.round((foodDone.length / nutritionChecks.length) * 100);
   const weeklyXpTotal = weeklyXp.reduce((sum, item) => sum + item.xp, 0);
+  const activeProfessionalConnections = professionalConnections.filter((connection) => connection.status === "active");
 
   useEffect(() => {
     const timer = window.setTimeout(async () => {
@@ -210,6 +216,20 @@ export function Dashboard() {
     }, 0);
 
     return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    listProfessionalConnections()
+      .then((result) => {
+        if (active) setProfessionalConnections(result.data);
+      })
+      .catch(() => {
+        if (active) setProfessionalConnections([]);
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
   function showToast(message: string, duration = 2400) {
@@ -317,6 +337,32 @@ export function Dashboard() {
             {nextAvatarStage && <p className="mt-3 text-xs font-bold text-[var(--text-muted)]">Próxima evolução no nível {nextAvatarStage.levelRequired}.</p>}
           </div>
         </div>
+      </section>
+
+      <section className="app-card mb-4 p-4 sm:p-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="eyebrow text-[var(--lime)]">Meu acompanhamento</p>
+            <h2 className="mt-2 text-lg font-black text-white">{activeProfessionalConnections.length ? "Profissionais conectados ao seu plano" : "Use solo ou conecte um profissional"}</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-muted)]">Você controla permissões de Nutri Pro e TAF Pro. Dados sensíveis só são compartilhados quando você autoriza.</p>
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Link href="/my-plan" className="secondary-button"><ShieldCheck size={18} /> Meu plano</Link>
+            <Link href="/professionals" className="primary-button"><Handshake size={18} /> Conectar</Link>
+          </div>
+        </div>
+        {activeProfessionalConnections.length > 0 && (
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {activeProfessionalConnections.slice(0, 2).map((connection) => (
+              <Link key={connection.id} href="/my-plan" className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:border-[var(--lime)]">
+                <p className={`text-xs font-black uppercase ${connection.kind === "nutrition" ? "text-[var(--green)]" : "text-[var(--coral)]"}`}>{connection.kind === "nutrition" ? "Nutri Pro" : "TAF Pro"}</p>
+                <h3 className="mt-2 text-base font-black text-white">{connection.professionalName}</h3>
+                <p className="mt-1 text-xs text-[var(--text-muted)]">{connection.planTitle}</p>
+                <p className="mt-3 text-xs font-bold text-[var(--text-dim)]">{connection.nextEventLabel ?? "Próximo ajuste a combinar"}</p>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="grid gap-4 xl:grid-cols-3">

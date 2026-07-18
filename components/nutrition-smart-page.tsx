@@ -1,17 +1,20 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Apple, BicepsFlexed, Check, HeartPulse, Plus, Search, Target, Trash2, Utensils } from "lucide-react";
+import { Apple, BicepsFlexed, Check, HeartPulse, Plus, Search, ShieldCheck, Target, Trash2, Utensils } from "lucide-react";
 import { ApiClientError } from "@/lib/auth-client";
 import {
   addFoodLog,
   getNutritionGoal,
   getNutritionToday,
+  listProfessionalConnections,
   searchFoods,
   updateNutritionGoal,
   type Food,
   type NutritionGoal,
   type NutritionToday,
+  type ProfessionalConnection,
 } from "@/lib/level-fit-api";
 import { PageHeader } from "./page-header";
 import { ProgressRing } from "./progress-ring";
@@ -83,6 +86,7 @@ export function NutritionSmartPage() {
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [nutritionConnection, setNutritionConnection] = useState<ProfessionalConnection | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -90,10 +94,13 @@ export function NutritionSmartPage() {
     setLoading(true);
     setError(null);
     try {
-      const [todayResult, goalResult] = await Promise.allSettled([getNutritionToday(), getNutritionGoal()]);
+      const [todayResult, goalResult, connectionResult] = await Promise.allSettled([getNutritionToday(), getNutritionGoal(), listProfessionalConnections()]);
       if (todayResult.status === "rejected") throw todayResult.reason;
       setData(todayResult.value);
       setGoal(goalResult.status === "fulfilled" ? goalResult.value : null);
+      if (connectionResult.status === "fulfilled") {
+        setNutritionConnection(connectionResult.value.data.find((item) => item.kind === "nutrition" && item.status === "active") ?? null);
+      }
       setError(null);
     } catch (err) {
       setError(errorMessage(err));
@@ -250,6 +257,16 @@ export function NutritionSmartPage() {
     <PageHeader title="Alimentação" description="Registre refeições sem transformar comida em prêmio ou culpa." action={<div className="flex flex-wrap gap-2"><button onClick={() => { setError(null); setNotice(null); setShowGoal(true); }} disabled={saving} className="secondary-button disabled:opacity-60"><Target size={18} /> Editar metas</button><button onClick={() => { setError(null); setNotice(null); setShowAdd(true); }} disabled={saving} className="primary-button disabled:opacity-60"><Plus size={18} /> Registrar refeição</button></div>} />
     <Notice message={notice} />
     <Notice message={error} tone="danger" />
+    {nutritionConnection && <section className="app-card mb-4 border-[rgba(56,217,121,0.28)] p-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="eyebrow text-[var(--green)]">Nutri Pro conectado</p>
+          <h2 className="mt-2 text-lg font-black text-white">{nutritionConnection.planTitle}</h2>
+          <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{nutritionConnection.professionalName} acompanha apenas os dados autorizados por você.</p>
+        </div>
+        <Link href="/my-plan" className="secondary-button"><ShieldCheck size={18} /> Ver plano</Link>
+      </div>
+    </section>}
 
     {showGoal && <form onSubmit={submitGoal} className="app-card mb-4 p-5">
       <div className="flex items-start justify-between gap-3"><div><p className="eyebrow text-[var(--green)]">Metas flexíveis</p><h2 className="mt-2 text-lg font-black text-white">Ajuste sem dieta extrema</h2><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Use só o que fizer sentido. Checklist é mais importante que número perfeito.</p></div><button type="button" onClick={() => setShowGoal(false)} className="ghost-button">Fechar</button></div>

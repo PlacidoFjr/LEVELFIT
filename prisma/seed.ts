@@ -248,6 +248,36 @@ async function main() {
       update: { ...template, isActive: true, deletedAt: null },
     });
   }
+
+  const professionalInvites = [
+    {
+      code: "LF-NUTRI-382",
+      kind: "nutrition" as const,
+      professionalKey: "rafael-martins",
+      professionalName: "Dr. Rafael Martins",
+      professionalRole: "Nutrição esportiva",
+      headline: "Acompanhamento nutricional com ajustes de rotina",
+      planTitle: "Plano Base Performance",
+      defaultPermissions: ["nutrition", "hydration", "body_checkins"],
+    },
+    {
+      code: "LF-TAF-284",
+      kind: "run" as const,
+      professionalKey: "coach-taf",
+      professionalName: "Coach TAF",
+      professionalRole: "Corrida e testes físicos",
+      headline: "Preparação progressiva para TAF",
+      planTitle: "TAF completo 2 km",
+      defaultPermissions: ["workouts", "run_checkins", "body_checkins"],
+    },
+  ];
+  for (const invite of professionalInvites) {
+    await prisma.professionalInvite.upsert({
+      where: { code: invite.code },
+      create: invite,
+      update: { ...invite, isActive: true, deletedAt: null },
+    });
+  }
 }
 
 main()

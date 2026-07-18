@@ -11,7 +11,9 @@ import {
   Dumbbell,
   Gauge,
   GlassWater,
+  Handshake,
   Menu,
+  Route,
   Settings,
   Sparkles,
   Target,
@@ -31,6 +33,8 @@ const primaryNav = [
   { href: "/workouts", label: "Treinos", icon: Dumbbell },
   { href: "/nutrition", label: "Alimentação", icon: Apple },
   { href: "/hydration", label: "Hidratação", icon: GlassWater },
+  { href: "/my-plan", label: "Meu plano", icon: Route },
+  { href: "/professionals", label: "Profissionais", icon: Handshake },
   { href: "/progress", label: "Progresso", icon: TrendingUp },
   { href: "/ranking", label: "Ranking", icon: Trophy },
   { href: "/achievements", label: "Conquistas", icon: Award },
@@ -45,6 +49,7 @@ const mobileNav = [
   { href: "/", label: "Hoje", icon: Gauge },
   { href: "/missions", label: "Missões", icon: Target },
   { href: "/workouts", label: "Treino", icon: Dumbbell },
+  { href: "/my-plan", label: "Plano", icon: Route },
   { href: "/progress", label: "Progresso", icon: TrendingUp },
 ];
 
@@ -168,7 +173,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid h-[calc(68px+env(safe-area-inset-bottom))] grid-cols-5 border-t border-[var(--border)] bg-[rgba(8,11,15,0.96)] px-1.5 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden" aria-label="Navegacao inferior">
+      <nav className="fixed inset-x-0 bottom-0 z-40 grid h-[calc(68px+env(safe-area-inset-bottom))] grid-cols-6 border-t border-[var(--border)] bg-[rgba(8,11,15,0.96)] px-1.5 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden" aria-label="Navegação inferior">
         {mobileNav.map(({ href, label, icon: Icon }) => {
           const active = isActive(pathname, href);
           return (
