@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
@@ -18,6 +19,7 @@ import {
   runSessions,
   runStats,
   runStatusLabel,
+  runTimeline,
   type RunAthlete,
   type RunAthleteStatus,
   type RunSession,
@@ -45,9 +47,24 @@ function RunPageHeader() {
           </p>
         </div>
         <div className="flex shrink-0 flex-wrap gap-2">
-          <button className="secondary-button"><ClipboardList size={18} /> Novo simulado</button>
-          <button className="primary-button"><Plus size={18} /> Publicar treino</button>
+          <Link href="/pro/run/agenda" className="secondary-button"><ClipboardList size={18} /> Novo simulado</Link>
+          <Link href="/pro/run/plans" className="primary-button"><Plus size={18} /> Publicar treino</Link>
         </div>
+      </div>
+    </header>
+  );
+}
+
+function RunSubPageHeader({ eyebrow, title, description, action }: { eyebrow: string; title: string; description: string; action?: React.ReactNode }) {
+  return (
+    <header className="mb-6 overflow-hidden rounded-[10px] border border-[rgba(34,211,238,0.2)] bg-[linear-gradient(135deg,rgba(34,211,238,0.1),rgba(16,22,29,0.9)_38%,rgba(255,107,61,0.08))] p-5 shadow-[0_18px_48px_rgba(0,0,0,0.24)] sm:p-6">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+        <div className="min-w-0">
+          <p className="eyebrow text-[var(--cyan)]">{eyebrow}</p>
+          <h1 className="mt-2 text-3xl font-black leading-tight text-white sm:text-4xl">{title}</h1>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--text-muted)]">{description}</p>
+        </div>
+        {action && <div className="flex shrink-0 flex-wrap gap-2">{action}</div>}
       </div>
     </header>
   );
@@ -203,7 +220,7 @@ export function ProRunPage() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="eyebrow text-[var(--cyan)]">Operação Run</p>
-                <h2 className="mt-2 text-lg font-black text-white">Preparacao TAF em ritmo controlado</h2>
+                <h2 className="mt-2 text-lg font-black text-white">Preparação TAF em ritmo controlado</h2>
                 <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Foco em consistência, recuperação e evolução por bloco. Sem pressão tóxica e sem prometer resultado.</p>
               </div>
               <span className="grid size-14 place-items-center rounded-[8px] bg-[rgba(34,211,238,0.1)] text-[var(--cyan)]">
@@ -257,6 +274,109 @@ export function ProRunPage() {
           <WeekProgram />
         </div>
 
+        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {runSessions.map((session) => <SessionCard key={session.id} session={session} />)}
+        </div>
+      </RevealGroup>
+    </>
+  );
+}
+
+export function ProRunAthletesPage() {
+  const attentionAthletes = runAthletes.filter((athlete) => athlete.status === "attention" || athlete.status === "new");
+
+  return (
+    <>
+      <RunSubPageHeader
+        eyebrow="Carteira Run"
+        title="Atletas e alunos"
+        description="Acompanhamento de objetivos, prontidão, carga semanal e próximos treinos de corrida ou TAF."
+        action={<Link href="/pro/run/agenda" className="primary-button"><Plus size={18} /> Agendar avaliação</Link>}
+      />
+      <RevealGroup>
+        <div className="grid gap-5 xl:grid-cols-[1fr_360px]">
+          <section className="app-card overflow-hidden" data-reveal>
+            <div className="grid gap-3 border-b border-[var(--border)] px-4 py-3 text-xs font-black uppercase text-[var(--text-dim)] md:grid-cols-[minmax(220px,1fr)_118px_170px_120px_170px_32px]">
+              <span>Atleta</span><span>Status</span><span>Prontidão</span><span>Melhor 2 km</span><span>Próximo treino</span><span />
+            </div>
+            {runAthletes.map((athlete) => <AthleteRow key={athlete.id} athlete={athlete} />)}
+          </section>
+
+          <section className="app-card premium-card h-fit p-5" data-reveal>
+            <p className="eyebrow text-[var(--coral)]">Atenção hoje</p>
+            <h2 className="mt-2 text-xl font-black text-white">Ajustes recomendados</h2>
+            <div className="mt-4 space-y-3">
+              {attentionAthletes.map((athlete) => (
+                <article key={athlete.id} className="rounded-[8px] border border-[var(--border)] bg-[rgba(8,11,15,0.28)] p-3">
+                  <div className="flex items-center justify-between gap-2"><p className="text-sm font-black text-white">{athlete.name}</p><StatusPill status={athlete.status} /></div>
+                  <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{athlete.risk ?? "Criar avaliação inicial e liberar primeiro bloco."}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        </div>
+      </RevealGroup>
+    </>
+  );
+}
+
+export function ProRunAgendaPage() {
+  return (
+    <>
+      <RunSubPageHeader
+        eyebrow="Agenda Run"
+        title="Treinos, simulados e avaliações"
+        description="Organize sessões de corrida, avaliações TAF e ajustes de carga sem misturar com agendas de outros produtos."
+        action={<Link href="/pro/run/plans" className="primary-button"><Plus size={18} /> Criar treino</Link>}
+      />
+      <RevealGroup className="grid gap-5 xl:grid-cols-[1fr_380px]">
+        <section className="app-card overflow-hidden" data-reveal>
+          <div className="border-b border-[var(--border)] p-5">
+            <p className="eyebrow">Próximos horários</p>
+            <h2 className="mt-2 text-xl font-black text-white">Linha do tempo Run</h2>
+          </div>
+          <div className="divide-y divide-[var(--border)]">
+            {runTimeline.map((item) => (
+              <article key={`${item.time}-${item.title}`} className="flex min-h-[88px] items-center gap-3 px-4 py-3">
+                <span className="grid w-14 shrink-0 place-items-center rounded-[7px] border border-[var(--border)] bg-[var(--surface-soft)] px-2 py-2 text-sm font-black text-white">{item.time}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-black text-white">{item.title}</span>
+                  <span className="mt-1 block text-xs leading-5 text-[var(--text-muted)]">{item.detail}</span>
+                </span>
+                <span className={`hidden rounded-[5px] px-2 py-1 text-[0.68rem] font-black uppercase sm:inline-flex ${toneClass[item.tone]}`}>Run</span>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="app-card premium-card h-fit p-5" data-reveal>
+          <p className="eyebrow text-[var(--cyan)]">Hoje</p>
+          <h2 className="mt-2 text-xl font-black text-white">Sessões publicadas</h2>
+          <div className="mt-4 space-y-3">
+            {runSessions.slice(0, 3).map((session) => (
+              <article key={session.id} className="rounded-[8px] border border-[var(--border)] bg-[rgba(8,11,15,0.28)] p-3">
+                <p className="text-sm font-black text-white">{session.title}</p>
+                <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{session.duration} · {session.intensity} · {session.athletes} atletas</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      </RevealGroup>
+    </>
+  );
+}
+
+export function ProRunPlansPage() {
+  return (
+    <>
+      <RunSubPageHeader
+        eyebrow="Treinos Run"
+        title="Modelos de corrida e TAF"
+        description="Biblioteca para publicar rodagem, intervalado, força para corrida, recuperação e simulados."
+        action={<button className="primary-button"><Plus size={18} /> Novo modelo</button>}
+      />
+      <RevealGroup>
+        <WeekProgram />
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {runSessions.map((session) => <SessionCard key={session.id} session={session} />)}
         </div>
