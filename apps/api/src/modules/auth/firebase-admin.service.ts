@@ -1,4 +1,4 @@
-import { Injectable, Logger, ServiceUnavailableException, UnauthorizedException } from "@nestjs/common";
+import { HttpException, Injectable, Logger, ServiceUnavailableException, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { cert, getApps, initializeApp, type App } from "firebase-admin/app";
 import { getAuth, type DecodedIdToken } from "firebase-admin/auth";
@@ -14,6 +14,7 @@ export class FirebaseAdminService {
     try {
       return await getAuth(this.getApp()).verifyIdToken(idToken);
     } catch (error) {
+      if (error instanceof HttpException) throw error;
       const code = typeof error === "object" && error && "code" in error ? String((error as { code?: unknown }).code) : "unknown";
       const message = error instanceof Error ? error.message : "unknown";
       this.logger.warn(`Firebase token verification failed: ${code} - ${message}`);

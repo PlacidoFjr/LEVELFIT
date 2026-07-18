@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, Dumbbell, Eye, EyeOff, HeartPulse, Salad, ShieldCheck, Sparkles, Target } from "lucide-react";
 import { FormEvent, useEffect, useState } from "react";
-import { ApiClientError, getDefaultRoute, loginUser, registerUser, requestPasswordReset, useAuthSession } from "@/lib/auth-client";
+import { ApiClientError, getLoginRedirectRoute, loginUser, registerUser, requestPasswordReset, useAuthSession } from "@/lib/auth-client";
 import { addMeasurement, updateMe, updateNotificationPreferences } from "@/lib/level-fit-api";
 import { activityOptions } from "@/lib/mock-data";
 import { LevelFitLogo } from "./level-fit-logo";
@@ -84,7 +84,7 @@ export function LoginPage() {
     const data = new FormData(event.currentTarget);
     try {
       const user = await loginUser(String(data.get("email")), String(data.get("password")));
-      window.location.assign(getDefaultRoute(user));
+      window.location.assign(getLoginRedirectRoute(user));
     } catch (err) {
       setError(formError(err));
     } finally {
