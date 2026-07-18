@@ -204,6 +204,12 @@ enum ProfessionalConnectionStatus {
   revoked
 }
 
+enum UserAccessRole {
+  OWNER
+  NUTRITIONIST
+  RUN_COACH
+}
+
 model User {
   id                     String     @id @default(uuid()) @db.Uuid
   email                  String     @unique @db.Citext
@@ -250,10 +256,30 @@ model User {
   auditLogsAsActor        AuditLog[]                @relation("AuditActor")
   auditLogsAsTarget       AuditLog[]                @relation("AuditTarget")
   professionalConnections ProfessionalConnection[]
+  roleAssignments         UserRoleAssignment[]      @relation("UserRoleSubject")
+  assignedRoleAssignments UserRoleAssignment[]      @relation("UserRoleAssigner")
 
   @@index([status])
   @@index([deletedAt])
   @@map("users")
+}
+
+model UserRoleAssignment {
+  id               String         @id @default(uuid()) @db.Uuid
+  userId           String         @map("user_id") @db.Uuid
+  role             UserAccessRole
+  source           String         @default("manual") @db.VarChar(32)
+  assignedByUserId String?        @map("assigned_by_user_id") @db.Uuid
+  revokedAt        DateTime?      @map("revoked_at") @db.Timestamptz(6)
+  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user       User  @relation("UserRoleSubject", fields: [userId], references: [id], onDelete: Cascade)
+  assignedBy User? @relation("UserRoleAssigner", fields: [assignedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([userId, role, revokedAt])
+  @@index([role, revokedAt])
+  @@map("user_role_assignments")
 }
 
 model UserProfile {

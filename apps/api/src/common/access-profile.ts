@@ -32,15 +32,15 @@ export function isOwnerEmail(config: ConfigService, email?: string | null) {
   return owners.includes(email.toLowerCase());
 }
 
-export function buildAccessProfile(config: ConfigService, email: string): AccessProfile {
+export function buildAccessProfile(config: ConfigService, email: string, assignedRoles: AccessRole[] = []): AccessProfile {
   const roles = new Set<AccessRole>(["USER"]);
   const workspaces: AvailableWorkspace[] = [
-    { type: "user", label: "Meu app", description: "Área pessoal de hábitos, treinos e progresso.", route: "/" },
+    { type: "user", label: "LevelFit", description: "Area pessoal de habitos, treinos e progresso.", route: "/" },
   ];
 
-  const owner = isOwnerEmail(config, email);
-  const nutritionist = hasEmail(config, "NUTRITIONIST_EMAILS", email);
-  const runCoach = hasEmail(config, "RUN_COACH_EMAILS", email);
+  const owner = isOwnerEmail(config, email) || assignedRoles.includes("OWNER");
+  const nutritionist = hasEmail(config, "NUTRITIONIST_EMAILS", email) || assignedRoles.includes("NUTRITIONIST");
+  const runCoach = hasEmail(config, "RUN_COACH_EMAILS", email) || assignedRoles.includes("RUN_COACH");
 
   if (nutritionist || owner) {
     if (nutritionist) roles.add("NUTRITIONIST");
@@ -54,7 +54,7 @@ export function buildAccessProfile(config: ConfigService, email: string): Access
 
   if (owner) {
     roles.add("OWNER");
-    workspaces.push({ type: "owner", label: "Gestão LevelFit", description: "Produtos, pilotos, métricas e operação.", route: "/pro/admin" });
+    workspaces.push({ type: "owner", label: "Gestao LevelFit", description: "Produtos, pilotos, metricas e operacao.", route: "/pro/admin" });
   }
 
   return {

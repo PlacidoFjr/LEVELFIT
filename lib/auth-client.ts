@@ -380,7 +380,7 @@ function toAuthUser(me: Awaited<ReturnType<typeof fetchMe>>): AuthUser {
     onboardingCompleted: Boolean(me.profile?.fitnessGoal && me.profile?.activityLevel),
     roles: me.roles ?? ["USER"],
     defaultRoute: me.defaultRoute ?? "/",
-    availableWorkspaces: me.availableWorkspaces ?? [{ type: "user", label: "Meu app", description: "Área pessoal de hábitos, treinos e progresso.", route: "/" }],
+    availableWorkspaces: me.availableWorkspaces ?? [{ type: "user", label: "LevelFit", description: "Área pessoal de hábitos, treinos e progresso.", route: "/" }],
     level: me.level ?? null,
     streaks: me.streaks ?? [],
   };

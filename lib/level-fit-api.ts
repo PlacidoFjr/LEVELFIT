@@ -264,22 +264,52 @@ export type ProfessionalInvitePreview = {
 
 export type AdminOverview = {
   stats: Array<{ label: string; value: string; detail: string; tone: "lime" | "cyan" | "green" | "gold" | "violet" | "coral" }>;
-  workspaces: Array<{
+  products: Array<{
     id: string;
     title: string;
-    owner: string;
-    status: "healthy" | "attention" | "setup";
+    description: string;
+    status: string;
     users: number;
     activeToday: number;
-    retention: number;
-    revenueState: string;
-    nextStep: string;
+    route: string;
   }>;
   checklist: Array<{ title: string; detail: string; done: boolean }>;
-  timeline: Array<{ tone: "lime" | "cyan" | "green" | "gold" | "violet" | "coral"; title: string; detail: string }>;
-  recentConnections: Array<{ kind: ProfessionalKind; professionalName: string; professionalRole: string; planTitle: string; createdAt: string }>;
   meta: { generatedAt: string; source: "api" };
-  catalog: { publicWorkouts: number };
+};
+
+export type AdminRoleName = "OWNER" | "NUTRITIONIST" | "RUN_COACH";
+
+export type AdminRoleAssignment = {
+  id: string;
+  email: string;
+  displayName: string;
+  role: AdminRoleName;
+  source: string;
+  createdAt: string | null;
+  revokedAt?: string | null;
+  assignedBy: string;
+  canRevoke: boolean;
+  product: "owner" | "nutri" | "run";
+  label: string;
+};
+
+export type AdminUserRow = {
+  id: string;
+  email: string;
+  displayName: string;
+  status: string;
+  createdAt: string;
+  lastLoginAt?: string | null;
+  roles: AdminRoleName[];
+  activity: { professionalConnections: number; workoutSessions: number; foodLogs: number };
+};
+
+export type AdminProductRow = AdminOverview["products"][number];
+
+export type AdminProfessionalRow = AdminRoleAssignment & {
+  connectedClients: number;
+  professionalName: string;
+  professionalRole: string;
 };
 
 export function isWorkoutSession(value: TodayWorkout): value is WorkoutSession {
@@ -568,4 +598,41 @@ export function revokeProfessionalConnection(id: string) {
 
 export function getAdminOverview() {
   return apiRequest<AdminOverview>("/admin/overview");
+}
+
+export function getAdminProducts() {
+  return apiRequest<{ data: AdminProductRow[]; meta: AdminOverview["meta"] }>("/admin/products");
+}
+
+export function getAdminUsers() {
+  return apiRequest<{ data: AdminUserRow[] }>("/admin/users");
+}
+
+export function getAdminProfessionals() {
+  return apiRequest<{ data: AdminProfessionalRow[] }>("/admin/professionals");
+}
+
+export function getAdminRoles() {
+  return apiRequest<{ availableRoles: Array<{ role: AdminRoleName; label: string; product: string }>; data: AdminRoleAssignment[] }>("/admin/roles");
+}
+
+export function grantAdminRole(input: { email: string; role: AdminRoleName }) {
+  return apiRequest<{ assignment: unknown }>("/admin/roles", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export function revokeAdminRole(id: string) {
+  return apiRequest<{ id: string; revokedAt: string | null }>(`/admin/roles/${id}`, { method: "DELETE" });
+}
+
+export function getAdminSettings() {
+  return apiRequest<{
+    ownerEmailsConfigured: number;
+    nutritionistEmailsConfigured: number;
+    runCoachEmailsConfigured: number;
+    nodeEnv: string;
+    webOrigin: string | null;
+  }>("/admin/settings");
 }

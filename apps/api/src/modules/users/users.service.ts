@@ -4,7 +4,7 @@ import * as argon2 from "argon2";
 import { randomUUID } from "node:crypto";
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
 import type { AuthUser } from "../../common/auth-user";
-import { buildAccessProfile } from "../../common/access-profile";
+import { buildAccessProfile, type AccessRole } from "../../common/access-profile";
 import type { DeleteAccountDto, ExportDataDto, UpdateMeDto } from "./users.dto";
 
 @Injectable()
@@ -17,9 +17,11 @@ export class UsersService {
       select: {
         id: true, email: true, emailVerifiedAt: true, rankingOptIn: true, sensitiveDataConsentAt: true, createdAt: true,
         profile: true, preferences: true, notificationPreference: true, level: true, streaks: true,
+        roleAssignments: { where: { revokedAt: null }, select: { role: true } },
       },
     });
-    return { ...user, emailVerified: Boolean(user.emailVerifiedAt), ...buildAccessProfile(this.config, user.email) };
+    const assignedRoles = user.roleAssignments.map((item) => item.role as AccessRole);
+    return { ...user, emailVerified: Boolean(user.emailVerifiedAt), ...buildAccessProfile(this.config, user.email, assignedRoles) };
   }
 
   async update(userId: string, dto: UpdateMeDto) {

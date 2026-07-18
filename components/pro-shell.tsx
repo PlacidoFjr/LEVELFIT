@@ -10,6 +10,7 @@ import {
   ChevronRight,
   ClipboardList,
   LayoutDashboard,
+  LockKeyhole,
   Menu,
   Route,
   Search,
@@ -19,7 +20,7 @@ import {
   UsersRound,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { LevelFitLogo } from "@/components/level-fit-logo";
 import { getDefaultRoute, useAuthSession } from "@/lib/auth-client";
 import type { AuthUser } from "@/lib/auth-client";
@@ -41,9 +42,14 @@ const runNav = [
 ];
 
 const ownerNav = [
-  { href: "/pro/admin", label: "Gestão", icon: ShieldCheck },
-  { href: "/pro", label: "Nutri Pro", icon: LayoutDashboard },
-  { href: "/pro/run", label: "Run Pro", icon: Route },
+  { href: "/pro/admin", label: "Visao geral", icon: ShieldCheck, section: "Gestao" },
+  { href: "/pro/admin/products", label: "Produtos", icon: LayoutDashboard, section: "Gestao" },
+  { href: "/pro/admin/users", label: "Usuarios", icon: UsersRound, section: "Acessos" },
+  { href: "/pro/admin/professionals", label: "Profissionais", icon: BriefcaseBusiness, section: "Acessos" },
+  { href: "/pro/admin/roles", label: "Papeis", icon: LockKeyhole, section: "Acessos" },
+  { href: "/pro/admin/settings", label: "Configuracao", icon: Settings, section: "Tecnico" },
+  { href: "/pro", label: "Nutri Pro", icon: ClipboardList, section: "Ambientes Pro" },
+  { href: "/pro/run", label: "Run Pro", icon: Route, section: "Ambientes Pro" },
 ];
 
 type ProNavItem = (typeof nutriNav)[number] | (typeof runNav)[number] | (typeof ownerNav)[number];
@@ -52,7 +58,7 @@ type ProContext = "nutri" | "run" | "owner";
 const profileByContext = {
   nutri: {
     name: "Dr. Rafael Martins",
-    role: "Nutrição esportiva",
+    role: "Nutricao esportiva",
     firstLabel: "Carteira",
     firstValue: "38 ativos",
     secondLabel: "Hoje",
@@ -65,41 +71,41 @@ const profileByContext = {
     actionLabel: "Cliente",
     search: "Buscar cliente, retorno ou plano",
     settingsHref: "/pro/settings",
-    settingsLabel: "Configurações",
+    settingsLabel: "Configuracoes",
   },
   run: {
     name: "Coach TAF",
-    role: "Corrida e testes físicos",
+    role: "Corrida e testes fisicos",
     firstLabel: "Carteira",
     firstValue: "24 atletas",
     secondLabel: "Hoje",
-    secondValue: "6 sessões",
+    secondValue: "6 sessoes",
     primaryHref: "/pro/run/athletes",
     primaryLabel: "Adicionar atleta",
     quickHref: "/pro/run/agenda",
     quickLabel: "Agenda Run",
     actionHref: "/pro/run/plans",
     actionLabel: "Treino",
-    search: "Buscar atleta, treino ou avaliação TAF",
+    search: "Buscar atleta, treino ou avaliacao TAF",
     settingsHref: "/pro/run/plans",
     settingsLabel: "Modelos Run",
   },
   owner: {
     name: "Placido",
     role: "Dono do produto",
-    firstLabel: "Produtos",
-    firstValue: "2 produtos",
-    secondLabel: "Base",
-    secondValue: "62 usuários",
-    primaryHref: "/pro/admin",
-    primaryLabel: "Ver gestão",
-    quickHref: "/pro",
-    quickLabel: "Nutri Pro",
-    actionHref: "/pro/run",
-    actionLabel: "Run Pro",
-    search: "Buscar produto, profissional ou piloto",
-    settingsHref: "/pro/settings",
-    settingsLabel: "Configurações",
+    firstLabel: "Escopo",
+    firstValue: "3 areas",
+    secondLabel: "Acesso",
+    secondValue: "Owner",
+    primaryHref: "/pro/admin/roles",
+    primaryLabel: "Gerir acessos",
+    quickHref: "/pro/admin/products",
+    quickLabel: "Produtos",
+    actionHref: "/pro/admin/roles",
+    actionLabel: "Papel",
+    search: "Buscar usuario, produto ou profissional",
+    settingsHref: "/pro/admin/settings",
+    settingsLabel: "Configuracao",
   },
 } satisfies Record<ProContext, Record<string, string>>;
 
@@ -150,6 +156,27 @@ function ProNavLink({ href, label, icon: Icon, onClick }: ProNavItem & { onClick
   );
 }
 
+function ProNavList({ context, nav, onClick }: { context: ProContext; nav: ProNavItem[]; onClick?: () => void }) {
+  if (context !== "owner") return <>{nav.map((item) => <ProNavLink key={item.href} {...item} onClick={onClick} />)}</>;
+
+  const grouped = new Map<string, ProNavItem[]>();
+  nav.forEach((item) => {
+    const section = "section" in item ? item.section : "Menu";
+    grouped.set(section, [...(grouped.get(section) ?? []), item]);
+  });
+
+  return (
+    <>
+      {Array.from(grouped.entries()).map(([section, items]) => (
+        <div key={section} className="space-y-1">
+          <p className="px-3 pt-3 text-[0.63rem] font-black uppercase tracking-[0.08em] text-[var(--text-dim)]">{section}</p>
+          {items.map((item) => <ProNavLink key={item.href} {...item} onClick={onClick} />)}
+        </div>
+      ))}
+    </>
+  );
+}
+
 function ProWorkspaceSwitcher({ user, currentContext, onClick }: { user?: AuthUser | null; currentContext: ProContext; onClick?: () => void }) {
   const workspaces = user?.availableWorkspaces ?? [];
   if (workspaces.length <= 1) return null;
@@ -157,7 +184,7 @@ function ProWorkspaceSwitcher({ user, currentContext, onClick }: { user?: AuthUs
   return (
     <div className="rounded-[8px] border border-[var(--border)] bg-[rgba(8,11,15,0.35)] p-3">
       <p className="mb-2 flex items-center gap-2 text-[0.68rem] font-black uppercase text-[var(--text-dim)]">
-        <BriefcaseBusiness size={15} /> Trocar área
+        <BriefcaseBusiness size={15} /> Trocar area
       </p>
       <div className="space-y-1">
         {workspaces.map((workspace) => {
@@ -188,7 +215,7 @@ export function ProShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const session = useAuthSession();
   const context = getContext(pathname);
-  const nav = getNav(context);
+  const nav = useMemo(() => getNav(context), [context]);
   const profile = profileByContext[context];
   const allowed = hasContextAccess(session.user, context);
 
@@ -212,10 +239,12 @@ export function ProShell({ children }: { children: React.ReactNode }) {
     );
   }
 
+  const homeHref = context === "run" ? "/pro/run" : context === "owner" ? "/pro/admin" : "/pro";
+
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.07),transparent_34%),radial-gradient(circle_at_top_left,rgba(183,255,42,0.07),transparent_28%)]">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-[280px] border-r border-[var(--border)] bg-[rgba(8,11,15,0.96)] px-4 py-5 backdrop-blur lg:flex lg:flex-col">
-        <Link href={context === "run" ? "/pro/run" : context === "owner" ? "/pro/admin" : "/pro"} className="flex min-h-11 items-center gap-3 px-2 text-white" aria-label="LevelFit Pro">
+        <Link href={homeHref} className="flex min-h-11 items-center gap-3 px-2 text-white" aria-label="LevelFit Pro">
           <LevelFitLogo className="pulse-idle text-[1.12rem]" />
           <span className="rounded-[5px] border border-[rgba(183,255,42,0.28)] bg-[rgba(183,255,42,0.1)] px-2 py-1 text-[0.66rem] font-black uppercase text-[var(--lime)]">
             {context === "run" ? "Run" : context === "owner" ? "Owner" : "Pro"}
@@ -244,8 +273,8 @@ export function ProShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        <nav className="mt-6 flex flex-col gap-1" aria-label="LevelFit Pro">
-          {nav.map((item) => <ProNavLink key={item.href} {...item} />)}
+        <nav className="mt-6 flex flex-col gap-1 overflow-y-auto pb-4" aria-label="LevelFit Pro">
+          <ProNavList context={context} nav={nav} />
         </nav>
 
         <div className="mt-auto space-y-3">
@@ -264,7 +293,7 @@ export function ProShell({ children }: { children: React.ReactNode }) {
           <button className="icon-button lg:!hidden" onClick={() => setMenuOpen(true)} aria-label="Abrir menu">
             <Menu size={20} />
           </button>
-          <Link href={context === "run" ? "/pro/run" : context === "owner" ? "/pro/admin" : "/pro"} className="lg:hidden">
+          <Link href={homeHref} className="lg:hidden">
             <LevelFitLogo compact className="pulse-idle" />
           </Link>
           <div className="hidden min-w-0 items-center gap-2 rounded-[7px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)] md:flex lg:w-[360px]">
@@ -284,15 +313,15 @@ export function ProShell({ children }: { children: React.ReactNode }) {
 
       {menuOpen && (
         <div className="fixed inset-0 z-50 bg-[rgba(0,0,0,0.72)] backdrop-blur-sm lg:hidden" role="dialog" aria-modal="true" aria-label="Menu LevelFit Pro">
-          <div className="ml-auto flex h-full w-[min(88vw,360px)] flex-col border-l border-[var(--border)] bg-[var(--bg)] p-4">
+          <div className="ml-auto flex h-full w-[min(88vw,360px)] flex-col overflow-y-auto border-l border-[var(--border)] bg-[var(--bg)] p-4">
             <div className="flex items-center justify-between">
-              <Link href={context === "run" ? "/pro/run" : context === "owner" ? "/pro/admin" : "/pro"} onClick={() => setMenuOpen(false)}><LevelFitLogo /></Link>
+              <Link href={homeHref} onClick={() => setMenuOpen(false)}><LevelFitLogo /></Link>
               <button className="icon-button" onClick={() => setMenuOpen(false)} aria-label="Fechar menu">
                 <X size={20} />
               </button>
             </div>
             <nav className="mt-8 flex flex-col gap-1">
-              {nav.map((item) => <ProNavLink key={item.href} {...item} onClick={() => setMenuOpen(false)} />)}
+              <ProNavList context={context} nav={nav} onClick={() => setMenuOpen(false)} />
             </nav>
             <div className="mt-5">
               <ProWorkspaceSwitcher user={session.user} currentContext={context} onClick={() => setMenuOpen(false)} />
