@@ -50,10 +50,10 @@ export const ownerChecklist = [
 ] as const;
 
 export const adminTimeline = [
-  { icon: CheckCircle2, tone: "green", title: "Build visual Pro aprovado", detail: "Nutri e Run seguem o mesmo padrao premium." },
+  { icon: CheckCircle2, tone: "green", title: "Build visual Pro aprovado", detail: "Nutri e Run seguem o mesmo padrão premium." },
   { icon: BarChart3, tone: "cyan", title: "Gestão geral adicionada", detail: "Tela para controlar uso, produtos e próximas pendências." },
-  { icon: AlertTriangle, tone: "gold", title: "Falta backend de papeis", detail: "Hoje a separacao ainda e visual/mockada." },
-  { icon: ShieldCheck, tone: "lime", title: "Proximo salto seguro", detail: "Implementar RBAC e escopo por profissional antes de vender maior." },
+  { icon: AlertTriangle, tone: "gold", title: "Falta backend de papéis", detail: "Hoje a separação ainda é visual/mockada." },
+  { icon: ShieldCheck, tone: "lime", title: "Próximo salto seguro", detail: "Implementar RBAC e escopo por profissional antes de vender maior." },
 ] as const;
 
 export function workspaceStatusLabel(status: WorkspaceStatus) {

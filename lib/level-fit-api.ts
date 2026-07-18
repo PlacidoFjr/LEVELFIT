@@ -262,6 +262,26 @@ export type ProfessionalInvitePreview = {
   defaultPermissions: string[];
 };
 
+export type AdminOverview = {
+  stats: Array<{ label: string; value: string; detail: string; tone: "lime" | "cyan" | "green" | "gold" | "violet" | "coral" }>;
+  workspaces: Array<{
+    id: string;
+    title: string;
+    owner: string;
+    status: "healthy" | "attention" | "setup";
+    users: number;
+    activeToday: number;
+    retention: number;
+    revenueState: string;
+    nextStep: string;
+  }>;
+  checklist: Array<{ title: string; detail: string; done: boolean }>;
+  timeline: Array<{ tone: "lime" | "cyan" | "green" | "gold" | "violet" | "coral"; title: string; detail: string }>;
+  recentConnections: Array<{ kind: ProfessionalKind; professionalName: string; professionalRole: string; planTitle: string; createdAt: string }>;
+  meta: { generatedAt: string; source: "api" };
+  catalog: { publicWorkouts: number };
+};
+
 export function isWorkoutSession(value: TodayWorkout): value is WorkoutSession {
   return Boolean(value && "workout" in value && "status" in value);
 }
@@ -544,4 +564,8 @@ export function updateProfessionalPermissions(id: string, permissions: string[])
 
 export function revokeProfessionalConnection(id: string) {
   return apiRequest<{ id: string; status: "revoked" }>(`/professional-connections/${id}`, { method: "DELETE" });
+}
+
+export function getAdminOverview() {
+  return apiRequest<AdminOverview>("/admin/overview");
 }

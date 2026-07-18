@@ -22,9 +22,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: JwtPayload): Promise<AuthUser> {
     const session = await this.prisma.session.findFirst({
       where: { id: payload.sid, userId: payload.sub, revokedAt: null, user: { deletedAt: null, status: "active" } },
-      select: { id: true, userId: true },
+      select: { id: true, userId: true, user: { select: { email: true } } },
     });
     if (!session) throw new UnauthorizedException({ code: "SESSION_REVOKED", message: "Sessão inválida ou encerrada." });
-    return { userId: session.userId, sessionId: session.id };
+    return { userId: session.userId, sessionId: session.id, email: session.user.email };
   }
 }
