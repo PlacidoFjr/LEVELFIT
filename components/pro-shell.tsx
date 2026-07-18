@@ -61,7 +61,7 @@ export function ProShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.07),transparent_34%),radial-gradient(circle_at_top_left,rgba(183,255,42,0.07),transparent_28%)]">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-[280px] border-r border-[var(--border)] bg-[rgba(8,11,15,0.96)] px-4 py-5 backdrop-blur lg:flex lg:flex-col">
         <Link href="/pro" className="flex min-h-11 items-center gap-3 px-2 text-white" aria-label="LevelFit Pro">
-          <LevelFitLogo className="text-[1.12rem]" />
+          <LevelFitLogo className="pulse-idle text-[1.12rem]" />
           <span className="rounded-[5px] border border-[rgba(183,255,42,0.28)] bg-[rgba(183,255,42,0.1)] px-2 py-1 text-[0.66rem] font-black uppercase text-[var(--lime)]">Pro</span>
         </Link>
 
@@ -107,7 +107,7 @@ export function ProShell({ children }: { children: React.ReactNode }) {
             <Menu size={20} />
           </button>
           <Link href="/pro" className="lg:hidden">
-            <LevelFitLogo compact />
+            <LevelFitLogo compact className="pulse-idle" />
           </Link>
           <div className="hidden min-w-0 items-center gap-2 rounded-[7px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)] md:flex lg:w-[360px]">
             <Search size={17} />

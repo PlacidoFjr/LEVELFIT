@@ -9,6 +9,7 @@ import { ApiClientError, loginUser, registerUser, requestPasswordReset, useAuthS
 import { addMeasurement, updateMe, updateNotificationPreferences } from "@/lib/level-fit-api";
 import { activityOptions } from "@/lib/mock-data";
 import { LevelFitLogo } from "./level-fit-logo";
+import { RevealGroup } from "./premium-motion";
 
 function AuthBrand() {
   return (
@@ -38,17 +39,19 @@ function AuthFrame({ eyebrow, title, description, children }: { eyebrow: string;
     <main className="grid min-h-screen lg:grid-cols-[1fr_0.92fr]">
       <section className="flex min-h-screen items-center justify-center px-4 py-6 sm:px-8 sm:py-8">
         <div className="w-full max-w-md">
-          <AuthBrand />
-          <div className="mt-7 sm:mt-10">
-            <p className="eyebrow text-[var(--lime)]">{eyebrow}</p>
-            <h1 className="mt-3 text-[1.7rem] font-black leading-tight text-white sm:text-3xl">{title}</h1>
-            <p className="mt-3 text-sm leading-5 text-[var(--text-muted)] sm:leading-6">{description}</p>
-          </div>
-          <div className="mt-6 sm:mt-8">{children}</div>
+          <RevealGroup>
+            <div data-reveal><AuthBrand /></div>
+            <div className="mt-7 sm:mt-10" data-reveal>
+              <p className="eyebrow text-[var(--lime)]">{eyebrow}</p>
+              <h1 className="mt-3 text-[1.7rem] font-black leading-tight text-white sm:text-3xl">{title}</h1>
+              <p className="mt-3 text-sm leading-5 text-[var(--text-muted)] sm:leading-6">{description}</p>
+            </div>
+            <div className="mt-6 sm:mt-8" data-reveal>{children}</div>
+          </RevealGroup>
         </div>
       </section>
       <aside className="relative hidden min-h-screen overflow-hidden border-l border-[var(--border)] lg:block">
-        <Image src="/assets/pulse-companion.png" alt="Pulse, companheiro LevelFit" fill priority sizes="46vw" className="object-cover object-[center_22%]" />
+        <Image src="/assets/pulse-companion.png" alt="Pulse, companheiro LevelFit" fill priority sizes="46vw" className="pulse-idle object-cover object-[center_22%]" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#080b0f] via-transparent to-[rgba(8,11,15,0.15)]" />
         <div className="absolute inset-x-0 bottom-0 p-10">
           <p className="max-w-md text-2xl font-black leading-9 text-white">Seu ritmo é seu. O LevelFit ajuda a torná-lo visível.</p>

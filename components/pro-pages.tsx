@@ -34,6 +34,7 @@ import {
   type ProClient,
   type ProClientStatus,
 } from "@/lib/pro-mock-data";
+import { AnimatedNumber, AnimatedProgressFill, RevealGroup } from "./premium-motion";
 
 const toneClass = {
   lime: "text-[var(--lime)] bg-[rgba(183,255,42,0.1)]",
@@ -60,13 +61,16 @@ function ProPageHeader({ eyebrow, title, description, action }: { eyebrow: strin
 }
 
 function MetricCard({ label, value, detail, icon: Icon, tone }: { label: string; value: string; detail: string; icon: LucideIcon; tone: keyof typeof toneClass }) {
+  const numericValue = Number(value.replace(/\D/g, ""));
   return (
-    <section className="app-card relative overflow-hidden p-4">
+    <section className="app-card premium-card relative overflow-hidden p-4" data-reveal>
       <span className={`absolute inset-x-0 top-0 h-1 ${tone === "lime" ? "bg-[var(--lime)]" : tone === "cyan" ? "bg-[var(--cyan)]" : tone === "green" ? "bg-[var(--green)]" : tone === "gold" ? "bg-[var(--gold)]" : tone === "violet" ? "bg-[var(--violet)]" : "bg-[var(--coral)]"}`} aria-hidden="true" />
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="eyebrow">{label}</p>
-          <p className="mt-3 text-2xl font-black text-white">{value}</p>
+          <p className="mt-3 text-2xl font-black text-white">
+            {Number.isFinite(numericValue) ? <AnimatedNumber value={numericValue} /> : value}
+          </p>
           <p className="mt-1 text-xs font-bold text-[var(--text-muted)]">{detail}</p>
         </div>
         <span className={`grid size-11 shrink-0 place-items-center rounded-[7px] ${toneClass[tone]}`}>
@@ -80,7 +84,7 @@ function MetricCard({ label, value, detail, icon: Icon, tone }: { label: string;
 function ProOperatingStrip() {
   return (
     <section className="mb-5 grid gap-3 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
-      <div className="app-card border-[rgba(183,255,42,0.22)] p-4">
+      <div className="app-card premium-card border-[rgba(183,255,42,0.22)] p-4" data-reveal>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="eyebrow text-[var(--lime)]">Ritmo do consultório</p>
@@ -92,12 +96,12 @@ function ProOperatingStrip() {
           </span>
         </div>
       </div>
-      <div className="app-card p-4">
+      <div className="app-card premium-card p-4" data-reveal>
         <p className="eyebrow">Próxima ação</p>
         <p className="mt-2 text-lg font-black text-white">João Lima</p>
         <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Enviar mensagem antes do retorno das 10:30.</p>
       </div>
-      <div className="app-card p-4">
+      <div className="app-card premium-card p-4" data-reveal>
         <p className="eyebrow">Janela crítica</p>
         <p className="mt-2 text-lg font-black text-white">até 18h</p>
         <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Check-ins pendentes devem ser revisados antes do fim do expediente.</p>
@@ -108,7 +112,7 @@ function ProOperatingStrip() {
 
 function ClientActionCard({ client }: { client: ProClient }) {
   return (
-    <section className="app-card border-[rgba(34,211,238,0.2)] p-5">
+    <section className="app-card premium-card border-[rgba(34,211,238,0.2)] p-5" data-reveal>
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="eyebrow text-[var(--cyan)]">Próxima ação</p>
@@ -141,7 +145,7 @@ const planMeals = {
 function PlanPreviewCard({ plan }: { plan: (typeof planTemplates)[number] }) {
   const meals = planMeals[plan.id as keyof typeof planMeals] ?? ["Café", "Almoço", "Lanche", "Jantar"];
   return (
-    <section className="app-card flex min-h-full flex-col p-5">
+    <section className="app-card premium-card flex min-h-full flex-col p-5" data-reveal>
       <div className="flex items-start justify-between gap-4">
         <span className="grid size-11 place-items-center rounded-[7px] bg-[rgba(56,217,121,0.1)] text-[var(--green)]">
           <Utensils size={21} />
@@ -221,7 +225,7 @@ function AdherenceBar({ value, tone = "lime" }: { value: number; tone?: "lime" |
         <span>{value}%</span>
       </div>
       <div className="progress-track">
-        <div className={`progress-fill ${color}`} style={{ width: `${Math.min(value, 100)}%` }} />
+        <AnimatedProgressFill value={value} className={`progress-fill ${color}`} />
       </div>
     </div>
   );
@@ -229,7 +233,7 @@ function AdherenceBar({ value, tone = "lime" }: { value: number; tone?: "lime" |
 
 function ClientRow({ client }: { client: ProClient }) {
   return (
-    <Link href={`/pro/clients/${client.id}`} className="grid gap-3 border-b border-[var(--border)] px-4 py-4 last:border-0 hover:bg-[rgba(255,255,255,0.025)] md:grid-cols-[minmax(220px,1.2fr)_120px_170px_120px_150px_36px] md:items-center">
+    <Link href={`/pro/clients/${client.id}`} className="grid gap-3 border-b border-[var(--border)] px-4 py-4 transition-colors last:border-0 hover:bg-[rgba(255,255,255,0.035)] md:grid-cols-[minmax(220px,1.2fr)_120px_170px_120px_150px_36px] md:items-center" data-reveal>
       <div className="flex min-w-0 items-center gap-3">
         <ClientAvatar client={client} />
         <div className="min-w-0">
@@ -296,14 +300,15 @@ export function ProDashboardPage() {
         action={<><Link href="/pro/agenda" className="secondary-button"><CalendarClock size={18} /> Ver agenda</Link><Link href="/pro/clients" className="primary-button"><UsersRound size={18} /> Carteira</Link></>}
       />
 
-      <ProOperatingStrip />
+      <RevealGroup>
+        <ProOperatingStrip />
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {proStats.map((stat) => <MetricCard key={stat.label} {...stat} />)}
-      </div>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {proStats.map((stat) => <MetricCard key={stat.label} {...stat} />)}
+        </div>
 
       <div className="mt-5 grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
-        <section className="app-card p-5">
+        <section className="app-card premium-card p-5" data-reveal>
           <div className="mb-4 flex items-center justify-between gap-3">
             <div><p className="eyebrow">Agenda de hoje</p><h2 className="mt-2 text-xl font-black text-white">Retornos e consultas</h2></div>
             <Link href="/pro/agenda" className="ghost-button">Abrir agenda <ArrowRight size={16} /></Link>
@@ -311,7 +316,7 @@ export function ProDashboardPage() {
           <AppointmentList compact />
         </section>
 
-        <section className="app-card p-5">
+        <section className="app-card premium-card p-5" data-reveal>
           <div className="mb-4 flex items-center justify-between gap-3">
             <div><p className="eyebrow">Prioridade</p><h2 className="mt-2 text-xl font-black text-white">Ações recomendadas</h2></div>
             <Link href="/pro/alerts" className="ghost-button">Ver alertas <ArrowRight size={16} /></Link>
@@ -321,7 +326,7 @@ export function ProDashboardPage() {
       </div>
 
       <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_380px]">
-        <section className="app-card overflow-hidden">
+        <section className="app-card overflow-hidden" data-reveal>
           <div className="border-b border-[var(--border)] p-5">
             <p className="eyebrow">Clientes em atenção</p>
             <h2 className="mt-2 text-xl font-black text-white">Quem precisa de ação</h2>
@@ -329,7 +334,7 @@ export function ProDashboardPage() {
           {attentionClients.map((client) => <ClientRow key={client.id} client={client} />)}
         </section>
 
-        <section className="app-card p-5">
+        <section className="app-card premium-card p-5" data-reveal>
           <p className="eyebrow">Atividade recente</p>
           <div className="mt-4 space-y-4">
             {proActivity.map(({ icon: Icon, tone, title, detail }) => (
@@ -341,6 +346,7 @@ export function ProDashboardPage() {
           </div>
         </section>
       </div>
+      </RevealGroup>
     </>
   );
 }
@@ -377,7 +383,8 @@ export function ProClientDetailPage({ clientId }: { clientId: string }) {
         action={<><button className="secondary-button"><MessageSquareText size={18} /> Adicionar nota</button><button className="primary-button"><FileText size={18} /> Editar plano</button></>}
       />
 
-      <section className="app-card p-5">
+      <RevealGroup>
+      <section className="app-card premium-card p-5" data-reveal>
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex min-w-0 items-center gap-4">
             <ClientAvatar client={client} size="lg" />
@@ -397,7 +404,7 @@ export function ProClientDetailPage({ clientId }: { clientId: string }) {
       </section>
 
       <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_390px]">
-        <section className="app-card p-5">
+        <section className="app-card premium-card p-5" data-reveal>
           <p className="eyebrow">Semana</p>
           <h2 className="mt-2 text-xl font-black text-white">Aderência alimentar</h2>
           <div className="mt-6 flex h-44 items-end gap-3">
@@ -416,7 +423,7 @@ export function ProClientDetailPage({ clientId }: { clientId: string }) {
       </div>
 
       <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_390px]">
-        <section className="app-card p-5">
+        <section className="app-card premium-card p-5" data-reveal>
           <p className="eyebrow">Permissões</p>
           <h2 className="mt-2 text-xl font-black text-white">Dados compartilhados</h2>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -430,7 +437,7 @@ export function ProClientDetailPage({ clientId }: { clientId: string }) {
       </div>
 
       <div className="mt-5 grid gap-5 xl:grid-cols-2">
-        <section className="app-card p-5">
+        <section className="app-card premium-card p-5" data-reveal>
           <p className="eyebrow">Hoje</p>
           <h2 className="mt-2 text-xl font-black text-white">Refeições registradas</h2>
           <div className="mt-4 divide-y divide-[var(--border)]">
@@ -438,7 +445,7 @@ export function ProClientDetailPage({ clientId }: { clientId: string }) {
           </div>
         </section>
 
-        <section className="app-card p-5">
+        <section className="app-card premium-card p-5" data-reveal>
           <p className="eyebrow">Histórico</p>
           <h2 className="mt-2 text-xl font-black text-white">Notas profissionais</h2>
           <div className="mt-4 space-y-3">
@@ -452,7 +459,8 @@ export function ProClientDetailPage({ clientId }: { clientId: string }) {
         </section>
       </div>
 
-      {clientAppointments.length > 0 && <section className="app-card mt-5 p-5"><p className="eyebrow">Retornos</p><AppointmentList compact /></section>}
+      {clientAppointments.length > 0 && <section className="app-card premium-card mt-5 p-5" data-reveal><p className="eyebrow">Retornos</p><AppointmentList compact /></section>}
+      </RevealGroup>
     </>
   );
 }
@@ -507,11 +515,11 @@ export function ProPlansPage() {
         description="Base inicial para montar planos por refeição, objetivo, rotina e preferências do cliente."
         action={<button className="primary-button"><Plus size={18} /> Novo modelo</button>}
       />
-      <div className="grid gap-5 xl:grid-cols-[1fr_340px]">
+      <RevealGroup className="grid gap-5 xl:grid-cols-[1fr_340px]">
         <div className="grid gap-4 md:grid-cols-2">
           {planTemplates.map((plan) => <PlanPreviewCard key={plan.id} plan={plan} />)}
         </div>
-        <aside className="app-card h-fit p-5">
+        <aside className="app-card premium-card h-fit p-5" data-reveal>
           <p className="eyebrow text-[var(--green)]">Fluxo recomendado</p>
           <h2 className="mt-2 text-xl font-black text-white">Do modelo ao plano individual</h2>
           <div className="mt-5 space-y-3">
@@ -531,7 +539,7 @@ export function ProPlansPage() {
             ))}
           </div>
         </aside>
-      </div>
+      </RevealGroup>
     </>
   );
 }
