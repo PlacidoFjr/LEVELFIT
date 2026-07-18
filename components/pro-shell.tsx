@@ -65,12 +65,25 @@ export function ProShell({ children }: { children: React.ReactNode }) {
           <span className="rounded-[5px] border border-[rgba(183,255,42,0.28)] bg-[rgba(183,255,42,0.1)] px-2 py-1 text-[0.66rem] font-black uppercase text-[var(--lime)]">Pro</span>
         </Link>
 
-        <div className="mt-6 rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-3">
-          <p className="text-sm font-black text-white">Dr. Rafael Martins</p>
-          <p className="mt-1 text-xs font-bold text-[var(--text-muted)]">Nutrição esportiva</p>
-          <div className="mt-3 flex items-center gap-2 text-xs font-bold text-[var(--green)]">
-            <span className="size-2 rounded-full bg-[var(--green)]" />
-            Carteira ativa
+        <div className="mt-6 rounded-[8px] border border-[rgba(183,255,42,0.22)] bg-[linear-gradient(145deg,rgba(183,255,42,0.1),rgba(16,22,29,0.96)_44%,rgba(34,211,238,0.08))] p-3">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-sm font-black text-white">Dr. Rafael Martins</p>
+              <p className="mt-1 text-xs font-bold text-[var(--text-muted)]">Nutrição esportiva</p>
+            </div>
+            <span className="rounded-[5px] bg-[rgba(56,217,121,0.12)] px-2 py-1 text-[0.64rem] font-black uppercase text-[var(--green)]">
+              Online
+            </span>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <div className="rounded-[6px] border border-[var(--border)] bg-[rgba(8,11,15,0.42)] p-2">
+              <p className="text-[0.65rem] font-black uppercase text-[var(--text-dim)]">Carteira</p>
+              <p className="mt-1 text-sm font-black text-white">38 ativos</p>
+            </div>
+            <div className="rounded-[6px] border border-[var(--border)] bg-[rgba(8,11,15,0.42)] p-2">
+              <p className="text-[0.65rem] font-black uppercase text-[var(--text-dim)]">Hoje</p>
+              <p className="mt-1 text-sm font-black text-white">4 retornos</p>
+            </div>
           </div>
         </div>
 
@@ -90,23 +103,23 @@ export function ProShell({ children }: { children: React.ReactNode }) {
 
       <header className="sticky top-0 z-30 flex h-[64px] items-center justify-between border-b border-[var(--border)] bg-[rgba(8,11,15,0.92)] px-4 backdrop-blur lg:ml-[280px]">
         <div className="flex min-w-0 items-center gap-3">
-          <button className="icon-button lg:hidden" onClick={() => setMenuOpen(true)} aria-label="Abrir menu">
+          <button className="icon-button lg:!hidden" onClick={() => setMenuOpen(true)} aria-label="Abrir menu">
             <Menu size={20} />
           </button>
           <Link href="/pro" className="lg:hidden">
             <LevelFitLogo compact />
           </Link>
-          <div className="hidden min-w-0 items-center gap-2 rounded-[7px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)] md:flex">
+          <div className="hidden min-w-0 items-center gap-2 rounded-[7px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)] md:flex lg:w-[360px]">
             <Search size={17} />
             <span>Buscar cliente, retorno ou plano</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/pro/agenda" className="secondary-button hidden sm:inline-flex">
+          <Link href="/pro/agenda" className="secondary-button !hidden sm:!inline-flex">
             <CalendarDays size={18} /> Novo retorno
           </Link>
-          <Link href="/pro/clients" className="primary-button">
-            <UserPlus size={18} /> Cliente
+          <Link href="/pro/clients" className="primary-button max-[420px]:size-11 max-[420px]:px-0" aria-label="Adicionar cliente">
+            <UserPlus size={18} /> <span className="max-[420px]:sr-only">Cliente</span>
           </Link>
         </div>
       </header>
@@ -133,4 +146,3 @@ export function ProShell({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-

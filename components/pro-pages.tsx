@@ -3,6 +3,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   AlertTriangle,
   ArrowRight,
+  BarChart3,
   CalendarClock,
   CheckCircle2,
   ChevronRight,
@@ -12,8 +13,10 @@ import {
   MessageSquareText,
   MoreHorizontal,
   Plus,
+  Send,
   ShieldCheck,
   Sparkles,
+  Utensils,
   UsersRound,
 } from "lucide-react";
 import {
@@ -43,20 +46,23 @@ const toneClass = {
 
 function ProPageHeader({ eyebrow, title, description, action }: { eyebrow: string; title: string; description: string; action?: React.ReactNode }) {
   return (
-    <header className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-      <div>
+    <header className="mb-6 rounded-[10px] border border-[rgba(183,255,42,0.16)] bg-[linear-gradient(135deg,rgba(183,255,42,0.09),rgba(16,22,29,0.82)_34%,rgba(34,211,238,0.08))] p-5 shadow-[0_18px_48px_rgba(0,0,0,0.24)] sm:p-6">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+      <div className="min-w-0">
         <p className="eyebrow">{eyebrow}</p>
-        <h1 className="mt-2 text-3xl font-black text-white sm:text-4xl">{title}</h1>
+        <h1 className="mt-2 text-3xl font-black leading-tight text-white sm:text-4xl">{title}</h1>
         <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--text-muted)]">{description}</p>
       </div>
-      {action && <div className="flex flex-wrap gap-2">{action}</div>}
+      {action && <div className="flex shrink-0 flex-wrap gap-2 xl:min-w-[300px] xl:justify-end">{action}</div>}
+      </div>
     </header>
   );
 }
 
 function MetricCard({ label, value, detail, icon: Icon, tone }: { label: string; value: string; detail: string; icon: LucideIcon; tone: keyof typeof toneClass }) {
   return (
-    <section className="app-card p-4">
+    <section className="app-card relative overflow-hidden p-4">
+      <span className={`absolute inset-x-0 top-0 h-1 ${tone === "lime" ? "bg-[var(--lime)]" : tone === "cyan" ? "bg-[var(--cyan)]" : tone === "green" ? "bg-[var(--green)]" : tone === "gold" ? "bg-[var(--gold)]" : tone === "violet" ? "bg-[var(--violet)]" : "bg-[var(--coral)]"}`} aria-hidden="true" />
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="eyebrow">{label}</p>
@@ -66,6 +72,100 @@ function MetricCard({ label, value, detail, icon: Icon, tone }: { label: string;
         <span className={`grid size-11 shrink-0 place-items-center rounded-[7px] ${toneClass[tone]}`}>
           <Icon size={21} />
         </span>
+      </div>
+    </section>
+  );
+}
+
+function ProOperatingStrip() {
+  return (
+    <section className="mb-5 grid gap-3 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
+      <div className="app-card border-[rgba(183,255,42,0.22)] p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="eyebrow text-[var(--lime)]">Ritmo do consultório</p>
+            <h2 className="mt-2 text-lg font-black text-white">Aderência média em 74%</h2>
+            <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">A carteira está saudável, mas três clientes precisam de contato curto hoje.</p>
+          </div>
+          <span className="grid size-14 place-items-center rounded-[8px] bg-[rgba(183,255,42,0.12)] text-[var(--lime)]">
+            <BarChart3 size={25} />
+          </span>
+        </div>
+      </div>
+      <div className="app-card p-4">
+        <p className="eyebrow">Próxima ação</p>
+        <p className="mt-2 text-lg font-black text-white">João Lima</p>
+        <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Enviar mensagem antes do retorno das 10:30.</p>
+      </div>
+      <div className="app-card p-4">
+        <p className="eyebrow">Janela crítica</p>
+        <p className="mt-2 text-lg font-black text-white">até 18h</p>
+        <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Check-ins pendentes devem ser revisados antes do fim do expediente.</p>
+      </div>
+    </section>
+  );
+}
+
+function ClientActionCard({ client }: { client: ProClient }) {
+  return (
+    <section className="app-card border-[rgba(34,211,238,0.2)] p-5">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="eyebrow text-[var(--cyan)]">Próxima ação</p>
+          <h2 className="mt-2 text-xl font-black text-white">
+            {client.status === "attention" ? "Intervenção leve" : client.status === "new" ? "Criar primeiro plano" : "Reforço positivo"}
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
+            {client.status === "attention"
+              ? "Responder com orientação curta, sem cobrança. O objetivo é remover atrito e retomar registro."
+              : client.status === "new"
+                ? "Montar plano inicial e liberar checklist simples antes da próxima consulta."
+                : "Registrar nota de evolução e enviar reconhecimento pelo bom ritmo da semana."}
+          </p>
+        </div>
+        <span className="grid size-12 shrink-0 place-items-center rounded-[8px] bg-[rgba(34,211,238,0.1)] text-[var(--cyan)]">
+          <Send size={22} />
+        </span>
+      </div>
+    </section>
+  );
+}
+
+const planMeals = {
+  "base-performance": ["Café reforçado", "Almoço base", "Lanche proteico", "Jantar leve", "Ceia opcional"],
+  "rotina-flexivel": ["Café simples", "Almoço livre guiado", "Lanche prático", "Jantar flexível"],
+  saciedade: ["Café com proteína", "Almoço completo", "Lanche de saciedade", "Jantar ajustado", "Ceia anti-fome"],
+  "corrida-nutricao": ["Pré-treino", "Pós-treino", "Almoço de recuperação", "Lanche energético", "Jantar equilibrado"],
+} as const;
+
+function PlanPreviewCard({ plan }: { plan: (typeof planTemplates)[number] }) {
+  const meals = planMeals[plan.id as keyof typeof planMeals] ?? ["Café", "Almoço", "Lanche", "Jantar"];
+  return (
+    <section className="app-card flex min-h-full flex-col p-5">
+      <div className="flex items-start justify-between gap-4">
+        <span className="grid size-11 place-items-center rounded-[7px] bg-[rgba(56,217,121,0.1)] text-[var(--green)]">
+          <Utensils size={21} />
+        </span>
+        <span className="rounded-[5px] bg-[rgba(183,255,42,0.1)] px-2 py-1 text-[0.68rem] font-black uppercase text-[var(--lime)]">
+          {plan.clients} clientes
+        </span>
+      </div>
+      <h2 className="mt-5 text-lg font-black text-white">{plan.title}</h2>
+      <p className="mt-2 text-sm leading-5 text-[var(--text-muted)]">{plan.target}</p>
+      <div className="mt-5 space-y-2">
+        {meals.map((meal) => (
+          <div key={meal} className="flex min-h-10 items-center gap-2 rounded-[7px] border border-[var(--border)] bg-[rgba(8,11,15,0.28)] px-3">
+            <span className="size-1.5 rounded-full bg-[var(--green)]" />
+            <span className="truncate text-xs font-bold text-[var(--text-muted)]">{meal}</span>
+          </div>
+        ))}
+      </div>
+      <div className="mt-auto pt-5">
+        <div className="grid grid-cols-2 gap-2">
+          <MiniMetric label="Refeições" value={`${plan.meals}`} />
+          <MiniMetric label="Uso" value={`${plan.clients}`} />
+        </div>
+        <p className="mt-4 text-xs font-bold text-[var(--text-dim)]">{plan.updatedAt}</p>
       </div>
     </section>
   );
@@ -196,6 +296,8 @@ export function ProDashboardPage() {
         action={<><Link href="/pro/agenda" className="secondary-button"><CalendarClock size={18} /> Ver agenda</Link><Link href="/pro/clients" className="primary-button"><UsersRound size={18} /> Carteira</Link></>}
       />
 
+      <ProOperatingStrip />
+
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {proStats.map((stat) => <MetricCard key={stat.label} {...stat} />)}
       </div>
@@ -301,8 +403,8 @@ export function ProClientDetailPage({ clientId }: { clientId: string }) {
           <div className="mt-6 flex h-44 items-end gap-3">
             {client.week.map((value, index) => (
               <div key={`${value}-${index}`} className="flex min-w-0 flex-1 flex-col items-center gap-2">
-                <div className="h-36 w-full rounded-t-[6px] bg-[var(--surface-soft)]">
-                  <div className="mt-auto rounded-t-[6px] bg-[var(--lime)]" style={{ height: `${value}%` }} />
+                <div className="flex h-36 w-full items-end rounded-t-[6px] bg-[var(--surface-soft)]">
+                  <div className="w-full rounded-t-[6px] bg-[var(--lime)]" style={{ height: `${value}%` }} />
                 </div>
                 <span className="text-[0.68rem] font-bold text-[var(--text-muted)]">{["S", "T", "Q", "Q", "S", "S", "D"][index]}</span>
               </div>
@@ -310,6 +412,10 @@ export function ProClientDetailPage({ clientId }: { clientId: string }) {
           </div>
         </section>
 
+        <ClientActionCard client={client} />
+      </div>
+
+      <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_390px]">
         <section className="app-card p-5">
           <p className="eyebrow">Permissões</p>
           <h2 className="mt-2 text-xl font-black text-white">Dados compartilhados</h2>
@@ -401,19 +507,30 @@ export function ProPlansPage() {
         description="Base inicial para montar planos por refeição, objetivo, rotina e preferências do cliente."
         action={<button className="primary-button"><Plus size={18} /> Novo modelo</button>}
       />
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {planTemplates.map((plan) => (
-          <section key={plan.id} className="app-card p-5">
-            <span className="grid size-10 place-items-center rounded-[7px] bg-[rgba(56,217,121,0.1)] text-[var(--green)]"><FileText size={20} /></span>
-            <h2 className="mt-5 text-lg font-black text-white">{plan.title}</h2>
-            <p className="mt-2 min-h-10 text-sm leading-5 text-[var(--text-muted)]">{plan.target}</p>
-            <div className="mt-5 grid grid-cols-2 gap-2">
-              <MiniMetric label="Refeições" value={`${plan.meals}`} />
-              <MiniMetric label="Clientes" value={`${plan.clients}`} />
-            </div>
-            <p className="mt-4 text-xs font-bold text-[var(--text-dim)]">{plan.updatedAt}</p>
-          </section>
-        ))}
+      <div className="grid gap-5 xl:grid-cols-[1fr_340px]">
+        <div className="grid gap-4 md:grid-cols-2">
+          {planTemplates.map((plan) => <PlanPreviewCard key={plan.id} plan={plan} />)}
+        </div>
+        <aside className="app-card h-fit p-5">
+          <p className="eyebrow text-[var(--green)]">Fluxo recomendado</p>
+          <h2 className="mt-2 text-xl font-black text-white">Do modelo ao plano individual</h2>
+          <div className="mt-5 space-y-3">
+            {[
+              ["Escolher base", "Parte de um modelo por objetivo e rotina."],
+              ["Ajustar restrições", "Preferências, horários, fome, treino e contexto."],
+              ["Publicar para cliente", "Cliente recebe checklist e refeições no app."],
+              ["Revisar por check-in", "Ajuste fino com dados da semana."],
+            ].map(([title, detail], index) => (
+              <div key={title} className="flex gap-3 rounded-[8px] border border-[var(--border)] bg-[rgba(8,11,15,0.28)] p-3">
+                <span className="grid size-7 shrink-0 place-items-center rounded-[6px] bg-[rgba(183,255,42,0.12)] text-xs font-black text-[var(--lime)]">{index + 1}</span>
+                <div>
+                  <p className="text-sm font-black text-white">{title}</p>
+                  <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </aside>
       </div>
     </>
   );
