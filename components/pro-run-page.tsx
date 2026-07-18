@@ -5,12 +5,18 @@ import {
   CheckCircle2,
   ChevronRight,
   ClipboardList,
+  Dumbbell,
+  FileSpreadsheet,
   Flag,
   Gauge,
+  ListChecks,
   Plus,
   Route,
+  Send,
   ShieldCheck,
+  Target,
   Timer,
+  Upload,
 } from "lucide-react";
 import {
   runActivity,
@@ -35,6 +41,33 @@ const toneClass = {
   coral: "text-[var(--coral)] bg-[rgba(255,107,61,0.1)]",
 } as const;
 
+const tafPlanTemplates = [
+  { title: "TAF 2 km - iniciante", detail: "Base aeróbica, técnica e progressão sem excesso.", weeks: "8 semanas", level: "Iniciante", focus: "Corrida" },
+  { title: "TAF completo PM", detail: "Corrida, flexão, abdominal, barra e mobilidade.", weeks: "12 semanas", level: "Intermediário", focus: "Completo" },
+  { title: "Polimento pré-prova", detail: "Redução de carga, ritmo-alvo e confiança.", weeks: "4 semanas", level: "Avançado", focus: "Reta final" },
+  { title: "Força para TAF", detail: "Flexão, barra, core e estabilidade para corrida.", weeks: "6 semanas", level: "Todos", focus: "Força" },
+] as const;
+
+const tafPlanDays = [
+  { day: "Seg", title: "Corrida base", blocks: ["Aquecimento 8 min", "Rodagem leve 30 min", "Mobilidade 6 min"], tone: "cyan" },
+  { day: "Ter", title: "Força TAF", blocks: ["Flexão 4 x 8", "Barra assistida 5 x 3", "Abdominal 4 x 20"], tone: "lime" },
+  { day: "Qua", title: "Intervalado 2 km", blocks: ["6 x 400 m", "Pausa completa", "Ritmo controlado"], tone: "coral" },
+  { day: "Qui", title: "Recuperação", blocks: ["Caminhada leve", "Mobilidade", "Respiração"], tone: "green" },
+  { day: "Sex", title: "Avaliação TAF", blocks: ["Aquecimento", "2 km referência", "Registro de tempo"], tone: "gold" },
+] as const;
+
+const tafImportRows = [
+  { semana: "1", dia: "Segunda", bloco: "Corrida base", volume: "30 min", status: "ok" },
+  { semana: "1", dia: "Terça", bloco: "Flexão + abdominal", volume: "4 séries", status: "ok" },
+  { semana: "1", dia: "Quarta", bloco: "Intervalado", volume: "6 x 400 m", status: "revisar descanso" },
+] as const;
+
+const tafAssignmentTargets = [
+  { label: "Grupo TAF PM", value: "12 atletas", detail: "Publicar plano de 8 semanas" },
+  { label: "Reta final", value: "5 atletas", detail: "Bloco de 4 semanas" },
+  { label: "Iniciantes", value: "7 atletas", detail: "Base e técnica primeiro" },
+] as const;
+
 function RunPageHeader() {
   return (
     <header className="mb-6 overflow-hidden rounded-[10px] border border-[rgba(34,211,238,0.2)] bg-[linear-gradient(135deg,rgba(34,211,238,0.11),rgba(16,22,29,0.9)_36%,rgba(255,107,61,0.1))] p-5 shadow-[0_18px_48px_rgba(0,0,0,0.26)] sm:p-6">
@@ -43,12 +76,12 @@ function RunPageHeader() {
           <p className="eyebrow text-[var(--cyan)]">LevelFit Run Pro</p>
           <h1 className="mt-2 text-3xl font-black leading-tight text-white sm:text-4xl">Corrida, TAF e performance</h1>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--text-muted)]">
-            Painel para acompanhar atletas, montar treinos de corrida, controlar carga e preparar simulados com visão profissional.
+            Painel para acompanhar atletas, montar planos TAF, controlar carga e preparar avaliações com visão profissional.
           </p>
         </div>
         <div className="flex shrink-0 flex-wrap gap-2">
-          <Link href="/pro/run/agenda" className="secondary-button"><ClipboardList size={18} /> Novo simulado</Link>
-          <Link href="/pro/run/plans" className="primary-button"><Plus size={18} /> Publicar treino</Link>
+          <Link href="/pro/run/agenda" className="secondary-button"><ClipboardList size={18} /> Avaliação TAF</Link>
+          <Link href="/pro/run/plans" className="primary-button"><Plus size={18} /> Publicar plano</Link>
         </div>
       </div>
     </header>
@@ -210,6 +243,111 @@ function WeekProgram() {
   );
 }
 
+function TafTemplateCard({ template }: { template: (typeof tafPlanTemplates)[number] }) {
+  return (
+    <article className="rounded-[9px] border border-[var(--border)] bg-[rgba(8,11,15,0.28)] p-4 transition hover:border-[rgba(183,255,42,0.4)] hover:bg-[rgba(183,255,42,0.05)]">
+      <div className="flex items-start justify-between gap-3">
+        <span className="grid size-10 shrink-0 place-items-center rounded-[7px] bg-[rgba(183,255,42,0.1)] text-[var(--lime)]">
+          <Target size={20} />
+        </span>
+        <span className="rounded-[5px] bg-[rgba(34,211,238,0.1)] px-2 py-1 text-[0.68rem] font-black uppercase text-[var(--cyan)]">{template.weeks}</span>
+      </div>
+      <h3 className="mt-4 text-base font-black text-white">{template.title}</h3>
+      <p className="mt-2 min-h-10 text-xs leading-5 text-[var(--text-muted)]">{template.detail}</p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <span className="rounded-[5px] bg-[rgba(255,107,61,0.1)] px-2 py-1 text-[0.68rem] font-black uppercase text-[var(--coral)]">{template.level}</span>
+        <span className="rounded-[5px] bg-[rgba(250,204,21,0.1)] px-2 py-1 text-[0.68rem] font-black uppercase text-[var(--gold)]">{template.focus}</span>
+      </div>
+    </article>
+  );
+}
+
+function TafManualBuilder() {
+  return (
+    <section className="app-card premium-card p-5" data-reveal>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="eyebrow text-[var(--lime)]">Criar manualmente</p>
+          <h2 className="mt-2 text-xl font-black text-white">Plano TAF de 8 semanas</h2>
+          <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">O coach escreve a rotina dentro do painel, ajustando volume, descanso e observações por atleta.</p>
+        </div>
+        <button className="secondary-button shrink-0"><ListChecks size={18} /> Editar estrutura</button>
+      </div>
+
+      <div className="mt-5 grid gap-3 lg:grid-cols-5">
+        {tafPlanDays.map((day) => (
+          <article key={day.day} className="min-h-[190px] rounded-[9px] border border-[var(--border)] bg-[rgba(8,11,15,0.28)] p-3">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-black uppercase text-[var(--text-dim)]">{day.day}</span>
+              <span className={`grid size-8 place-items-center rounded-[7px] ${toneClass[day.tone]}`}>
+                {day.tone === "lime" ? <Dumbbell size={16} /> : day.tone === "gold" ? <Flag size={16} /> : <Route size={16} />}
+              </span>
+            </div>
+            <h3 className="mt-4 text-sm font-black text-white">{day.title}</h3>
+            <div className="mt-3 space-y-2">
+              {day.blocks.map((block) => (
+                <p key={block} className="rounded-[6px] border border-[var(--border)] bg-[rgba(16,22,29,0.72)] px-2 py-2 text-xs font-bold leading-4 text-[var(--text-muted)]">{block}</p>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function TafSpreadsheetImport() {
+  return (
+    <section className="app-card premium-card p-5" data-reveal>
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+        <div>
+          <p className="eyebrow text-[var(--cyan)]">Importar planilha</p>
+          <h2 className="mt-2 text-xl font-black text-white">Prévia antes de publicar</h2>
+          <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">Fluxo preparado para Excel/CSV: o coach importa, revisa inconsistências e só depois publica.</p>
+        </div>
+        <button className="primary-button shrink-0"><Upload size={18} /> Importar Excel</button>
+      </div>
+
+      <div className="mt-5 overflow-hidden rounded-[9px] border border-[var(--border)]">
+        <div className="grid grid-cols-[70px_1fr_1.2fr_100px_120px] gap-3 border-b border-[var(--border)] bg-[rgba(34,211,238,0.06)] px-4 py-3 text-xs font-black uppercase text-[var(--text-dim)] max-md:hidden">
+          <span>Semana</span><span>Dia</span><span>Bloco</span><span>Volume</span><span>Status</span>
+        </div>
+        {tafImportRows.map((row) => (
+          <article key={`${row.semana}-${row.dia}-${row.bloco}`} className="grid gap-2 border-b border-[var(--border)] px-4 py-3 last:border-0 md:grid-cols-[70px_1fr_1.2fr_100px_120px] md:items-center">
+            <span className="text-sm font-black text-white">S{row.semana}</span>
+            <span className="text-sm font-bold text-[var(--text-muted)]">{row.dia}</span>
+            <span className="text-sm font-black text-white">{row.bloco}</span>
+            <span className="text-sm font-bold text-[var(--text-muted)]">{row.volume}</span>
+            <span className={`w-fit rounded-[5px] px-2 py-1 text-[0.68rem] font-black uppercase ${row.status === "ok" ? toneClass.green : toneClass.gold}`}>{row.status}</span>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function TafAssignmentPanel() {
+  return (
+    <section className="app-card premium-card h-fit p-5" data-reveal>
+      <p className="eyebrow text-[var(--gold)]">Publicar para atletas</p>
+      <h2 className="mt-2 text-xl font-black text-white">Atribuição rápida</h2>
+      <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">Depois de criar ou importar, o plano pode ir para grupo, atleta individual ou turma de preparação.</p>
+      <div className="mt-5 space-y-3">
+        {tafAssignmentTargets.map((target) => (
+          <article key={target.label} className="rounded-[8px] border border-[var(--border)] bg-[rgba(8,11,15,0.28)] p-3">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-black text-white">{target.label}</p>
+              <span className="text-xs font-black text-[var(--lime)]">{target.value}</span>
+            </div>
+            <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{target.detail}</p>
+          </article>
+        ))}
+      </div>
+      <button className="primary-button mt-5 w-full"><Send size={18} /> Publicar plano TAF</button>
+    </section>
+  );
+}
+
 export function ProRunPage() {
   return (
     <>
@@ -325,9 +463,9 @@ export function ProRunAgendaPage() {
     <>
       <RunSubPageHeader
         eyebrow="Agenda Run"
-        title="Treinos, simulados e avaliações"
-        description="Organize sessões de corrida, avaliações TAF e ajustes de carga sem misturar com agendas de outros produtos."
-        action={<Link href="/pro/run/plans" className="primary-button"><Plus size={18} /> Criar treino</Link>}
+        title="Sessões e avaliações TAF"
+        description="Organize treinos presenciais, avaliações TAF e ajustes de carga sem misturar com agendas de outros produtos."
+        action={<Link href="/pro/run/plans" className="primary-button"><Plus size={18} /> Criar plano TAF</Link>}
       />
       <RevealGroup className="grid gap-5 xl:grid-cols-[1fr_380px]">
         <section className="app-card overflow-hidden" data-reveal>
@@ -371,14 +509,35 @@ export function ProRunPlansPage() {
     <>
       <RunSubPageHeader
         eyebrow="Treinos Run"
-        title="Modelos de corrida e TAF"
-        description="Biblioteca para publicar rodagem, intervalado, força para corrida, recuperação e simulados."
-        action={<button className="primary-button"><Plus size={18} /> Novo modelo</button>}
+        title="Planos TAF"
+        description="Crie planos manuais, importe planilhas do coach e publique blocos TAF para atletas ou grupos."
+        action={
+          <>
+            <button className="secondary-button"><FileSpreadsheet size={18} /> Importar planilha</button>
+            <button className="primary-button"><Plus size={18} /> Novo plano</button>
+          </>
+        }
       />
-      <RevealGroup>
-        <WeekProgram />
-        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {runSessions.map((session) => <SessionCard key={session.id} session={session} />)}
+      <RevealGroup className="space-y-5">
+        <section className="app-card premium-card p-5" data-reveal>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="eyebrow text-[var(--cyan)]">Biblioteca TAF</p>
+              <h2 className="mt-2 text-xl font-black text-white">Modelos por objetivo</h2>
+            </div>
+            <span className="w-fit rounded-[5px] bg-[rgba(34,211,238,0.1)] px-2 py-1 text-xs font-black text-[var(--cyan)]">4 bases prontas</span>
+          </div>
+          <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {tafPlanTemplates.map((template) => <TafTemplateCard key={template.title} template={template} />)}
+          </div>
+        </section>
+
+        <div className="grid gap-5 xl:grid-cols-[1fr_360px]">
+          <div className="space-y-5">
+            <TafManualBuilder />
+            <TafSpreadsheetImport />
+          </div>
+          <TafAssignmentPanel />
         </div>
       </RevealGroup>
     </>

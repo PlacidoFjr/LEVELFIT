@@ -28,7 +28,6 @@ const nutriNav = [
   { href: "/pro/plans", label: "Planos", icon: ClipboardList },
   { href: "/pro/checkins", label: "Check-ins", icon: CheckSquare },
   { href: "/pro/alerts", label: "Alertas", icon: AlertTriangle },
-  { href: "/pro/admin", label: "Gestão", icon: ShieldCheck },
 ];
 
 const runNav = [
@@ -36,7 +35,6 @@ const runNav = [
   { href: "/pro/run/athletes", label: "Atletas", icon: UsersRound },
   { href: "/pro/run/agenda", label: "Agenda Run", icon: CalendarDays },
   { href: "/pro/run/plans", label: "Treinos", icon: ClipboardList },
-  { href: "/pro/admin", label: "Gestão", icon: ShieldCheck },
 ];
 
 const ownerNav = [
@@ -79,7 +77,7 @@ const profileByContext = {
     quickLabel: "Agenda Run",
     actionHref: "/pro/run/plans",
     actionLabel: "Treino",
-    search: "Buscar atleta, treino ou simulado",
+    search: "Buscar atleta, treino ou avaliação TAF",
     settingsHref: "/pro/run/plans",
     settingsLabel: "Modelos Run",
   },

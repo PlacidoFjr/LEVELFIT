@@ -40,7 +40,7 @@ export type RunSession = {
 export const runStats = [
   { label: "Atletas ativos", value: "24", detail: "7 em preparação TAF", icon: UsersRound, tone: "lime" },
   { label: "Sessões hoje", value: "6", detail: "3 corrida, 2 força, 1 mobilidade", icon: CalendarClock, tone: "cyan" },
-  { label: "Prontos para teste", value: "8", detail: "readiness acima de 80%", icon: Medal, tone: "gold" },
+  { label: "Prontos para TAF", value: "8", detail: "readiness acima de 80%", icon: Medal, tone: "gold" },
   { label: "Alertas de carga", value: "3", detail: "ajustar volume antes do fim do dia", icon: AlertTriangle, tone: "coral" },
 ] as const;
 
@@ -155,13 +155,13 @@ export const runProgramBlocks = [
   { label: "Ter", title: "Força + core", detail: "Técnica, postura e estabilidade", done: true },
   { label: "Qua", title: "Intervalado", detail: "Ritmo TAF com pausas completas", done: false },
   { label: "Qui", title: "Recuperação", detail: "Caminhada, mobilidade ou descanso", done: false },
-  { label: "Sex", title: "Simulado curto", detail: "Controle de pace sem esgotar", done: false },
+  { label: "Sex", title: "Avaliação TAF", detail: "Controle de ritmo sem esgotar", done: false },
 ] as const;
 
 export const runActivity = [
   { icon: Route, tone: "cyan", title: "7 atletas com treino publicado", detail: "Treinos da semana liberados com orientação clara." },
   { icon: Gauge, tone: "gold", title: "3 precisam reduzir carga", detail: "Sinais de fadiga ou dor leve no check-in." },
-  { icon: Timer, tone: "lime", title: "8 prontos para simulado", detail: "Readiness acima de 80% e boa frequência." },
+  { icon: Timer, tone: "lime", title: "8 prontos para avaliação TAF", detail: "Readiness acima de 80% e boa frequência." },
   { icon: Activity, tone: "coral", title: "TAF em 21 dias", detail: "Criar bloco de polimento na próxima semana." },
 ] as const;
 
