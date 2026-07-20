@@ -26,7 +26,7 @@ async function bootstrap() {
     origin: config.getOrThrow<string>("WEB_ORIGIN").split(",").map((value) => value.trim()),
     credentials: true,
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Idempotency-Key", "X-CSRF-Token", "X-Request-Id"],
+    allowedHeaders: ["Content-Type", "Authorization", "Idempotency-Key", "X-CSRF-Token", "X-Request-Id", "X-LevelFit-Step-Up"],
   });
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
@@ -48,7 +48,7 @@ async function bootstrap() {
     SwaggerModule.setup("docs", app, () => SwaggerModule.createDocument(app, swaggerConfig));
   }
 
-  const port = config.get<number>("API_PORT", 3001);
+  const port = Number(process.env.PORT ?? config.get<number>("API_PORT", 3001));
   await app.listen(port, config.get<string>("API_HOST", "127.0.0.1"));
 }
 
