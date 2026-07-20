@@ -1,19 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { CheckCircle2, Plus, RefreshCw, ShieldCheck, Trash2 } from "lucide-react";
+import { CheckCircle2, Copy, Plus, RefreshCw, ShieldCheck, Trash2 } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
   getAdminOverview,
   getAdminProducts,
+  getAdminProfessionalInvites,
   getAdminProfessionals,
   getAdminRoles,
   getAdminSecurityEvents,
   getAdminSettings,
   getAdminUsers,
+  confirmOwnerStepUp,
+  createAdminProfessionalInvite,
   grantAdminRole,
+  hasFreshOwnerStepUp,
   revokeAdminRole,
   type AdminOverview,
+  type AdminProfessionalInvite,
   type AdminProductRow,
   type AdminProfessionalRow,
   type AdminRoleAssignment,
@@ -55,6 +60,29 @@ function MiniMetric({ label, value, detail }: { label: string; value: string; de
 
 function EmptyState({ text }: { text: string }) {
   return <div className="rounded-[8px] border border-[var(--border)] bg-[rgba(8,11,15,0.28)] p-5 text-sm font-bold text-[var(--text-muted)]">{text}</div>;
+}
+
+async function ensureOwnerStepUp(
+  setTone: (tone: "neutral" | "error" | "success") => void,
+  setMessage: (message: string | null) => void,
+) {
+  if (hasFreshOwnerStepUp()) return true;
+  const password = window.prompt("Confirme sua senha Owner para continuar. Esta confirmacao vale por 10 minutos.");
+  if (!password) {
+    setTone("neutral");
+    setMessage("Acao cancelada. Nenhuma alteracao foi feita.");
+    return false;
+  }
+  try {
+    await confirmOwnerStepUp(password);
+    setTone("success");
+    setMessage("Confirmacao de seguranca aprovada por 10 minutos.");
+    return true;
+  } catch {
+    setTone("error");
+    setMessage("Nao foi possivel confirmar sua senha Owner.");
+    return false;
+  }
 }
 
 export function AdminOverviewPage() {
@@ -185,12 +213,90 @@ export function AdminUsersPage() {
 
 export function AdminProfessionalsPage() {
   const [rows, setRows] = useState<AdminProfessionalRow[]>([]);
+  const [invites, setInvites] = useState<AdminProfessionalInvite[]>([]);
   const [message, setMessage] = useState<string | null>(null);
-  useEffect(() => { getAdminProfessionals().then((result) => setRows(result.data)).catch(() => setMessage("Nao foi possivel carregar profissionais.")); }, []);
+  const [tone, setTone] = useState<"neutral" | "error" | "success">("neutral");
+  const [savingInvite, setSavingInvite] = useState<"nutrition" | "run" | null>(null);
+
+  async function load() {
+    const [professionalsResult, invitesResult] = await Promise.all([getAdminProfessionals(), getAdminProfessionalInvites()]);
+    setRows(professionalsResult.data);
+    setInvites(invitesResult.data);
+  }
+
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      load().catch(() => {
+        setTone("error");
+        setMessage("Nao foi possivel carregar profissionais.");
+      });
+    }, 0);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  async function createInvite(kind: "nutrition" | "run") {
+    if (!(await ensureOwnerStepUp(setTone, setMessage))) return;
+    setSavingInvite(kind);
+    try {
+      const isRun = kind === "run";
+      await createAdminProfessionalInvite({
+        kind,
+        professionalKey: isRun ? "coach-taf" : "dr-rafael-martins",
+        professionalName: isRun ? "Coach TAF" : "Dr. Rafael Martins",
+        professionalRole: isRun ? "Run Pro" : "Nutri Pro",
+        headline: isRun ? "Rotina TAF conectada ao LevelFit" : "Plano nutricional conectado ao LevelFit",
+        planTitle: isRun ? "Acompanhamento Run Pro" : "Acompanhamento Nutri Pro",
+        defaultPermissions: isRun ? ["workouts", "run_checkins", "notes"] : ["nutrition", "hydration", "body_checkins", "notes"],
+      });
+      setTone("success");
+      setMessage("Convite criado com seguranca. Copie o codigo e envie ao usuario.");
+      await load();
+    } catch {
+      setTone("error");
+      setMessage("Nao foi possivel criar o convite agora.");
+    } finally {
+      setSavingInvite(null);
+    }
+  }
+
+  async function copyInvite(code: string | null) {
+    if (!code) return;
+    await navigator.clipboard?.writeText(code);
+    setTone("success");
+    setMessage("Codigo copiado.");
+  }
+
   return (
     <>
       <AdminHeader eyebrow="Profissionais" title="Nutri Pro e Run Pro" description="Acompanhe quais logins possuem papel profissional e quantos clientes/atletas estao ligados a cada produto." />
-      <Notice message={message} tone="error" />
+      <Notice message={message} tone={tone} />
+      <section className="app-card mb-5 p-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="eyebrow">Convites seguros</p>
+            <h2 className="mt-2 text-xl font-black text-white">Gerar codigo para conectar usuario</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">Cada codigo nasce pela API, expira em 30 dias e aparece na auditoria da Gestao.</p>
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button type="button" onClick={() => void createInvite("nutrition")} disabled={savingInvite !== null} className="secondary-button disabled:opacity-50"><Plus size={17} /> Nutri Pro</button>
+            <button type="button" onClick={() => void createInvite("run")} disabled={savingInvite !== null} className="primary-button disabled:opacity-50"><Plus size={17} /> Run Pro</button>
+          </div>
+        </div>
+        <div className="mt-5 grid gap-3 xl:grid-cols-2">
+          {invites.slice(0, 6).map((invite) => (
+            <article key={invite.id} className="flex flex-col gap-3 rounded-[8px] border border-[var(--border)] bg-[rgba(8,11,15,0.28)] p-4 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <p className="text-sm font-black text-white">{invite.professionalName} <span className="text-[var(--text-dim)]">- {invite.kind === "run" ? "Run Pro" : "Nutri Pro"}</span></p>
+                <p className="mt-1 text-xs font-bold text-[var(--text-muted)]">{invite.isActive ? `Expira em ${invite.expiresAt ? new Date(invite.expiresAt).toLocaleDateString("pt-BR") : "30 dias"}` : "Inativo ou expirado"}</p>
+              </div>
+              <button type="button" onClick={() => void copyInvite(invite.code)} disabled={!invite.code} className="secondary-button justify-center disabled:cursor-not-allowed disabled:opacity-50">
+                <Copy size={16} /> {invite.code ?? invite.codePreview}
+              </button>
+            </article>
+          ))}
+        </div>
+        {!invites.length && <div className="mt-5"><EmptyState text="Nenhum convite ativo criado pela Gestao ainda." /></div>}
+      </section>
       <div className="grid gap-4 xl:grid-cols-2">
         {rows.map((row) => (
           <section key={row.id} className="app-card p-5">
@@ -236,6 +342,7 @@ export function AdminRolesPage() {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (!(await ensureOwnerStepUp(setTone, setMessage))) return;
     setSaving(true);
     try {
       await grantAdminRole({ email, role });
@@ -252,6 +359,7 @@ export function AdminRolesPage() {
   }
 
   async function revoke(id: string) {
+    if (!(await ensureOwnerStepUp(setTone, setMessage))) return;
     setSaving(true);
     try {
       await revokeAdminRole(id);
@@ -329,6 +437,8 @@ export function AdminSettingsPage() {
           <MiniMetric label="OWNER_EMAILS" value={String(settings.ownerEmailsConfigured)} detail="emails configurados" />
           <MiniMetric label="NUTRITIONIST_EMAILS" value={String(settings.nutritionistEmailsConfigured)} detail="emails configurados" />
           <MiniMetric label="RUN_COACH_EMAILS" value={String(settings.runCoachEmailsConfigured)} detail="emails configurados" />
+          <MiniMetric label="OWNER_DB_ROLES" value={settings.ownerDbRolesEnabled ? "ativo" : "bloqueado"} detail="Owner manual via banco" />
+          <MiniMetric label="OWNER_GRANTS" value={settings.ownerRoleGrantsEnabled ? "ativo" : "bloqueado"} detail="Concessao manual de Owner" />
           <MiniMetric label="NODE_ENV" value={settings.nodeEnv} detail="ambiente da API" />
           <MiniMetric label="WEB_ORIGIN" value={settings.webOrigin ? "definido" : "vazio"} detail="origem web permitida" />
         </div>
@@ -350,11 +460,15 @@ function securityLabel(action: string) {
   return {
     professional_invite_previewed: "Codigo verificado",
     professional_invite_preview_failed: "Codigo recusado",
+    professional_invite_created: "Convite criado",
     professional_connection_accepted: "Convite aceito",
     professional_permissions_updated: "Permissoes alteradas",
     professional_connection_revoked: "Conexao revogada",
+    professional_touch_sent: "Toque enviado",
     admin_role_granted: "Papel concedido",
     admin_role_revoked: "Papel revogado",
+    owner_step_up_success: "Owner confirmado",
+    owner_step_up_failed: "Owner recusado",
   }[action] ?? action;
 }
 

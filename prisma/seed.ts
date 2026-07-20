@@ -249,7 +249,8 @@ async function main() {
     });
   }
 
-  const professionalInvites = [
+  if (process.env.NODE_ENV !== "production") {
+    const professionalInvites = [
     {
       code: "LF-NUTRI-382",
       kind: "nutrition" as const,
@@ -271,12 +272,15 @@ async function main() {
       defaultPermissions: ["workouts", "run_checkins", "body_checkins"],
     },
   ];
-  for (const invite of professionalInvites) {
+    for (const invite of professionalInvites) {
     await prisma.professionalInvite.upsert({
       where: { code: invite.code },
       create: invite,
       update: { ...invite, isActive: true, deletedAt: null },
     });
+    }
+  } else {
+    console.log("Seed de convites demo ignorado em producao.");
   }
 }
 

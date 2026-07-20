@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Req, UseGuards } from "@nestjs/common";
 import type { Request } from "express";
 import type { AuthUser } from "../../common/auth-user";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
+import { CreateProfessionalInviteDto, GrantRoleDto } from "./admin.dto";
 import { AdminService } from "./admin.service";
 import { OwnerGuard } from "./owner.guard";
+import { OwnerStepUpGuard } from "./owner-step-up.guard";
 
 @Controller("admin")
 @UseGuards(JwtAuthGuard, OwnerGuard)
@@ -30,18 +32,31 @@ export class AdminController {
     return this.admin.professionals();
   }
 
+  @Get("professional-invites")
+  professionalInvites() {
+    return this.admin.professionalInvites();
+  }
+
+  @Post("professional-invites")
+  @UseGuards(OwnerStepUpGuard)
+  createProfessionalInvite(@Req() request: Request & { user: AuthUser }, @Body() body: CreateProfessionalInviteDto) {
+    return this.admin.createProfessionalInvite(request.user.userId, body);
+  }
+
   @Get("roles")
   roles() {
     return this.admin.roles();
   }
 
   @Post("roles")
-  grantRole(@Req() request: Request & { user: AuthUser }, @Body() body: { email?: string; role?: "OWNER" | "NUTRITIONIST" | "RUN_COACH" }) {
-    return this.admin.grantRole(request.user.userId, body.email ?? "", body.role ?? "NUTRITIONIST");
+  @UseGuards(OwnerStepUpGuard)
+  grantRole(@Req() request: Request & { user: AuthUser }, @Body() body: GrantRoleDto) {
+    return this.admin.grantRole(request.user.userId, body.email, body.role);
   }
 
   @Delete("roles/:id")
-  revokeRole(@Req() request: Request & { user: AuthUser }, @Param("id") id: string) {
+  @UseGuards(OwnerStepUpGuard)
+  revokeRole(@Req() request: Request & { user: AuthUser }, @Param("id", new ParseUUIDPipe({ version: "4" })) id: string) {
     return this.admin.revokeRole(request.user.userId, id);
   }
 

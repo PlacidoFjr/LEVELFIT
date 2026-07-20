@@ -38,6 +38,10 @@ services:
         sync: false
       - key: RUN_COACH_EMAILS
         sync: false
+      - key: OWNER_ROLE_GRANTS_ENABLED
+        value: "false"
+      - key: OWNER_DB_ROLES_ENABLED
+        value: "false"
       - key: FIREBASE_PROJECT_ID
         sync: false
       - key: FIREBASE_CLIENT_EMAIL

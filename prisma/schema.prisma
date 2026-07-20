@@ -125,6 +125,7 @@ enum NotificationType {
   weekly_summary
   security_alert
   reactivation
+  professional_message
 }
 
 enum NotificationChannel {

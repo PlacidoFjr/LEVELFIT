@@ -3,6 +3,7 @@ import { AuthModule } from "../auth/auth.module";
 import { AdminController } from "./admin.controller";
 import { AdminService } from "./admin.service";
 import { OwnerGuard } from "./owner.guard";
+import { OwnerStepUpGuard } from "./owner-step-up.guard";
 
-@Module({ imports: [AuthModule], controllers: [AdminController], providers: [AdminService, OwnerGuard] })
+@Module({ imports: [AuthModule], controllers: [AdminController], providers: [AdminService, OwnerGuard, OwnerStepUpGuard] })
 export class AdminModule {}

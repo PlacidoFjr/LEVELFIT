@@ -1,6 +1,40 @@
 "use client";
 
-import { apiRequest } from "@/lib/auth-client";
+import { apiRequest, getAuthenticatedUser } from "@/lib/auth-client";
+import { firebaseIdToken, signInFirebaseWithEmail } from "@/lib/firebase-client";
+
+let ownerStepUpToken: string | null = null;
+let ownerStepUpExpiresAt = 0;
+
+function ownerStepUpHeaders() {
+  if (!ownerStepUpToken || Date.now() >= ownerStepUpExpiresAt) return undefined;
+  return { "X-LevelFit-Step-Up": ownerStepUpToken };
+}
+
+export function hasFreshOwnerStepUp() {
+  return Boolean(ownerStepUpToken && Date.now() < ownerStepUpExpiresAt);
+}
+
+export async function confirmOwnerStepUp(password: string) {
+  const user = getAuthenticatedUser();
+  let firebaseToken: string | undefined;
+  if (user?.email) {
+    try {
+      const firebaseUser = await signInFirebaseWithEmail(user.email, password);
+      firebaseToken = await firebaseIdToken(firebaseUser);
+    } catch {
+      firebaseToken = undefined;
+    }
+  }
+
+  const result = await apiRequest<{ stepUpToken: string; expiresIn: number }>("/auth/step-up", {
+    method: "POST",
+    body: JSON.stringify(firebaseToken ? { firebaseIdToken: firebaseToken } : { password }),
+  });
+  ownerStepUpToken = result.stepUpToken;
+  ownerStepUpExpiresAt = Date.now() + Math.max(30, result.expiresIn - 15) * 1000;
+  return result;
+}
 
 export type Paginated<T> = {
   data: T[];
@@ -253,7 +287,6 @@ export type ProfessionalConnection = {
 };
 
 export type ProfessionalInvitePreview = {
-  code: string;
   kind: ProfessionalKind;
   professionalName: string;
   professionalRole: string;
@@ -276,6 +309,19 @@ export type AdminOverview = {
   checklist: Array<{ title: string; detail: string; done: boolean }>;
   meta: { generatedAt: string; source: "api" };
 };
+
+export type ProfessionalMessageRecipient = {
+  connectionId: string;
+  userId: string;
+  displayName: string;
+  email: string;
+  kind: ProfessionalKind;
+  permissions: string[];
+  planTitle: string;
+  acceptedAt: string;
+};
+
+export type ProfessionalMessageCategory = "reminder" | "checkin" | "plan_update" | "encouragement" | "appointment" | "free";
 
 export type AdminRoleName = "OWNER" | "NUTRITIONIST" | "RUN_COACH";
 
@@ -310,6 +356,22 @@ export type AdminProfessionalRow = AdminRoleAssignment & {
   connectedClients: number;
   professionalName: string;
   professionalRole: string;
+};
+
+export type AdminProfessionalInvite = {
+  id: string;
+  code: string | null;
+  codePreview: string;
+  kind: ProfessionalKind;
+  professionalKey: string;
+  professionalName: string;
+  professionalRole: string;
+  headline: string;
+  planTitle: string;
+  defaultPermissions: string[];
+  isActive: boolean;
+  expiresAt?: string | null;
+  createdAt: string;
 };
 
 export type AdminSecurityEvent = {
@@ -609,6 +671,25 @@ export function revokeProfessionalConnection(id: string) {
   return apiRequest<{ id: string; status: "revoked" }>(`/professional-connections/${id}`, { method: "DELETE" });
 }
 
+export function listProfessionalMessageRecipients(kind: ProfessionalKind) {
+  const params = new URLSearchParams({ kind });
+  return apiRequest<{ data: ProfessionalMessageRecipient[] }>(`/professional-connections/pro/recipients?${params.toString()}`);
+}
+
+export function sendProfessionalMessage(input: {
+  kind: ProfessionalKind;
+  targetUserId: string;
+  category: ProfessionalMessageCategory;
+  title: string;
+  body: string;
+  actionUrl?: string;
+}) {
+  return apiRequest<{ notification: NotificationItem }>("/professional-connections/pro/messages", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
 export function getAdminOverview() {
   return apiRequest<AdminOverview>("/admin/overview");
 }
@@ -625,6 +706,27 @@ export function getAdminProfessionals() {
   return apiRequest<{ data: AdminProfessionalRow[] }>("/admin/professionals");
 }
 
+export function getAdminProfessionalInvites() {
+  return apiRequest<{ data: AdminProfessionalInvite[] }>("/admin/professional-invites");
+}
+
+export function createAdminProfessionalInvite(input: {
+  kind: ProfessionalKind;
+  professionalKey: string;
+  professionalName: string;
+  professionalRole: string;
+  headline: string;
+  planTitle: string;
+  defaultPermissions?: string[];
+  expiresAt?: string;
+}) {
+  return apiRequest<{ invite: AdminProfessionalInvite }>("/admin/professional-invites", {
+    method: "POST",
+    headers: ownerStepUpHeaders(),
+    body: JSON.stringify(input),
+  });
+}
+
 export function getAdminRoles() {
   return apiRequest<{ availableRoles: Array<{ role: AdminRoleName; label: string; product: string }>; data: AdminRoleAssignment[] }>("/admin/roles");
 }
@@ -632,12 +734,13 @@ export function getAdminRoles() {
 export function grantAdminRole(input: { email: string; role: AdminRoleName }) {
   return apiRequest<{ assignment: unknown }>("/admin/roles", {
     method: "POST",
+    headers: ownerStepUpHeaders(),
     body: JSON.stringify(input),
   });
 }
 
 export function revokeAdminRole(id: string) {
-  return apiRequest<{ id: string; revokedAt: string | null }>(`/admin/roles/${id}`, { method: "DELETE" });
+  return apiRequest<{ id: string; revokedAt: string | null }>(`/admin/roles/${id}`, { method: "DELETE", headers: ownerStepUpHeaders() });
 }
 
 export function getAdminSettings() {
@@ -645,6 +748,8 @@ export function getAdminSettings() {
     ownerEmailsConfigured: number;
     nutritionistEmailsConfigured: number;
     runCoachEmailsConfigured: number;
+    ownerDbRolesEnabled: boolean;
+    ownerRoleGrantsEnabled: boolean;
     nodeEnv: string;
     webOrigin: string | null;
   }>("/admin/settings");

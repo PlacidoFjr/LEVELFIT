@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } f
 import type { AuthUser } from "../../common/auth-user";
 import { CurrentUser } from "../../common/current-user.decorator";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
-import { AcceptProfessionalInviteDto, UpdateProfessionalPermissionsDto } from "./professionals.dto";
+import { AcceptProfessionalInviteDto, ProfessionalRecipientsQueryDto, SendProfessionalMessageDto, UpdateProfessionalPermissionsDto } from "./professionals.dto";
 import { ProfessionalsService } from "./professionals.service";
 
 @Controller("professional-connections")
@@ -33,5 +33,15 @@ export class ProfessionalsController {
   @Delete(":id")
   revoke(@CurrentUser() user: AuthUser, @Param("id") id: string) {
     return this.professionals.revoke(user.userId, id);
+  }
+
+  @Get("pro/recipients")
+  recipients(@CurrentUser() user: AuthUser, @Query() query: ProfessionalRecipientsQueryDto) {
+    return this.professionals.recipients(user, query.kind);
+  }
+
+  @Post("pro/messages")
+  sendMessage(@CurrentUser() user: AuthUser, @Body() dto: SendProfessionalMessageDto) {
+    return this.professionals.sendMessage(user, dto);
   }
 }

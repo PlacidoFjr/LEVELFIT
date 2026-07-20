@@ -104,3 +104,15 @@ export class LogoutDto {
   @IsBoolean()
   allDevices?: boolean;
 }
+
+export class StepUpDto {
+  @IsOptional()
+  @IsString()
+  @MaxLength(128)
+  password?: string;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(20)
+  firebaseIdToken?: string;
+}

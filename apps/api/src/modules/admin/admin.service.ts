@@ -1,7 +1,12 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { Prisma } from "@prisma/client";
+import type { ProfessionalInvite } from "@prisma/client";
+import { randomBytes } from "node:crypto";
 import { splitEmails, type AccessRole } from "../../common/access-profile";
+import { defaultProfessionalPermissions, sanitizeProfessionalPermissions } from "../../common/professional-permissions";
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
+import type { CreateProfessionalInviteDto } from "./admin.dto";
 
 type AdminRole = Exclude<AccessRole, "USER">;
 
@@ -25,6 +30,37 @@ function productFromRole(role: AdminRole) {
   if (role === "NUTRITIONIST") return "nutri";
   if (role === "RUN_COACH") return "run";
   return "owner";
+}
+
+function generateInviteCode(kind: "nutrition" | "run") {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const bytes = randomBytes(12);
+  const token = Array.from(bytes, (byte) => alphabet[byte % alphabet.length]).join("");
+  return `LF-${kind === "nutrition" ? "NUTRI" : "RUN"}-${token}`;
+}
+
+function defaultInviteExpiry() {
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 30);
+  return expiresAt;
+}
+
+function serializeProfessionalInvite(invite: ProfessionalInvite) {
+  return {
+    id: invite.id,
+    code: invite.isActive ? invite.code : null,
+    codePreview: `${invite.code.slice(0, 9)}...`,
+    kind: invite.kind,
+    professionalKey: invite.professionalKey,
+    professionalName: invite.professionalName,
+    professionalRole: invite.professionalRole,
+    headline: invite.headline,
+    planTitle: invite.planTitle,
+    defaultPermissions: invite.defaultPermissions,
+    isActive: invite.isActive && (!invite.expiresAt || invite.expiresAt > new Date()),
+    expiresAt: invite.expiresAt,
+    createdAt: invite.createdAt,
+  };
 }
 
 @Injectable()
@@ -162,6 +198,72 @@ export class AdminService {
     };
   }
 
+  async professionalInvites() {
+    const invites = await this.prisma.professionalInvite.findMany({
+      where: { deletedAt: null },
+      orderBy: { createdAt: "desc" },
+      take: 80,
+    });
+
+    return {
+      data: invites.map(serializeProfessionalInvite),
+    };
+  }
+
+  async createProfessionalInvite(actorUserId: string, dto: CreateProfessionalInviteDto) {
+    const kind = dto.kind;
+    const professionalKey = dto.professionalKey.trim().toLowerCase().replace(/[^a-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
+    if (!professionalKey) throw new BadRequestException({ code: "PROFESSIONAL_KEY_REQUIRED", message: "Informe uma chave valida para o profissional." });
+
+    const expiresAt = dto.expiresAt ? new Date(dto.expiresAt) : defaultInviteExpiry();
+    if (Number.isNaN(expiresAt.getTime()) || expiresAt <= new Date()) {
+      throw new BadRequestException({ code: "INVALID_INVITE_EXPIRY", message: "A expiracao precisa ser uma data futura." });
+    }
+
+    const defaultPermissions = sanitizeProfessionalPermissions(dto.defaultPermissions, defaultProfessionalPermissions(kind));
+    if (!defaultPermissions.length) throw new BadRequestException({ code: "PERMISSIONS_REQUIRED", message: "Escolha pelo menos uma permissao valida." });
+
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      const code = generateInviteCode(kind);
+      try {
+        const invite = await this.prisma.$transaction(async (tx) => {
+          const created = await tx.professionalInvite.create({
+            data: {
+              code,
+              kind,
+              professionalKey,
+              professionalName: dto.professionalName.trim(),
+              professionalRole: dto.professionalRole.trim(),
+              headline: dto.headline.trim(),
+              planTitle: dto.planTitle.trim(),
+              defaultPermissions,
+              expiresAt,
+            },
+          });
+
+          await tx.auditLog.create({
+            data: {
+              actorUserId,
+              action: "professional_invite_created",
+              entityType: "professional_invite",
+              entityId: created.id,
+              metadata: { kind, professionalKey, codePrefix: created.code.slice(0, 9), expiresAt: expiresAt.toISOString() },
+            },
+          });
+
+          return created;
+        });
+
+        return { invite: serializeProfessionalInvite(invite) };
+      } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") continue;
+        throw error;
+      }
+    }
+
+    throw new BadRequestException({ code: "INVITE_CODE_COLLISION", message: "Nao foi possivel gerar um codigo unico agora. Tente novamente." });
+  }
+
   async roles() {
     const manual = await this.prisma.userRoleAssignment.findMany({
       where: { revokedAt: null },
@@ -195,6 +297,12 @@ export class AdminService {
 
   async grantRole(actorUserId: string, email: string, role: AdminRole) {
     if (!adminRoles.includes(role)) throw new BadRequestException({ code: "INVALID_ROLE", message: "Papel invalido." });
+    if (role === "OWNER" && this.config.get<string>("OWNER_ROLE_GRANTS_ENABLED") !== "true") {
+      throw new BadRequestException({
+        code: "OWNER_ROLE_GRANTS_DISABLED",
+        message: "Concessao manual de Owner esta bloqueada. Use OWNER_EMAILS no ambiente ou habilite OWNER_ROLE_GRANTS_ENABLED apenas durante manutencao controlada.",
+      });
+    }
     const normalizedEmail = email.trim().toLowerCase();
     const user = await this.prisma.user.findFirst({ where: { email: normalizedEmail, deletedAt: null }, select: { id: true, email: true } });
     if (!user) throw new NotFoundException({ code: "USER_NOT_FOUND", message: "Usuario nao encontrado com este e-mail." });
@@ -225,6 +333,8 @@ export class AdminService {
       ownerEmailsConfigured: splitEmails(this.config.get<string>("OWNER_EMAILS")).length,
       nutritionistEmailsConfigured: splitEmails(this.config.get<string>("NUTRITIONIST_EMAILS")).length,
       runCoachEmailsConfigured: splitEmails(this.config.get<string>("RUN_COACH_EMAILS")).length,
+      ownerDbRolesEnabled: this.config.get<string>("OWNER_DB_ROLES_ENABLED") === "true",
+      ownerRoleGrantsEnabled: this.config.get<string>("OWNER_ROLE_GRANTS_ENABLED") === "true",
       nodeEnv: this.config.get<string>("NODE_ENV") ?? "development",
       webOrigin: this.config.get<string>("WEB_ORIGIN") ?? null,
     };
@@ -234,11 +344,15 @@ export class AdminService {
     const actions = [
       "professional_invite_previewed",
       "professional_invite_preview_failed",
+      "professional_invite_created",
       "professional_connection_accepted",
       "professional_permissions_updated",
       "professional_connection_revoked",
+      "professional_touch_sent",
       "admin_role_granted",
       "admin_role_revoked",
+      "owner_step_up_success",
+      "owner_step_up_failed",
     ];
     const events = await this.prisma.auditLog.findMany({
       where: { action: { in: actions } },

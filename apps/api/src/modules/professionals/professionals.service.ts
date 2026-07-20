@@ -1,29 +1,32 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { sanitizeProfessionalPermissions } from "../../common/professional-permissions";
+import { buildAccessProfile, type AccessRole } from "../../common/access-profile";
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
-import type { AcceptProfessionalInviteDto, UpdateProfessionalPermissionsDto } from "./professionals.dto";
-
-const allowedPermissions = new Set([
-  "nutrition",
-  "hydration",
-  "body_checkins",
-  "progress_photos",
-  "workouts",
-  "run_checkins",
-  "notes",
-]);
+import type { AcceptProfessionalInviteDto, SendProfessionalMessageDto, UpdateProfessionalPermissionsDto } from "./professionals.dto";
+import type { AuthUser } from "../../common/auth-user";
 
 function normalizeCode(code: string) {
   return code.trim().toUpperCase();
 }
 
-function sanitizePermissions(permissions: string[] | undefined, fallback: string[]) {
-  const source = permissions?.length ? permissions : fallback;
-  return Array.from(new Set(source.map((item) => item.trim()).filter((item) => allowedPermissions.has(item))));
-}
-
 @Injectable()
 export class ProfessionalsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly config: ConfigService) {}
+
+  private async accessProfile(auth: AuthUser) {
+    const assignments = await this.prisma.userRoleAssignment.findMany({
+      where: { userId: auth.userId, revokedAt: null },
+      select: { role: true },
+    });
+    return buildAccessProfile(this.config, auth.email, assignments.map((item) => item.role as AccessRole));
+  }
+
+  private async assertProfessionalAccess(auth: AuthUser, kind: "nutrition" | "run") {
+    const profile = await this.accessProfile(auth);
+    const allowed = profile.roles.includes("OWNER") || (kind === "nutrition" ? profile.roles.includes("NUTRITIONIST") : profile.roles.includes("RUN_COACH"));
+    if (!allowed) throw new ForbiddenException({ code: "PROFESSIONAL_ACCESS_REQUIRED", message: "Acesso profissional necessario para enviar este toque." });
+  }
 
   async list(userId: string) {
     const connections = await this.prisma.professionalConnection.findMany({
@@ -63,7 +66,6 @@ export class ProfessionalsService {
     });
 
     return {
-      code: invite.code,
       kind: invite.kind,
       professionalName: invite.professionalName,
       professionalRole: invite.professionalRole,
@@ -79,7 +81,7 @@ export class ProfessionalsService {
       throw new NotFoundException({ code: "INVITE_NOT_FOUND", message: "Convite nao encontrado ou expirado." });
     }
 
-    const permissions = sanitizePermissions(dto.permissions, invite.defaultPermissions);
+    const permissions = sanitizeProfessionalPermissions(dto.permissions, invite.defaultPermissions);
     if (!permissions.length) throw new BadRequestException({ code: "PERMISSIONS_REQUIRED", message: "Escolha pelo menos uma permissao." });
     const nextEventLabel = invite.kind === "nutrition" ? "Proximo retorno a combinar" : "Proxima sessao TAF a combinar";
 
@@ -129,7 +131,7 @@ export class ProfessionalsService {
   }
 
   async updatePermissions(userId: string, connectionId: string, dto: UpdateProfessionalPermissionsDto) {
-    const permissions = sanitizePermissions(dto.permissions, []);
+    const permissions = sanitizeProfessionalPermissions(dto.permissions, []);
     if (!permissions.length) throw new BadRequestException({ code: "PERMISSIONS_REQUIRED", message: "Escolha pelo menos uma permissao." });
 
     const existing = await this.prisma.professionalConnection.findFirst({ where: { id: connectionId, userId, deletedAt: null } });
@@ -173,5 +175,76 @@ export class ProfessionalsService {
     ]);
 
     return { id: existing.id, status: "revoked" };
+  }
+
+  async recipients(auth: AuthUser, kind: "nutrition" | "run") {
+    await this.assertProfessionalAccess(auth, kind);
+    const connections = await this.prisma.professionalConnection.findMany({
+      where: { kind, status: "active", deletedAt: null, user: { deletedAt: null, status: "active" } },
+      orderBy: { acceptedAt: "desc" },
+      take: 100,
+      include: { user: { select: { id: true, email: true, profile: { select: { displayName: true } } } } },
+    });
+
+    return {
+      data: connections.map((connection) => ({
+        connectionId: connection.id,
+        userId: connection.userId,
+        displayName: connection.user.profile?.displayName ?? connection.user.email.split("@")[0],
+        email: connection.user.email,
+        kind: connection.kind,
+        permissions: connection.permissions,
+        planTitle: connection.planTitle,
+        acceptedAt: connection.acceptedAt,
+      })),
+    };
+  }
+
+  async sendMessage(auth: AuthUser, dto: SendProfessionalMessageDto) {
+    await this.assertProfessionalAccess(auth, dto.kind);
+    const connection = await this.prisma.professionalConnection.findFirst({
+      where: { userId: dto.targetUserId, kind: dto.kind, status: "active", deletedAt: null, user: { deletedAt: null, status: "active" } },
+      select: { id: true, userId: true, kind: true, professionalName: true, professionalKey: true },
+    });
+    if (!connection) throw new NotFoundException({ code: "PROFESSIONAL_CONNECTION_NOT_FOUND", message: "Usuario conectado nao encontrado para este produto." });
+
+    const title = dto.title.trim();
+    const body = dto.body.trim();
+    if (!title || !body) throw new BadRequestException({ code: "MESSAGE_REQUIRED", message: "Titulo e mensagem sao obrigatorios." });
+    const actionUrl = dto.actionUrl?.startsWith("/") ? dto.actionUrl : dto.kind === "run" ? "/workouts" : "/nutrition";
+
+    const notification = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.notification.create({
+        data: {
+          userId: connection.userId,
+          type: "professional_message",
+          title,
+          body,
+          actionUrl,
+          metadata: {
+            origin: dto.kind === "run" ? "Run Pro" : "Nutri Pro",
+            kind: dto.kind,
+            category: dto.category,
+            professionalName: connection.professionalName,
+            professionalKey: connection.professionalKey,
+          },
+        },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          actorUserId: auth.userId,
+          targetUserId: connection.userId,
+          action: "professional_touch_sent",
+          entityType: "notification",
+          entityId: created.id,
+          metadata: { kind: dto.kind, category: dto.category, connectionId: connection.id },
+        },
+      });
+
+      return created;
+    });
+
+    return { notification };
   }
 }

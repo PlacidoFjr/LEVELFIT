@@ -14,7 +14,7 @@ export class OwnerGuard implements CanActivate {
     const userEmail = request.user?.email?.toLowerCase();
 
     if (isOwnerEmail(this.config, userEmail)) return true;
-    if (request.user?.userId) {
+    if (this.config.get<string>("OWNER_DB_ROLES_ENABLED") === "true" && request.user?.userId) {
       const role = await this.prisma.userRoleAssignment.findFirst({
         where: { userId: request.user.userId, role: "OWNER", revokedAt: null },
         select: { id: true },

@@ -8,7 +8,7 @@ import { hashContext, hashToken, randomToken } from "../../common/crypto";
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
 import type { AuthUser } from "../../common/auth-user";
 import { buildAccessProfile, type AccessRole } from "../../common/access-profile";
-import type { FirebaseLoginDto, LoginDto, RegisterDto, ResetPasswordDto } from "./auth.dto";
+import type { FirebaseLoginDto, LoginDto, RegisterDto, ResetPasswordDto, StepUpDto } from "./auth.dto";
 import { FirebaseAdminService } from "./firebase-admin.service";
 
 type RequestContext = { ip?: string; userAgent?: string };
@@ -219,6 +219,55 @@ export class AuthService {
       await this.prisma.passwordResetToken.create({ data: { userId: user.id, tokenHash: hashToken(token, this.tokenSecret), expiresAt: new Date(Date.now() + 30 * 60 * 1000) } });
     }
     return { accepted: true, ...(!this.isProduction && devResetToken ? { devResetToken } : {}) };
+  }
+
+  async stepUp(auth: AuthUser, dto: StepUpDto, context: RequestContext) {
+    const user = await this.prisma.user.findFirst({
+      where: { id: auth.userId, email: auth.email, deletedAt: null, status: "active" },
+      select: { id: true, email: true, passwordHash: true },
+    });
+    let valid = false;
+
+    if (user && dto.firebaseIdToken) {
+      try {
+        const decoded = await this.firebase.verifyIdToken(dto.firebaseIdToken);
+        valid = decoded.email?.trim().toLowerCase() === user.email && Boolean(decoded.email_verified);
+      } catch {
+        valid = false;
+      }
+    }
+
+    if (!valid && user?.passwordHash && dto.password) {
+      valid = await argon2.verify(user.passwordHash, dto.password);
+    }
+
+    if (!user || !valid) {
+      await this.prisma.auditLog.create({
+        data: {
+          actorUserId: auth.userId,
+          action: "owner_step_up_failed",
+          entityType: "owner_step_up",
+          ipHash: hashContext(context.ip, this.tokenSecret),
+          userAgentHash: hashContext(context.userAgent, this.tokenSecret),
+        },
+      });
+      throw new UnauthorizedException({ code: "STEP_UP_FAILED", message: "Confirmacao de seguranca invalida." });
+    }
+
+    await this.prisma.auditLog.create({
+      data: {
+        actorUserId: auth.userId,
+        action: "owner_step_up_success",
+        entityType: "owner_step_up",
+        ipHash: hashContext(context.ip, this.tokenSecret),
+        userAgentHash: hashContext(context.userAgent, this.tokenSecret),
+      },
+    });
+
+    return {
+      stepUpToken: await this.jwt.signAsync({ sub: auth.userId, sid: auth.sessionId, scope: "owner:critical", typ: "step_up" }, { expiresIn: "10m" }),
+      expiresIn: 600,
+    };
   }
 
   async resetPassword(dto: ResetPasswordDto) {

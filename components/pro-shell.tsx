@@ -10,6 +10,7 @@ import {
   ChevronRight,
   ClipboardList,
   LayoutDashboard,
+  MessageSquareText,
   LockKeyhole,
   Menu,
   Route,
@@ -29,6 +30,7 @@ import type { AuthUser } from "@/lib/auth-client";
 const nutriNav = [
   { href: "/pro", label: "Dashboard", icon: LayoutDashboard },
   { href: "/pro/clients", label: "Clientes", icon: UsersRound },
+  { href: "/pro/messages", label: "Toques", icon: MessageSquareText },
   { href: "/pro/agenda", label: "Agenda", icon: CalendarDays },
   { href: "/pro/plans", label: "Planos", icon: ClipboardList },
   { href: "/pro/checkins", label: "Check-ins", icon: CheckSquare },
@@ -38,6 +40,7 @@ const nutriNav = [
 const runNav = [
   { href: "/pro/run", label: "Dashboard Run", icon: Route },
   { href: "/pro/run/athletes", label: "Atletas", icon: UsersRound },
+  { href: "/pro/run/messages", label: "Toques", icon: MessageSquareText },
   { href: "/pro/run/agenda", label: "Agenda Run", icon: CalendarDays },
   { href: "/pro/run/plans", label: "Treinos", icon: ClipboardList },
 ];

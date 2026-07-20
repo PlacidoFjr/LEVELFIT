@@ -32,6 +32,5 @@ if (!migrated) {
   process.exit(1);
 }
 
-console.log("\n[db:deploy] Rodando seed idempotente...");
-const seed = run("npm", ["run", "db:seed"]);
-process.exit(seed.status ?? 1);
+console.log("\n[db:deploy] Migrations aplicadas. Seeds devem ser executados manualmente e fora do deploy de producao.");
+process.exit(0);

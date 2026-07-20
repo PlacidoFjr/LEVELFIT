@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { createFirebaseUser, firebaseIdToken, sendFirebasePasswordReset, signInFirebaseWithEmail, storedFirebaseIdToken } from "./firebase-client";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001/v1";
-const ACCESS_TOKEN_KEY = "levelfit.accessToken";
-const CSRF_TOKEN_KEY = "levelfit.csrfToken";
-const USER_KEY = "levelfit.user";
+const LEGACY_ACCESS_TOKEN_KEY = "levelfit.accessToken";
+const LEGACY_CSRF_TOKEN_KEY = "levelfit.csrfToken";
+const LEGACY_USER_KEY = "levelfit.user";
 const REQUEST_TIMEOUT_MS = 120000;
 
 let memoryAccessToken: string | null = null;
@@ -110,32 +110,8 @@ async function warmApiOnce() {
 }
 
 function readStoredUser(): AuthUser | null {
-  if (memoryUser) return memoryUser;
-  const raw = readStorage(USER_KEY);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as AuthUser;
-  } catch {
-    return null;
-  }
-}
-
-function readStorage(key: string) {
-  if (typeof window === "undefined") return null;
-  try {
-    return window.localStorage.getItem(key);
-  } catch {
-    return null;
-  }
-}
-
-function writeStorage(key: string, value: string) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(key, value);
-  } catch {
-    // Browsers can block storage in strict privacy modes. The in-memory copy keeps the current tab usable.
-  }
+  clearLegacySessionStorage();
+  return memoryUser;
 }
 
 function removeStorage(key: string) {
@@ -145,6 +121,12 @@ function removeStorage(key: string) {
   } catch {
     // Ignore storage cleanup failures; memory is cleared separately.
   }
+}
+
+function clearLegacySessionStorage() {
+  removeStorage(LEGACY_ACCESS_TOKEN_KEY);
+  removeStorage(LEGACY_CSRF_TOKEN_KEY);
+  removeStorage(LEGACY_USER_KEY);
 }
 
 function readCookie(name: string) {
@@ -157,11 +139,15 @@ function readCookie(name: string) {
 
 function saveUser(user: AuthUser) {
   memoryUser = user;
-  writeStorage(USER_KEY, JSON.stringify(user));
+  clearLegacySessionStorage();
 }
 
 export function getAccessToken() {
-  return memoryAccessToken ?? readStorage(ACCESS_TOKEN_KEY);
+  return memoryAccessToken;
+}
+
+export function getAuthenticatedUser() {
+  return memoryUser;
 }
 
 export function getDefaultRoute(user?: AuthUser | null) {
@@ -176,8 +162,7 @@ export function getLoginRedirectRoute(user?: AuthUser | null) {
 function saveSession(response: LoginResponse) {
   memoryAccessToken = response.accessToken;
   memoryCsrfToken = response.csrfToken;
-  writeStorage(ACCESS_TOKEN_KEY, response.accessToken);
-  writeStorage(CSRF_TOKEN_KEY, response.csrfToken);
+  clearLegacySessionStorage();
   saveUser(response.user);
   window.dispatchEvent(new Event("levelfit:auth"));
 }
@@ -204,9 +189,7 @@ export function clearSession() {
   memoryAccessToken = null;
   memoryCsrfToken = null;
   memoryUser = null;
-  removeStorage(ACCESS_TOKEN_KEY);
-  removeStorage(CSRF_TOKEN_KEY);
-  removeStorage(USER_KEY);
+  clearLegacySessionStorage();
   window.dispatchEvent(new Event("levelfit:auth"));
 }
 
@@ -349,7 +332,8 @@ export async function refreshSession() {
 
 async function refreshSessionOnce() {
   if (typeof window === "undefined") return false;
-  const csrfToken = memoryCsrfToken ?? readStorage(CSRF_TOKEN_KEY) ?? readCookie("lf_csrf");
+  clearLegacySessionStorage();
+  const csrfToken = memoryCsrfToken ?? readCookie("lf_csrf");
   if (!csrfToken) return false;
 
   try {
@@ -359,8 +343,7 @@ async function refreshSessionOnce() {
     }, false);
     memoryAccessToken = response.accessToken;
     memoryCsrfToken = response.csrfToken;
-    writeStorage(ACCESS_TOKEN_KEY, response.accessToken);
-    writeStorage(CSRF_TOKEN_KEY, response.csrfToken);
+    clearLegacySessionStorage();
     return true;
   } catch {
     clearSession();

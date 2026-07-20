@@ -4,7 +4,7 @@ import type { Request, Response } from "express";
 import { CurrentUser } from "../../common/current-user.decorator";
 import type { AuthUser } from "../../common/auth-user";
 import { AuthService } from "./auth.service";
-import { EmailDto, FirebaseLoginDto, LoginDto, LogoutDto, RegisterDto, ResetPasswordDto, TokenDto } from "./auth.dto";
+import { EmailDto, FirebaseLoginDto, LoginDto, LogoutDto, RegisterDto, ResetPasswordDto, StepUpDto, TokenDto } from "./auth.dto";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 
 const isProduction = process.env.NODE_ENV === "production";
@@ -70,6 +70,14 @@ export class AuthController {
     response.clearCookie("lf_refresh", { path: "/v1/auth" });
     response.clearCookie("lf_csrf", { path: "/v1/auth" });
     response.clearCookie("lf_csrf", { path: "/" });
+  }
+
+  @Post("step-up")
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 5, ttl: minutes(15) } })
+  stepUp(@CurrentUser() user: AuthUser, @Body() dto: StepUpDto, @Ip() ip: string, @Req() request: Request) {
+    return this.auth.stepUp(user, dto, { ip, userAgent: request.header("user-agent") });
   }
 
   @Post("verify-email")

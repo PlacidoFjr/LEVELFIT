@@ -201,7 +201,7 @@ export function ProfessionalsPage() {
     if (!preview) return;
     setNotice(null);
     try {
-      await acceptProfessionalInvite(preview.code, permissions);
+      await acceptProfessionalInvite(code, permissions);
       setNotice({ tone: "success", message: `${preview.professionalName} conectado ao seu LevelFit.` });
       setCode("");
       setPreview(null);
