@@ -196,6 +196,9 @@ export type NotificationPreferences = {
   waterRemindersEnabled: boolean;
   workoutRemindersEnabled: boolean;
   nutritionRemindersEnabled: boolean;
+  professionalMessagesEnabled: boolean;
+  nutritionProMessagesEnabled: boolean;
+  runProMessagesEnabled: boolean;
   streakRemindersEnabled: boolean;
   weeklySummaryEnabled: boolean;
   preferredWorkoutTime?: string | null;
@@ -205,6 +208,14 @@ export type NotificationPreferences = {
   quietHoursEnd?: string | null;
   silentDays: number[];
   timezone: string;
+};
+
+export type PushSubscriptionInput = {
+  endpoint: string;
+  keys: {
+    p256dh: string;
+    auth: string;
+  };
 };
 
 export type SecurityEvent = {
@@ -322,6 +333,20 @@ export type ProfessionalMessageRecipient = {
 };
 
 export type ProfessionalMessageCategory = "reminder" | "checkin" | "plan_update" | "encouragement" | "appointment" | "free";
+
+export type ProfessionalMessageHistoryItem = {
+  id: string;
+  notificationId?: string | null;
+  kind: ProfessionalKind;
+  category: ProfessionalMessageCategory | string;
+  title: string;
+  body: string;
+  actionUrl?: string | null;
+  targetUserId?: string | null;
+  targetName: string;
+  targetEmail?: string | null;
+  createdAt: string;
+};
 
 export type AdminRoleName = "OWNER" | "NUTRITIONIST" | "RUN_COACH";
 
@@ -610,6 +635,20 @@ export function updateNotificationPreferences(input: Partial<NotificationPrefere
   });
 }
 
+export function subscribePush(input: PushSubscriptionInput) {
+  return apiRequest<{ id: string; createdAt: string; revokedAt?: string | null }>("/push/subscribe", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export function unsubscribePush(endpoint: string) {
+  return apiRequest<{ revoked: boolean }>("/push/unsubscribe", {
+    method: "DELETE",
+    body: JSON.stringify({ endpoint }),
+  });
+}
+
 export function updateMe(input: {
   displayName?: string;
   gender?: "male_cis" | "female_cis" | "male_trans" | "female_trans" | null;
@@ -676,6 +715,11 @@ export function listProfessionalMessageRecipients(kind: ProfessionalKind) {
   return apiRequest<{ data: ProfessionalMessageRecipient[] }>(`/professional-connections/pro/recipients?${params.toString()}`);
 }
 
+export function listProfessionalMessageHistory(kind: ProfessionalKind) {
+  const params = new URLSearchParams({ kind });
+  return apiRequest<{ data: ProfessionalMessageHistoryItem[] }>(`/professional-connections/pro/messages?${params.toString()}`);
+}
+
 export function sendProfessionalMessage(input: {
   kind: ProfessionalKind;
   targetUserId: string;
@@ -724,6 +768,13 @@ export function createAdminProfessionalInvite(input: {
     method: "POST",
     headers: ownerStepUpHeaders(),
     body: JSON.stringify(input),
+  });
+}
+
+export function revokeAdminProfessionalInvite(id: string) {
+  return apiRequest<{ invite: AdminProfessionalInvite }>(`/admin/professional-invites/${id}`, {
+    method: "DELETE",
+    headers: ownerStepUpHeaders(),
   });
 }
 

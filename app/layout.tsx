@@ -3,7 +3,9 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "LevelFit",
-  description: "Sua evolução, um passo de cada vez.",
+  description: "Sua evolucao, um passo de cada vez.",
+  manifest: "/manifest.webmanifest",
+  icons: { icon: "/assets/pulse-evolved.png", apple: "/assets/pulse-evolved.png" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

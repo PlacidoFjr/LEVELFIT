@@ -43,6 +43,12 @@ export class AdminController {
     return this.admin.createProfessionalInvite(request.user.userId, body);
   }
 
+  @Delete("professional-invites/:id")
+  @UseGuards(OwnerStepUpGuard)
+  revokeProfessionalInvite(@Req() request: Request & { user: AuthUser }, @Param("id", new ParseUUIDPipe({ version: "4" })) id: string) {
+    return this.admin.revokeProfessionalInvite(request.user.userId, id);
+  }
+
   @Get("roles")
   roles() {
     return this.admin.roles();

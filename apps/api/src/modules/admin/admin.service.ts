@@ -264,6 +264,31 @@ export class AdminService {
     throw new BadRequestException({ code: "INVITE_CODE_COLLISION", message: "Nao foi possivel gerar um codigo unico agora. Tente novamente." });
   }
 
+  async revokeProfessionalInvite(actorUserId: string, id: string) {
+    const invite = await this.prisma.professionalInvite.findFirst({ where: { id, deletedAt: null } });
+    if (!invite) throw new NotFoundException({ code: "PROFESSIONAL_INVITE_NOT_FOUND", message: "Convite profissional nao encontrado." });
+    if (!invite.isActive) return { invite: serializeProfessionalInvite(invite) };
+
+    const revoked = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.professionalInvite.update({
+        where: { id },
+        data: { isActive: false, expiresAt: new Date() },
+      });
+      await tx.auditLog.create({
+        data: {
+          actorUserId,
+          action: "professional_invite_revoked",
+          entityType: "professional_invite",
+          entityId: updated.id,
+          metadata: { kind: updated.kind, professionalKey: updated.professionalKey, codePrefix: updated.code.slice(0, 9) },
+        },
+      });
+      return updated;
+    });
+
+    return { invite: serializeProfessionalInvite(revoked) };
+  }
+
   async roles() {
     const manual = await this.prisma.userRoleAssignment.findMany({
       where: { revokedAt: null },

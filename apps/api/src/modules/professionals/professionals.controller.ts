@@ -40,6 +40,11 @@ export class ProfessionalsController {
     return this.professionals.recipients(user, query.kind);
   }
 
+  @Get("pro/messages")
+  messageHistory(@CurrentUser() user: AuthUser, @Query() query: ProfessionalRecipientsQueryDto) {
+    return this.professionals.messageHistory(user, query.kind);
+  }
+
   @Post("pro/messages")
   sendMessage(@CurrentUser() user: AuthUser, @Body() dto: SendProfessionalMessageDto) {
     return this.professionals.sendMessage(user, dto);

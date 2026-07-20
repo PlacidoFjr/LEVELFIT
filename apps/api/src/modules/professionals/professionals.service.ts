@@ -10,6 +10,12 @@ function normalizeCode(code: string) {
   return code.trim().toUpperCase();
 }
 
+function metadataValue(metadata: unknown, key: string) {
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) return null;
+  const value = (metadata as Record<string, unknown>)[key];
+  return typeof value === "string" ? value : null;
+}
+
 @Injectable()
 export class ProfessionalsService {
   constructor(private readonly prisma: PrismaService, private readonly config: ConfigService) {}
@@ -200,6 +206,44 @@ export class ProfessionalsService {
     };
   }
 
+  async messageHistory(auth: AuthUser, kind: "nutrition" | "run") {
+    await this.assertProfessionalAccess(auth, kind);
+    const logs = await this.prisma.auditLog.findMany({
+      where: { actorUserId: auth.userId, action: "professional_touch_sent" },
+      orderBy: { createdAt: "desc" },
+      take: 80,
+      include: { target: { select: { id: true, email: true, profile: { select: { displayName: true } } } } },
+    });
+    const filtered = logs.filter((log) => metadataValue(log.metadata, "kind") === kind).slice(0, 20);
+    const notificationIds = filtered.map((log) => log.entityId).filter((id): id is string => Boolean(id));
+    const notifications = notificationIds.length
+      ? await this.prisma.notification.findMany({
+          where: { id: { in: notificationIds } },
+          select: { id: true, title: true, body: true, actionUrl: true, createdAt: true },
+        })
+      : [];
+    const notificationById = new Map(notifications.map((item) => [item.id, item]));
+
+    return {
+      data: filtered.map((log) => {
+        const notification = log.entityId ? notificationById.get(log.entityId) : null;
+        return {
+          id: log.id,
+          notificationId: log.entityId,
+          kind,
+          category: metadataValue(log.metadata, "category") ?? "free",
+          title: notification?.title ?? "Toque enviado",
+          body: notification?.body ?? "",
+          actionUrl: notification?.actionUrl ?? null,
+          targetUserId: log.targetUserId,
+          targetName: log.target?.profile?.displayName ?? log.target?.email?.split("@")[0] ?? "Usuario",
+          targetEmail: log.target?.email ?? null,
+          createdAt: log.createdAt,
+        };
+      }),
+    };
+  }
+
   async sendMessage(auth: AuthUser, dto: SendProfessionalMessageDto) {
     await this.assertProfessionalAccess(auth, dto.kind);
     const connection = await this.prisma.professionalConnection.findFirst({
@@ -207,6 +251,19 @@ export class ProfessionalsService {
       select: { id: true, userId: true, kind: true, professionalName: true, professionalKey: true },
     });
     if (!connection) throw new NotFoundException({ code: "PROFESSIONAL_CONNECTION_NOT_FOUND", message: "Usuario conectado nao encontrado para este produto." });
+
+    const preferences = await this.prisma.notificationPreference.findUnique({
+      where: { userId: connection.userId },
+      select: {
+        professionalMessagesEnabled: true,
+        nutritionProMessagesEnabled: true,
+        runProMessagesEnabled: true,
+      },
+    });
+    const productAllowed = dto.kind === "run" ? preferences?.runProMessagesEnabled !== false : preferences?.nutritionProMessagesEnabled !== false;
+    if (preferences?.professionalMessagesEnabled === false || !productAllowed) {
+      throw new ForbiddenException({ code: "PROFESSIONAL_MESSAGES_DISABLED", message: "O usuario desativou Toques Pro para este produto." });
+    }
 
     const title = dto.title.trim();
     const body = dto.body.trim();

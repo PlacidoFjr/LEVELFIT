@@ -1,0 +1,17 @@
+{
+  "name": "LevelFit",
+  "short_name": "LevelFit",
+  "description": "Fitness, habitos e profissionais conectados em um app gamificado.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070b0f",
+  "theme_color": "#b7ff2a",
+  "icons": [
+    {
+      "src": "/assets/pulse-evolved.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

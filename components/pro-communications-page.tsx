@@ -1,12 +1,14 @@
 "use client";
 
-import { BellRing, CheckCircle2, MessageSquareText, Send, UsersRound } from "lucide-react";
+import { BellRing, CheckCircle2, Clock3, MessageSquareText, Send, UsersRound } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
+  listProfessionalMessageHistory,
   listProfessionalMessageRecipients,
   sendProfessionalMessage,
   type ProfessionalKind,
   type ProfessionalMessageCategory,
+  type ProfessionalMessageHistoryItem,
   type ProfessionalMessageRecipient,
 } from "@/lib/level-fit-api";
 
@@ -77,6 +79,7 @@ function recipientLabel(recipient?: ProfessionalMessageRecipient) {
 
 export function ProCommunicationsPage({ kind }: { kind: ProfessionalKind }) {
   const [recipients, setRecipients] = useState<ProfessionalMessageRecipient[]>([]);
+  const [history, setHistory] = useState<ProfessionalMessageHistoryItem[]>([]);
   const [selectedUserId, setSelectedUserId] = useState("");
   const [category, setCategory] = useState<ProfessionalMessageCategory>("reminder");
   const [title, setTitle] = useState("");
@@ -88,14 +91,20 @@ export function ProCommunicationsPage({ kind }: { kind: ProfessionalKind }) {
   const productLabel = kind === "run" ? "Run Pro" : "Nutri Pro";
   const selected = useMemo(() => recipients.find((item) => item.userId === selectedUserId), [recipients, selectedUserId]);
 
+  async function loadHistory() {
+    const result = await listProfessionalMessageHistory(kind);
+    setHistory(result.data);
+  }
+
   useEffect(() => {
     const id = window.setTimeout(() => {
-      listProfessionalMessageRecipients(kind)
-        .then((result) => {
-          setRecipients(result.data);
-          setSelectedUserId((current) => current || result.data[0]?.userId || "");
+      Promise.all([listProfessionalMessageRecipients(kind), listProfessionalMessageHistory(kind)])
+        .then(([recipientsResult, historyResult]) => {
+          setRecipients(recipientsResult.data);
+          setHistory(historyResult.data);
+          setSelectedUserId((current) => current || recipientsResult.data[0]?.userId || "");
         })
-        .catch(() => setNotice({ tone: "error", message: "Nao foi possivel carregar usuarios conectados." }))
+        .catch(() => setNotice({ tone: "error", message: "Nao foi possivel carregar usuarios conectados e historico." }))
         .finally(() => setLoading(false));
     }, 0);
     return () => window.clearTimeout(id);
@@ -120,6 +129,7 @@ export function ProCommunicationsPage({ kind }: { kind: ProfessionalKind }) {
     try {
       await sendProfessionalMessage({ kind, targetUserId: selectedUserId, category, title, body, actionUrl });
       setNotice({ tone: "success", message: "Toque enviado para o sino do usuario." });
+      await loadHistory();
     } catch {
       setNotice({ tone: "error", message: "Nao foi possivel enviar o toque agora." });
     } finally {
@@ -208,6 +218,32 @@ export function ProCommunicationsPage({ kind }: { kind: ProfessionalKind }) {
           <button type="submit" disabled={sending || !recipients.length} className="primary-button mt-5 w-full disabled:cursor-not-allowed disabled:opacity-50"><Send size={18} /> {sending ? "Enviando..." : "Enviar toque"}</button>
         </form>
       </div>
+
+      <section className="app-card mt-5 overflow-hidden">
+        <div className="border-b border-[var(--border)] p-5">
+          <p className="eyebrow">Historico</p>
+          <h2 className="mt-2 text-xl font-black text-white">Ultimos Toques enviados</h2>
+          <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">Registro operacional do que saiu deste login profissional para usuarios conectados.</p>
+        </div>
+        {history.map((item) => (
+          <article key={item.id} className="grid gap-3 border-b border-[var(--border)] p-4 last:border-b-0 lg:grid-cols-[190px_1fr_180px] lg:items-center">
+            <div>
+              <span className="rounded-[6px] bg-[rgba(183,255,42,0.1)] px-2 py-1 text-xs font-black uppercase text-[var(--lime)]">
+                {categoryLabels[item.category as ProfessionalMessageCategory] ?? item.category}
+              </span>
+              <p className="mt-2 text-xs font-bold text-[var(--text-muted)]">{item.targetName}</p>
+            </div>
+            <div>
+              <p className="text-sm font-black text-white">{item.title}</p>
+              <p className="mt-1 line-clamp-2 text-xs leading-5 text-[var(--text-muted)]">{item.body || "Mensagem registrada."}</p>
+            </div>
+            <time className="flex items-center gap-2 text-xs font-bold text-[var(--text-dim)]" dateTime={item.createdAt}>
+              <Clock3 size={15} /> {new Date(item.createdAt).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
+            </time>
+          </article>
+        ))}
+        {!history.length && <div className="p-5 text-sm font-bold text-[var(--text-muted)]">Nenhum Toque enviado por este login ainda.</div>}
+      </section>
     </div>
   );
 }

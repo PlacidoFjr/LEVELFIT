@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { CheckCircle2, Copy, Plus, RefreshCw, ShieldCheck, Trash2 } from "lucide-react";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   getAdminOverview,
   getAdminProducts,
@@ -16,6 +16,7 @@ import {
   createAdminProfessionalInvite,
   grantAdminRole,
   hasFreshOwnerStepUp,
+  revokeAdminProfessionalInvite,
   revokeAdminRole,
   type AdminOverview,
   type AdminProfessionalInvite,
@@ -62,27 +63,95 @@ function EmptyState({ text }: { text: string }) {
   return <div className="rounded-[8px] border border-[var(--border)] bg-[rgba(8,11,15,0.28)] p-5 text-sm font-bold text-[var(--text-muted)]">{text}</div>;
 }
 
-async function ensureOwnerStepUp(
-  setTone: (tone: "neutral" | "error" | "success") => void,
+type NoticeTone = "neutral" | "error" | "success";
+
+function useOwnerStepUpDialog(
+  setTone: (tone: NoticeTone) => void,
   setMessage: (message: string | null) => void,
 ) {
-  if (hasFreshOwnerStepUp()) return true;
-  const password = window.prompt("Confirme sua senha Owner para continuar. Esta confirmacao vale por 10 minutos.");
-  if (!password) {
+  const [open, setOpen] = useState(false);
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const resolverRef = useRef<((confirmed: boolean) => void) | null>(null);
+
+  async function requestStepUp() {
+    if (hasFreshOwnerStepUp()) return true;
+    setPassword("");
+    setError(null);
+    setOpen(true);
+    return new Promise<boolean>((resolve) => {
+      resolverRef.current = resolve;
+    });
+  }
+
+  function finish(confirmed: boolean) {
+    resolverRef.current?.(confirmed);
+    resolverRef.current = null;
+    setOpen(false);
+    setSubmitting(false);
+  }
+
+  function cancelStepUp() {
     setTone("neutral");
     setMessage("Acao cancelada. Nenhuma alteracao foi feita.");
-    return false;
+    finish(false);
   }
-  try {
-    await confirmOwnerStepUp(password);
-    setTone("success");
-    setMessage("Confirmacao de seguranca aprovada por 10 minutos.");
-    return true;
-  } catch {
-    setTone("error");
-    setMessage("Nao foi possivel confirmar sua senha Owner.");
-    return false;
+
+  async function submitStepUp(event: FormEvent) {
+    event.preventDefault();
+    if (!password.trim()) {
+      setError("Digite sua senha Owner para continuar.");
+      return;
+    }
+    setSubmitting(true);
+    setError(null);
+    try {
+      await confirmOwnerStepUp(password);
+      setTone("success");
+      setMessage("Confirmacao de seguranca aprovada por 10 minutos.");
+      finish(true);
+    } catch {
+      setSubmitting(false);
+      setError("Nao foi possivel confirmar sua senha Owner.");
+    }
   }
+
+  const dialog = open ? (
+    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="owner-step-up-title">
+      <form onSubmit={submitStepUp} className="w-full max-w-md rounded-[12px] border border-[rgba(183,255,42,0.22)] bg-[linear-gradient(145deg,rgba(16,22,29,0.98),rgba(8,11,15,0.98))] p-5 shadow-2xl">
+        <div className="flex items-start gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] border border-[rgba(183,255,42,0.26)] bg-[rgba(183,255,42,0.1)] text-[var(--lime)]">
+            <ShieldCheck size={22} />
+          </span>
+          <div>
+            <p className="eyebrow text-[var(--lime)]">Seguranca Owner</p>
+            <h2 id="owner-step-up-title" className="mt-1 text-xl font-black text-white">Confirme esta acao</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">Acoes criticas da Gestao exigem uma confirmacao rapida. Ela vale por 10 minutos neste navegador.</p>
+          </div>
+        </div>
+        <label className="mt-5 block text-sm font-black text-[var(--text-muted)]">Senha Owner</label>
+        <input
+          autoFocus
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          className="mt-2 w-full rounded-[7px] border border-[var(--border)] bg-[var(--surface)] px-3 py-3 text-sm font-bold text-white outline-none focus:border-[var(--lime)]"
+          placeholder="Digite sua senha"
+          type="password"
+          autoComplete="current-password"
+        />
+        {error ? <div className="mt-3 rounded-[8px] border border-[rgba(255,107,61,0.35)] bg-[rgba(255,107,61,0.08)] p-3 text-sm font-bold text-white">{error}</div> : null}
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <button type="button" onClick={cancelStepUp} className="secondary-button justify-center" disabled={submitting}>Cancelar</button>
+          <button type="submit" className="primary-button justify-center disabled:opacity-60" disabled={submitting}>
+            <ShieldCheck size={17} /> {submitting ? "Confirmando..." : "Confirmar"}
+          </button>
+        </div>
+      </form>
+    </div>
+  ) : null;
+
+  return { requestStepUp, dialog };
 }
 
 export function AdminOverviewPage() {
@@ -216,7 +285,8 @@ export function AdminProfessionalsPage() {
   const [invites, setInvites] = useState<AdminProfessionalInvite[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [tone, setTone] = useState<"neutral" | "error" | "success">("neutral");
-  const [savingInvite, setSavingInvite] = useState<"nutrition" | "run" | null>(null);
+  const [savingInvite, setSavingInvite] = useState<"nutrition" | "run" | "revoke" | null>(null);
+  const stepUp = useOwnerStepUpDialog(setTone, setMessage);
 
   async function load() {
     const [professionalsResult, invitesResult] = await Promise.all([getAdminProfessionals(), getAdminProfessionalInvites()]);
@@ -235,7 +305,7 @@ export function AdminProfessionalsPage() {
   }, []);
 
   async function createInvite(kind: "nutrition" | "run") {
-    if (!(await ensureOwnerStepUp(setTone, setMessage))) return;
+    if (!(await stepUp.requestStepUp())) return;
     setSavingInvite(kind);
     try {
       const isRun = kind === "run";
@@ -266,8 +336,25 @@ export function AdminProfessionalsPage() {
     setMessage("Codigo copiado.");
   }
 
+  async function revokeInvite(id: string) {
+    if (!(await stepUp.requestStepUp())) return;
+    setSavingInvite("revoke");
+    try {
+      await revokeAdminProfessionalInvite(id);
+      setTone("success");
+      setMessage("Convite revogado. O codigo nao podera mais ser usado.");
+      await load();
+    } catch {
+      setTone("error");
+      setMessage("Nao foi possivel revogar o convite agora.");
+    } finally {
+      setSavingInvite(null);
+    }
+  }
+
   return (
     <>
+      {stepUp.dialog}
       <AdminHeader eyebrow="Profissionais" title="Nutri Pro e Run Pro" description="Acompanhe quais logins possuem papel profissional e quantos clientes/atletas estao ligados a cada produto." />
       <Notice message={message} tone={tone} />
       <section className="app-card mb-5 p-5">
@@ -289,9 +376,14 @@ export function AdminProfessionalsPage() {
                 <p className="text-sm font-black text-white">{invite.professionalName} <span className="text-[var(--text-dim)]">- {invite.kind === "run" ? "Run Pro" : "Nutri Pro"}</span></p>
                 <p className="mt-1 text-xs font-bold text-[var(--text-muted)]">{invite.isActive ? `Expira em ${invite.expiresAt ? new Date(invite.expiresAt).toLocaleDateString("pt-BR") : "30 dias"}` : "Inativo ou expirado"}</p>
               </div>
-              <button type="button" onClick={() => void copyInvite(invite.code)} disabled={!invite.code} className="secondary-button justify-center disabled:cursor-not-allowed disabled:opacity-50">
-                <Copy size={16} /> {invite.code ?? invite.codePreview}
-              </button>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <button type="button" onClick={() => void copyInvite(invite.code)} disabled={!invite.code} className="secondary-button justify-center disabled:cursor-not-allowed disabled:opacity-50">
+                  <Copy size={16} /> {invite.code ?? invite.codePreview}
+                </button>
+                <button type="button" onClick={() => void revokeInvite(invite.id)} disabled={!invite.isActive || savingInvite !== null} className="secondary-button justify-center disabled:cursor-not-allowed disabled:opacity-50">
+                  <Trash2 size={16} /> Revogar
+                </button>
+              </div>
             </article>
           ))}
         </div>
@@ -327,6 +419,7 @@ export function AdminRolesPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [tone, setTone] = useState<"neutral" | "error" | "success">("neutral");
   const [saving, setSaving] = useState(false);
+  const stepUp = useOwnerStepUpDialog(setTone, setMessage);
 
   async function load() {
     const result = await getAdminRoles();
@@ -342,7 +435,7 @@ export function AdminRolesPage() {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    if (!(await ensureOwnerStepUp(setTone, setMessage))) return;
+    if (!(await stepUp.requestStepUp())) return;
     setSaving(true);
     try {
       await grantAdminRole({ email, role });
@@ -359,7 +452,7 @@ export function AdminRolesPage() {
   }
 
   async function revoke(id: string) {
-    if (!(await ensureOwnerStepUp(setTone, setMessage))) return;
+    if (!(await stepUp.requestStepUp())) return;
     setSaving(true);
     try {
       await revokeAdminRole(id);
@@ -382,6 +475,7 @@ export function AdminRolesPage() {
 
   return (
     <>
+      {stepUp.dialog}
       <AdminHeader eyebrow="Papeis" title="Controle de acesso" description="Conceda ou revogue Nutri Pro, Run Pro e Owner para logins existentes. Papeis vindos do Render continuam protegidos." />
       <Notice message={message} tone={tone} />
       <div className="grid gap-4 xl:grid-cols-[380px_1fr]">
@@ -461,6 +555,7 @@ function securityLabel(action: string) {
     professional_invite_previewed: "Codigo verificado",
     professional_invite_preview_failed: "Codigo recusado",
     professional_invite_created: "Convite criado",
+    professional_invite_revoked: "Convite revogado",
     professional_connection_accepted: "Convite aceito",
     professional_permissions_updated: "Permissoes alteradas",
     professional_connection_revoked: "Conexao revogada",

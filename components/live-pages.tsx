@@ -76,11 +76,13 @@ import {
   markNotificationRead,
   requestDataExport,
   startWorkoutSession,
+  subscribePush,
   timeValue,
   updateHydrationGoal,
   updateNotificationPreferences,
   updateNutritionGoal,
   updateMe,
+  unsubscribePush,
   type Achievement,
   type BodyMeasurement,
   type HydrationToday,
@@ -838,11 +840,20 @@ function Toggle({ checked, onChange, label }: { checked: boolean; onChange: () =
   return <button type="button" onClick={onChange} role="switch" aria-checked={checked} aria-label={label} className={`relative h-7 w-12 shrink-0 rounded-full border transition-colors ${checked ? "border-[var(--lime)] bg-[var(--lime)]" : "border-[var(--border-strong)] bg-[var(--surface-soft)]"}`}><span className={`absolute top-1 size-[18px] rounded-full transition-transform ${checked ? "left-1 translate-x-5 bg-[var(--lime-ink)]" : "left-1 translate-x-0 bg-[var(--text-muted)]"}`} /></button>;
 }
 
+function urlBase64ToUint8Array(value: string) {
+  const padding = "=".repeat((4 - (value.length % 4)) % 4);
+  const base64 = (value + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const rawData = window.atob(base64);
+  return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+}
+
 export function NotificationPreferencesLivePage() {
   const [prefs, setPrefs] = useState<NotificationPreferences | null>(null);
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [pushNotice, setPushNotice] = useState<string | null>(null);
+  const [pushBusy, setPushBusy] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -879,6 +890,9 @@ export function NotificationPreferencesLivePage() {
         waterRemindersEnabled: prefs.waterRemindersEnabled,
         workoutRemindersEnabled: prefs.workoutRemindersEnabled,
         nutritionRemindersEnabled: prefs.nutritionRemindersEnabled,
+        professionalMessagesEnabled: prefs.professionalMessagesEnabled,
+        nutritionProMessagesEnabled: prefs.nutritionProMessagesEnabled,
+        runProMessagesEnabled: prefs.runProMessagesEnabled,
         streakRemindersEnabled: prefs.streakRemindersEnabled,
         weeklySummaryEnabled: prefs.weeklySummaryEnabled,
         preferredWorkoutTime: preferredWorkoutTime || undefined,
@@ -896,18 +910,84 @@ export function NotificationPreferencesLivePage() {
     }
   }
 
+  async function enableBrowserPush() {
+    if (!prefs) return;
+    setPushNotice(null);
+    setError(null);
+    if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) {
+      setPushNotice("Este navegador ainda nao suporta Web Push. O sino interno continua funcionando.");
+      return;
+    }
+    const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+    if (!publicKey) {
+      setPushNotice("Web Push esta preparado, mas falta configurar NEXT_PUBLIC_VAPID_PUBLIC_KEY no deploy.");
+      return;
+    }
+    setPushBusy(true);
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        setPushNotice("Permissao nao concedida. O sino interno continua funcionando.");
+        return;
+      }
+      const registration = await navigator.serviceWorker.register("/sw.js");
+      const existing = await registration.pushManager.getSubscription();
+      const subscription = existing ?? await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(publicKey),
+      });
+      const payload = subscription.toJSON();
+      if (!payload.endpoint || !payload.keys?.p256dh || !payload.keys?.auth) throw new Error("Subscription incompleta.");
+      await subscribePush({ endpoint: payload.endpoint, keys: { p256dh: payload.keys.p256dh, auth: payload.keys.auth } });
+      const saved = await updateNotificationPreferences({ pushEnabled: true });
+      setPrefs(saved);
+      setPushNotice("Push ativado neste navegador. As notificacoes internas continuam como historico.");
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setPushBusy(false);
+    }
+  }
+
+  async function disableBrowserPush() {
+    if (!prefs) return;
+    setPushBusy(true);
+    setPushNotice(null);
+    setError(null);
+    try {
+      const registration = "serviceWorker" in navigator ? await navigator.serviceWorker.getRegistration("/sw.js") : null;
+      const subscription = await registration?.pushManager.getSubscription();
+      if (subscription?.endpoint) await unsubscribePush(subscription.endpoint);
+      await subscription?.unsubscribe();
+      const saved = await updateNotificationPreferences({ pushEnabled: false });
+      setPrefs(saved);
+      setPushNotice("Push desativado neste navegador. O sino interno segue ativo.");
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setPushBusy(false);
+    }
+  }
+
   const rows: { key: keyof NotificationPreferences; title: string; detail: string; icon: LucideIcon; color: string }[] = [
     { key: "emailEnabled", title: "E-mails do produto", detail: "Controla lembretes e resumos, não segurança.", icon: Mail, color: "var(--cyan)" },
     { key: "workoutRemindersEnabled", title: "Lembrete de treino", detail: "No horário escolhido por você.", icon: Dumbbell, color: "var(--coral)" },
     { key: "waterRemindersEnabled", title: "Lembrete de água", detail: "Gentil e configurável.", icon: GlassWater, color: "var(--cyan)" },
     { key: "nutritionRemindersEnabled", title: "Checklist de alimentação", detail: "Uma lembrança sem cobrança.", icon: Salad, color: "var(--green)" },
+    { key: "professionalMessagesEnabled", title: "Toques Pro", detail: "Permite lembretes internos de profissionais conectados.", icon: Bell, color: "var(--lime)" },
+    { key: "nutritionProMessagesEnabled", title: "Nutri Pro", detail: "Mensagens internas do nutricionista conectado.", icon: Apple, color: "var(--green)" },
+    { key: "runProMessagesEnabled", title: "Run Pro", detail: "Mensagens internas do coach conectado.", icon: Activity, color: "var(--cyan)" },
     { key: "streakRemindersEnabled", title: "Streak em risco", detail: "No máximo uma vez por dia.", icon: Flame, color: "var(--gold)" },
     { key: "weeklySummaryEnabled", title: "Resumo semanal", detail: "Resumo de constância.", icon: TrendingUp, color: "var(--lime)" },
   ];
 
+  const pushControl = prefs ? <section className="app-card mb-4 flex min-w-0 flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between"><div className="min-w-0"><p className="eyebrow">Web Push</p><h2 className="mt-2 text-xl font-black text-white">Permissao explicita no navegador</h2><p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">Ative apenas se quiser receber avisos fora do app. Se nao ativar, o sino interno continua funcionando normalmente.</p></div><button type="button" onClick={() => prefs.pushEnabled ? void disableBrowserPush() : void enableBrowserPush()} disabled={pushBusy} className={prefs.pushEnabled ? "secondary-button justify-center disabled:opacity-60" : "primary-button justify-center disabled:opacity-60"}><Bell size={18} /> {pushBusy ? "Processando..." : prefs.pushEnabled ? "Desativar push" : "Ativar push"}</button></section> : null;
+
   return <Screen title="Preferências de notificação" description="Escolha o que ajuda. Todas as opções de produto podem ser desligadas." action={<Link href="/settings" className="secondary-button"><ArrowLeft size={18} /> Configurações</Link>}>
     <Notice message={notice} />
     <Notice message={error} tone="danger" />
+    <Notice message={pushNotice} />
+    {pushControl}
     {loading || !prefs ? <LoadingCard /> : <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,1fr)_380px]"><section className="app-card min-w-0 px-5">{rows.map(({ key, title, detail, icon: Icon, color }) => <div key={key} className="flex min-h-[82px] min-w-0 items-center gap-3 border-b border-[var(--border)] last:border-0"><span className="grid size-10 shrink-0 place-items-center rounded-[7px] bg-[var(--surface-soft)]" style={{ color }}><Icon size={20} /></span><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold text-white">{title}</p><p className="mt-1 truncate text-xs text-[var(--text-muted)]">{detail}</p></div><Toggle checked={Boolean(prefs[key])} onChange={() => updateLocal(key, !prefs[key])} label={title} /></div>)}</section><aside className="min-w-0 space-y-4"><section className="app-card p-5"><p className="eyebrow">Horário silencioso</p><div className="mt-4 grid grid-cols-2 gap-3"><label className="min-w-0 text-xs font-bold text-[var(--text-muted)]">Início<input className="field mt-2 min-w-0" type="time" value={timeValue(prefs.quietHoursStart) || "22:00"} onChange={(event) => updateLocal("quietHoursStart", event.target.value)} /></label><label className="min-w-0 text-xs font-bold text-[var(--text-muted)]">Fim<input className="field mt-2 min-w-0" type="time" value={timeValue(prefs.quietHoursEnd) || "08:00"} onChange={(event) => updateLocal("quietHoursEnd", event.target.value)} /></label></div><label className="mt-4 block text-xs font-bold text-[var(--text-muted)]">Treino<input className="field mt-2" type="time" value={timeValue(prefs.preferredWorkoutTime) || "18:30"} onChange={(event) => updateLocal("preferredWorkoutTime", event.target.value)} /></label></section><section className="app-card p-5"><p className="eyebrow">Timezone</p><select className="field mt-4" value={prefs.timezone} onChange={(event) => updateLocal("timezone", event.target.value)} aria-label="Timezone"><option value="America/Sao_Paulo">America/Sao_Paulo</option><option value="America/Manaus">America/Manaus</option><option value="America/Recife">America/Recife</option><option value="UTC">UTC</option></select><button onClick={save} className="primary-button mt-4 w-full">Salvar preferências</button></section></aside></div>}
   </Screen>;
 }

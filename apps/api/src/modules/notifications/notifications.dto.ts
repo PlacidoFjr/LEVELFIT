@@ -24,6 +24,9 @@ export class UpdateNotificationPreferencesDto {
   @IsOptional() @IsBoolean() waterRemindersEnabled?: boolean;
   @IsOptional() @IsBoolean() workoutRemindersEnabled?: boolean;
   @IsOptional() @IsBoolean() nutritionRemindersEnabled?: boolean;
+  @IsOptional() @IsBoolean() professionalMessagesEnabled?: boolean;
+  @IsOptional() @IsBoolean() nutritionProMessagesEnabled?: boolean;
+  @IsOptional() @IsBoolean() runProMessagesEnabled?: boolean;
   @IsOptional() @IsBoolean() streakRemindersEnabled?: boolean;
   @IsOptional() @IsBoolean() weeklySummaryEnabled?: boolean;
   @IsOptional() @Matches(clockPattern) preferredWorkoutTime?: string;
