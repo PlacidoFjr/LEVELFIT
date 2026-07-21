@@ -1,4 +1,4 @@
-import { createCipheriv, createHash, createHmac, randomBytes } from "node:crypto";
+import { createCipheriv, createDecipheriv, createHash, createHmac, randomBytes } from "node:crypto";
 
 export function randomToken(bytes = 32) { return randomBytes(bytes).toString("base64url"); }
 export function hashToken(token: string, secret: string) { return createHmac("sha256", secret).update(token).digest("hex"); }
@@ -13,4 +13,15 @@ export function encryptSecret(value: string, secret: string) {
   const cipher = createCipheriv("aes-256-gcm", key, iv);
   const encrypted = Buffer.concat([cipher.update(value, "utf8"), cipher.final()]);
   return Buffer.concat([iv, cipher.getAuthTag(), encrypted]).toString("base64url");
+}
+
+export function decryptSecret(value: string, secret: string) {
+  const payload = Buffer.from(value, "base64url");
+  const iv = payload.subarray(0, 12);
+  const authTag = payload.subarray(12, 28);
+  const encrypted = payload.subarray(28);
+  const key = createHash("sha256").update(secret).digest();
+  const decipher = createDecipheriv("aes-256-gcm", key, iv);
+  decipher.setAuthTag(authTag);
+  return Buffer.concat([decipher.update(encrypted), decipher.final()]).toString("utf8");
 }

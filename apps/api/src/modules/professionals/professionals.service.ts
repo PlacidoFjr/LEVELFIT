@@ -3,6 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { sanitizeProfessionalPermissions } from "../../common/professional-permissions";
 import { buildAccessProfile, type AccessRole } from "../../common/access-profile";
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
+import { NotificationsService } from "../notifications/notifications.service";
 import type { AcceptProfessionalInviteDto, SendProfessionalMessageDto, UpdateProfessionalPermissionsDto } from "./professionals.dto";
 import type { AuthUser } from "../../common/auth-user";
 
@@ -18,7 +19,7 @@ function metadataValue(metadata: unknown, key: string) {
 
 @Injectable()
 export class ProfessionalsService {
-  constructor(private readonly prisma: PrismaService, private readonly config: ConfigService) {}
+  constructor(private readonly prisma: PrismaService, private readonly config: ConfigService, private readonly notifications: NotificationsService) {}
 
   private async accessProfile(auth: AuthUser) {
     const assignments = await this.prisma.userRoleAssignment.findMany({
@@ -302,6 +303,7 @@ export class ProfessionalsService {
       return created;
     });
 
+    void this.notifications.sendPushForNotification(notification).catch(() => undefined);
     return { notification };
   }
 }
