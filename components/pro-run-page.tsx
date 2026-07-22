@@ -99,7 +99,7 @@ function RunPageHeader() {
             Painel para acompanhar atletas, montar planos TAF, controlar carga e preparar avaliações com visão profissional.
           </p>
         </div>
-        <div className="flex shrink-0 flex-wrap gap-2">
+        <div className="grid shrink-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap [&>a]:w-full [&>button]:w-full sm:[&>a]:w-auto sm:[&>button]:w-auto">
           <Link href="/pro/run/agenda" className="secondary-button"><ClipboardList size={18} /> Avaliação TAF</Link>
           <Link href="/pro/run/plans" className="primary-button"><Plus size={18} /> Publicar plano</Link>
         </div>
@@ -117,7 +117,7 @@ function RunSubPageHeader({ eyebrow, title, description, action }: { eyebrow: st
           <h1 className="mt-2 text-3xl font-black leading-tight text-white sm:text-4xl">{title}</h1>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--text-muted)]">{description}</p>
         </div>
-        {action && <div className="flex shrink-0 flex-wrap gap-2">{action}</div>}
+        {action && <div className="grid shrink-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap [&>a]:w-full [&>button]:w-full sm:[&>a]:w-auto sm:[&>button]:w-auto">{action}</div>}
       </div>
     </header>
   );
@@ -176,7 +176,7 @@ function ReadinessBar({ value }: { value: number }) {
 
 function AthleteRow({ athlete }: { athlete: RunAthlete }) {
   return (
-    <article className="grid gap-3 border-b border-[var(--border)] px-4 py-4 last:border-0 md:grid-cols-[minmax(220px,1fr)_118px_170px_120px_170px_32px] md:items-center" data-reveal>
+    <Link href={`/pro/run/athletes/${athlete.id}`} className="grid gap-3 border-b border-[var(--border)] px-4 py-4 transition-colors last:border-0 hover:bg-[rgba(255,255,255,0.035)] md:grid-cols-[minmax(220px,1fr)_118px_170px_120px_170px_32px] md:items-center" data-reveal>
       <div className="flex min-w-0 items-center gap-3">
         <AthleteAvatar athlete={athlete} />
         <div className="min-w-0">
@@ -192,7 +192,7 @@ function AthleteRow({ athlete }: { athlete: RunAthlete }) {
       </div>
       <p className="text-xs font-bold text-[var(--text-muted)]">{athlete.nextSession}</p>
       <ChevronRight className="hidden text-[var(--text-dim)] md:block" size={18} />
-    </article>
+    </Link>
   );
 }
 
@@ -538,7 +538,7 @@ export function ProRunAthletesPage() {
                 </article>
               ))}
             </div>
-            <div className="mt-5 rounded-[8px] border border-[rgba(34,211,238,0.24)] bg-[rgba(34,211,238,0.07)] p-4">
+            <div className="hidden">
               <p className="eyebrow text-[var(--cyan)]">Convite Run Pro</p>
               <h3 className="mt-2 text-lg font-black text-white">Código do coach</h3>
               <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
@@ -553,6 +553,96 @@ export function ProRunAthletesPage() {
             </div>
           </section>
         </div>
+      </RevealGroup>
+    </>
+  );
+}
+
+export function ProRunAthleteDetailPage({ athleteId }: { athleteId: string }) {
+  const [notice, setNotice] = useState<RunNotice | null>(null);
+  const athlete = runAthletes.find((item) => item.id === athleteId) ?? runAthletes[0];
+
+  return (
+    <>
+      <RunSubPageHeader
+        eyebrow="Perfil do atleta"
+        title={athlete.name}
+        description={`${athlete.objective}. Fase atual: ${athlete.phase}.`}
+        action={
+          <>
+            <button type="button" onClick={() => setNotice({ tone: "cyan", title: "Mensagem preparada", message: `Mock: toque curto pronto para ${athlete.name}.` })} className="secondary-button"><Send size={18} /> Enviar toque</button>
+            <button type="button" onClick={() => setNotice({ tone: "lime", title: "Treino ajustado", message: `Mock: rotina de ${athlete.name} aberta para ajustar volume, descanso e observacoes.` })} className="primary-button"><ListChecks size={18} /> Ajustar treino</button>
+          </>
+        }
+      />
+      <RunNoticeBanner notice={notice} />
+      <RevealGroup>
+        <section className="app-card premium-card p-5" data-reveal>
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex min-w-0 items-center gap-4">
+              <AthleteAvatar athlete={athlete} />
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2"><StatusPill status={athlete.status} />{athlete.risk && <span className="rounded-[5px] bg-[rgba(255,107,61,0.12)] px-2 py-1 text-[0.68rem] font-black uppercase text-[var(--coral)]">{athlete.risk}</span>}</div>
+                <h2 className="mt-3 text-2xl font-black text-white">{athlete.nextSession}</h2>
+                <p className="mt-1 text-sm text-[var(--text-muted)]">Ultimo check-in: {athlete.lastCheckin}</p>
+              </div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-4 lg:min-w-[520px]">
+              <MiniMetric label="Prontidao" value={`${athlete.readiness}%`} />
+              <MiniMetric label="Carga semanal" value={athlete.weeklyLoad} />
+              <MiniMetric label="Melhor 2 km" value={athlete.bestTwoKm} />
+              <MiniMetric label="Fase" value={athlete.phase} />
+            </div>
+          </div>
+        </section>
+
+        <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_380px]">
+          <section className="app-card premium-card p-5" data-reveal>
+            <p className="eyebrow text-[var(--cyan)]">Evolucao semanal</p>
+            <h2 className="mt-2 text-xl font-black text-white">Prontidao e constancia</h2>
+            <div className="mt-6 flex h-44 items-end gap-3">
+              {athlete.week.map((value, index) => (
+                <div key={`${value}-${index}`} className="flex min-w-0 flex-1 flex-col items-center gap-2">
+                  <div className="flex h-36 w-full items-end rounded-t-[6px] bg-[var(--surface-soft)]">
+                    <div className="w-full rounded-t-[6px] bg-[var(--cyan)]" style={{ height: `${value}%` }} />
+                  </div>
+                  <span className="text-[0.68rem] font-bold text-[var(--text-muted)]">{["S", "T", "Q", "Q", "S", "S", "D"][index]}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="app-card premium-card p-5" data-reveal>
+            <p className="eyebrow text-[var(--gold)]">Proxima acao</p>
+            <h2 className="mt-2 text-xl font-black text-white">{athlete.status === "attention" ? "Reduzir carga" : athlete.status === "new" ? "Fazer triagem" : "Manter progressao"}</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
+              {athlete.status === "attention"
+                ? "Troque intensidade por base leve e acompanhe sintomas antes de novo bloco forte."
+                : athlete.status === "new"
+                  ? "Coletar objetivo, historico e disponibilidade antes de publicar a primeira semana."
+                  : "Manter plano atual e revisar evolucao no proximo check-in."}
+            </p>
+          </section>
+        </div>
+
+        <section className="app-card premium-card mt-5 p-5" data-reveal>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="eyebrow text-[var(--lime)]">Plano TAF</p>
+              <h2 className="mt-2 text-xl font-black text-white">Semana publicada</h2>
+            </div>
+            <Link href="/pro/run/plans" className="secondary-button"><FileSpreadsheet size={18} /> Abrir modelos</Link>
+          </div>
+          <div className="mt-5 grid gap-3 md:grid-cols-5">
+            {runProgramBlocks.map((block) => (
+              <article key={block.label} className="rounded-[8px] border border-[var(--border)] bg-[rgba(8,11,15,0.28)] p-3">
+                <p className="text-xs font-black uppercase text-[var(--text-dim)]">{block.label}</p>
+                <p className="mt-3 text-sm font-black text-white">{block.title}</p>
+                <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{block.detail}</p>
+              </article>
+            ))}
+          </div>
+        </section>
       </RevealGroup>
     </>
   );

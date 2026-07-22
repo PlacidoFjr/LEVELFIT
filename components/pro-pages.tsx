@@ -18,6 +18,7 @@ import {
   Send,
   ShieldCheck,
   Sparkles,
+  Upload,
   Utensils,
   UsersRound,
 } from "lucide-react";
@@ -74,7 +75,7 @@ function ProPageHeader({ eyebrow, title, description, action }: { eyebrow: strin
         <h1 className="mt-2 text-3xl font-black leading-tight text-white sm:text-4xl">{title}</h1>
         <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--text-muted)]">{description}</p>
       </div>
-      {action && <div className="flex shrink-0 flex-wrap gap-2 xl:min-w-[300px] xl:justify-end">{action}</div>}
+      {action && <div className="grid shrink-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap xl:min-w-[300px] xl:justify-end [&>a]:w-full [&>button]:w-full sm:[&>a]:w-auto sm:[&>button]:w-auto">{action}</div>}
       </div>
     </header>
   );
@@ -155,6 +156,45 @@ function ClientActionCard({ client }: { client: ProClient }) {
   );
 }
 
+function ClientNutritionPlanCard({ client, onEdit }: { client: ProClient; onEdit: () => void }) {
+  const hasPlan = client.plan !== "Sem plano ativo";
+
+  return (
+    <section className="app-card premium-card p-5" data-reveal>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0">
+          <p className="eyebrow text-[var(--green)]">Plano alimentar</p>
+          <h2 className="mt-2 text-xl font-black text-white">{client.plan}</h2>
+          <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
+            {hasPlan
+              ? "Estrutura atual do paciente, com refeições, observações e status do dia."
+              : "Cliente cadastrado, mas ainda sem plano publicado. Crie o primeiro plano para aparecer no app dele."}
+          </p>
+        </div>
+        <button type="button" onClick={onEdit} className="primary-button shrink-0">
+          <FileText size={18} /> {hasPlan ? "Editar plano" : "Criar plano"}
+        </button>
+      </div>
+
+      <div className="mt-5 grid gap-3 md:grid-cols-2">
+        {client.meals.map((meal) => (
+          <div key={meal.name} className="rounded-[8px] border border-[var(--border)] bg-[rgba(8,11,15,0.28)] p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="truncate text-sm font-black text-white">{meal.name}</p>
+                <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{meal.note}</p>
+              </div>
+              <span className="rounded-[5px] bg-[rgba(56,217,121,0.1)] px-2 py-1 text-[0.68rem] font-black uppercase text-[var(--green)]">
+                {meal.status === "done" ? "ok" : meal.status === "partial" ? "ajustar" : meal.status === "missed" ? "ausente" : "pendente"}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 const planMeals = {
   "base-performance": ["Café reforçado", "Almoço base", "Lanche proteico", "Jantar leve", "Ceia opcional"],
   "rotina-flexivel": ["Café simples", "Almoço livre guiado", "Lanche prático", "Jantar flexível"],
@@ -191,6 +231,32 @@ function PlanPreviewCard({ plan }: { plan: (typeof planTemplates)[number] }) {
         </div>
         <p className="mt-4 text-xs font-bold text-[var(--text-dim)]">{plan.updatedAt}</p>
       </div>
+    </section>
+  );
+}
+
+function PdfModelUploadCard({ fileName, onFile }: { fileName: string | null; onFile: (fileName: string) => void }) {
+  return (
+    <section className="app-card premium-card p-5" data-reveal>
+      <p className="eyebrow text-[var(--cyan)]">Modelos por PDF</p>
+      <h2 className="mt-2 text-xl font-black text-white">Subir material do nutricionista</h2>
+      <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
+        O profissional pode anexar um PDF próprio como referência do plano, cardápio, substituições ou orientação complementar.
+      </p>
+      <label className="mt-5 flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-[9px] border border-dashed border-[rgba(34,211,238,0.42)] bg-[rgba(34,211,238,0.06)] p-4 text-center transition hover:bg-[rgba(34,211,238,0.1)]">
+        <Upload className="text-[var(--cyan)]" size={26} />
+        <span className="mt-3 text-sm font-black text-white">{fileName ?? "Selecionar PDF do modelo"}</span>
+        <span className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Mock visual agora. Depois salvamos no storage e vinculamos ao plano do cliente.</span>
+        <input
+          type="file"
+          accept="application/pdf,.pdf"
+          className="sr-only"
+          onChange={(event) => {
+            const file = event.target.files?.[0];
+            if (file) onFile(file.name);
+          }}
+        />
+      </label>
     </section>
   );
 }
@@ -412,6 +478,7 @@ export function ProClientDetailPage({ clientId }: { clientId: string }) {
         action={
           <>
             <button type="button" onClick={() => setNotice({ tone: "cyan", title: "Nota profissional criada", message: `Mock: nova nota aberta para ${client.name}, sem salvar no banco ainda.` })} className="secondary-button"><MessageSquareText size={18} /> Adicionar nota</button>
+            <button type="button" onClick={() => setNotice({ tone: "lime", title: "Retorno marcado", message: `Mock: retorno de ${client.name} reservado para a agenda do nutricionista.` })} className="secondary-button"><CalendarClock size={18} /> Marcar retorno</button>
             <button type="button" onClick={() => setNotice({ tone: "green", title: "Plano aberto para edição", message: `Mock: ${client.plan} carregado para ajuste de refeições e checklist.` })} className="primary-button"><FileText size={18} /> Editar plano</button>
           </>
         }
@@ -457,7 +524,14 @@ export function ProClientDetailPage({ clientId }: { clientId: string }) {
         <ClientActionCard client={client} />
       </div>
 
-      <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_390px]">
+      <div className="mt-5">
+        <ClientNutritionPlanCard
+          client={client}
+          onEdit={() => setNotice({ tone: "green", title: "Plano aberto para edição", message: `Mock: ${client.plan} carregado para ajuste de refeições, substituições e checklist.` })}
+        />
+      </div>
+
+      <div className="hidden">
         <section className="app-card premium-card p-5" data-reveal>
           <p className="eyebrow">Permissões</p>
           <h2 className="mt-2 text-xl font-black text-white">Dados compartilhados</h2>
@@ -546,6 +620,7 @@ export function ProAgendaPage() {
 
 export function ProPlansPage() {
   const [notice, setNotice] = useState<ProNotice | null>(null);
+  const [pdfFileName, setPdfFileName] = useState<string | null>(null);
 
   return (
     <>
@@ -560,10 +635,18 @@ export function ProPlansPage() {
         <div className="grid gap-4 md:grid-cols-2">
           {planTemplates.map((plan) => <PlanPreviewCard key={plan.id} plan={plan} />)}
         </div>
-        <aside className="app-card premium-card h-fit p-5" data-reveal>
-          <p className="eyebrow text-[var(--green)]">Fluxo recomendado</p>
-          <h2 className="mt-2 text-xl font-black text-white">Do modelo ao plano individual</h2>
-          <div className="mt-5 space-y-3">
+        <aside className="space-y-5">
+          <PdfModelUploadCard
+            fileName={pdfFileName}
+            onFile={(fileName) => {
+              setPdfFileName(fileName);
+              setNotice({ tone: "cyan", title: "PDF anexado ao modelo", message: `${fileName} ficou pronto para revisão visual. Depois conectamos ao storage seguro.` });
+            }}
+          />
+          <section className="app-card premium-card h-fit p-5" data-reveal>
+            <p className="eyebrow text-[var(--green)]">Fluxo recomendado</p>
+            <h2 className="mt-2 text-xl font-black text-white">Do modelo ao plano individual</h2>
+            <div className="mt-5 space-y-3">
             {[
               ["Escolher base", "Parte de um modelo por objetivo e rotina."],
               ["Ajustar restrições", "Preferências, horários, fome, treino e contexto."],
@@ -578,7 +661,8 @@ export function ProPlansPage() {
                 </div>
               </div>
             ))}
-          </div>
+            </div>
+          </section>
         </aside>
       </RevealGroup>
     </>
