@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
+  CalendarClock,
   CheckCircle2,
   ChevronRight,
   ClipboardList,
@@ -19,6 +20,7 @@ import {
   Target,
   Timer,
   Upload,
+  UsersRound,
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -423,7 +425,7 @@ export function ProRunPage() {
       <RunPageHeader />
       <RunNoticeBanner notice={notice} />
       <RevealGroup>
-        <section className="mb-5 grid gap-3 lg:grid-cols-[1.1fr_0.9fr_0.8fr]">
+        <section className="hidden">
           <div className="app-card premium-card border-[rgba(34,211,238,0.24)] p-4" data-reveal>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
@@ -452,7 +454,51 @@ export function ProRunPage() {
           {runStats.map((stat) => <RunMetricCard key={stat.label} {...stat} />)}
         </div>
 
-        <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_390px]">
+        <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_360px]">
+          <section className="app-card premium-card p-5" data-reveal>
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div>
+                <p className="eyebrow text-[var(--cyan)]">Painel do coach</p>
+                <h2 className="mt-2 text-2xl font-black text-white">TAF sem poluir a tela</h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-muted)]">Resumo para decidir rápido. Carteira, agenda e planilhas continuam separadas nas abas do Run Pro.</p>
+              </div>
+              <Link href="/pro/run/plans" className="primary-button shrink-0"><Plus size={18} /> Montar plano</Link>
+            </div>
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
+              {runAthletes.filter((athlete) => athlete.status === "attention" || athlete.status === "new").slice(0, 3).map((athlete) => (
+                <Link key={athlete.id} href={`/pro/run/athletes/${athlete.id}`} className="rounded-[8px] border border-[var(--border)] bg-[rgba(8,11,15,0.28)] p-4 transition hover:border-[rgba(34,211,238,0.45)]">
+                  <div className="flex items-center justify-between gap-2"><p className="truncate text-sm font-black text-white">{athlete.name}</p><StatusPill status={athlete.status} /></div>
+                  <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{athlete.risk ?? athlete.nextSession}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          <section className="app-card premium-card p-5" data-reveal>
+            <p className="eyebrow text-[var(--gold)]">Hoje</p>
+            <h2 className="mt-2 text-xl font-black text-white">Próximo treino</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">{runTimeline[0]?.title ?? "Sem treino"} - {runTimeline[0]?.detail ?? "Organize a agenda Run."}</p>
+            <Link href="/pro/run/agenda" className="secondary-button mt-5 w-full"><CalendarClock size={18} /> Abrir agenda</Link>
+          </section>
+        </div>
+
+        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {[
+            { href: "/pro/run/athletes", title: "Atletas", detail: "Carteira e perfil", icon: UsersRound, tone: "lime" as const },
+            { href: "/pro/run/plans", title: "Planos TAF", detail: "Planilhas e blocos", icon: FileSpreadsheet, tone: "cyan" as const },
+            { href: "/pro/run/agenda", title: "Agenda", detail: "Treinos e avaliações", icon: CalendarClock, tone: "gold" as const },
+            { href: "/pro/run/messages", title: "Mensagens", detail: "Toques do coach", icon: Send, tone: "coral" as const },
+          ].map(({ href, title, detail, icon: Icon, tone }) => (
+            <Link key={href} href={href} className="app-card premium-card p-5 transition hover:-translate-y-0.5 hover:border-[rgba(34,211,238,0.45)]" data-reveal>
+              <span className={`grid size-11 place-items-center rounded-[7px] ${toneClass[tone]}`}><Icon size={21} /></span>
+              <h3 className="mt-5 text-lg font-black text-white">{title}</h3>
+              <p className="mt-2 text-sm leading-5 text-[var(--text-muted)]">{detail}</p>
+              <span className="mt-5 inline-flex items-center gap-2 text-sm font-black text-[var(--cyan)]">Abrir <ArrowRight size={16} /></span>
+            </Link>
+          ))}
+        </div>
+
+        <div className="hidden">
           <section className="app-card overflow-hidden" data-reveal>
             <div className="border-b border-[var(--border)] p-5">
               <p className="eyebrow">Carteira Run</p>
@@ -478,11 +524,11 @@ export function ProRunPage() {
           </section>
         </div>
 
-        <div className="mt-5">
+        <div className="hidden">
           <WeekProgram />
         </div>
 
-        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="hidden">
           {runSessions.map((session) => (
             <SessionCard
               key={session.id}

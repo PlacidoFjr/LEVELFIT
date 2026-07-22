@@ -387,13 +387,56 @@ export function ProDashboardPage() {
       />
 
       <RevealGroup>
-        <ProOperatingStrip />
-
+        {false && <ProOperatingStrip />}
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {proStats.map((stat) => <MetricCard key={stat.label} {...stat} />)}
         </div>
 
-      <div className="mt-5 grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
+        <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_360px]">
+          <section className="app-card premium-card p-5" data-reveal>
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div>
+                <p className="eyebrow text-[var(--lime)]">Resumo do dia</p>
+                <h2 className="mt-2 text-2xl font-black text-white">Priorize o que muda atendimento</h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-muted)]">A home fica limpa para leitura rapida. Agenda, carteira, planos e alertas ficam nas abas proprias.</p>
+              </div>
+              <Link href="/pro/alerts" className="secondary-button shrink-0"><AlertTriangle size={18} /> Ver prioridades</Link>
+            </div>
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
+              {attentionClients.slice(0, 3).map((client) => (
+                <Link key={client.id} href={`/pro/clients/${client.id}`} className="rounded-[8px] border border-[var(--border)] bg-[rgba(8,11,15,0.28)] p-4 transition hover:border-[rgba(183,255,42,0.45)]">
+                  <div className="flex items-center justify-between gap-2"><p className="truncate text-sm font-black text-white">{client.name}</p><StatusPill status={client.status} /></div>
+                  <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{client.riskReason ?? client.nextAppointment}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          <section className="app-card premium-card p-5" data-reveal>
+            <p className="eyebrow text-[var(--cyan)]">Proximo retorno</p>
+            <h2 className="mt-2 text-xl font-black text-white">{appointments[0]?.clientName ?? "Agenda livre"}</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">{appointments[0] ? `${appointments[0].time} - ${appointments[0].type} - ${appointments[0].mode}` : "Nenhum retorno marcado para hoje."}</p>
+            <Link href="/pro/agenda" className="primary-button mt-5 w-full"><CalendarClock size={18} /> Abrir agenda</Link>
+          </section>
+        </div>
+
+        <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {[
+            { href: "/pro/clients", title: "Carteira", detail: "Clientes, status e perfil", icon: UsersRound, tone: "lime" as const },
+            { href: "/pro/plans", title: "Planos", detail: "Modelos, PDF e publicacao", icon: FileText, tone: "green" as const },
+            { href: "/pro/checkins", title: "Check-ins", detail: "Respostas da semana", icon: ClipboardList, tone: "cyan" as const },
+            { href: "/pro/messages", title: "Mensagens", detail: "Toques e historico", icon: MessageSquareText, tone: "violet" as const },
+          ].map(({ href, title, detail, icon: Icon, tone }) => (
+            <Link key={href} href={href} className="app-card premium-card p-5 transition hover:-translate-y-0.5 hover:border-[rgba(183,255,42,0.45)]" data-reveal>
+              <span className={`grid size-11 place-items-center rounded-[7px] ${toneClass[tone]}`}><Icon size={21} /></span>
+              <h3 className="mt-5 text-lg font-black text-white">{title}</h3>
+              <p className="mt-2 text-sm leading-5 text-[var(--text-muted)]">{detail}</p>
+              <span className="mt-5 inline-flex items-center gap-2 text-sm font-black text-[var(--lime)]">Abrir <ArrowRight size={16} /></span>
+            </Link>
+          ))}
+        </div>
+
+      <div className="hidden">
         <section className="app-card premium-card p-5" data-reveal>
           <div className="mb-4 flex items-center justify-between gap-3">
             <div><p className="eyebrow">Agenda de hoje</p><h2 className="mt-2 text-xl font-black text-white">Retornos e consultas</h2></div>
@@ -411,7 +454,7 @@ export function ProDashboardPage() {
         </section>
       </div>
 
-      <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_380px]">
+      <div className="hidden">
         <section className="app-card overflow-hidden" data-reveal>
           <div className="border-b border-[var(--border)] p-5">
             <p className="eyebrow">Clientes em atenção</p>
