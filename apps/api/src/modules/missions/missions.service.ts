@@ -42,9 +42,16 @@ export class MissionsService {
     if (!mission) throw new NotFoundException({ code: "MISSION_NOT_FOUND", message: "Missão não encontrada." });
     if (mission.status === "completed") throw new ConflictException({ code: "MISSION_ALREADY_RESOLVED", message: "Missão já concluída." });
     return this.prisma.$transaction(async (tx) => {
+      const completedBefore = await tx.userMission.count({ where: { userId, status: "completed", deletedAt: null } });
       const award = await this.game.awardXp(userId, mission.dailyMission.xpReward, "mission_completed", `user_mission:${mission.id}:completed`, "user_mission", mission.id, tx);
       const updated = await tx.userMission.update({ where: { id: mission.id }, data: { status: "completed", completedAt: new Date(), xpAwarded: mission.xpAwarded + award.awarded } });
-      return { mission: updated, xpAwarded: award.awarded };
+      let rankingAutoJoined = false;
+      if (completedBefore === 0 && award.awarded > 0) {
+        await tx.user.update({ where: { id: userId }, data: { rankingOptIn: true } });
+        await tx.auditLog.create({ data: { actorUserId: userId, targetUserId: userId, action: "ranking_auto_joined", entityType: "user", entityId: userId, metadata: { source: "first_mission", missionId: mission.id } } });
+        rankingAutoJoined = true;
+      }
+      return { mission: updated, xpAwarded: award.awarded, rankingAutoJoined };
     });
   }
 }

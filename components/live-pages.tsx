@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -92,6 +92,7 @@ import {
   type NutritionToday,
   type ProfessionalConnection,
   type RankingEntry,
+  type RankingScope,
   type TodayWorkout,
   type UserMission,
   type Workout,
@@ -1228,6 +1229,84 @@ export function ProgressLivePage() {
 }
 
 export function RankingLivePage() {
+  const [items, setItems] = useState<RankingEntry[]>([]);
+  const [scope, setScope] = useState<RankingScope>("global");
+  const [scopeLabel, setScopeLabel] = useState("Global");
+  const [loading, setLoading] = useState(true);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async (nextScope = scope) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await listRanking(nextScope);
+      setItems(result.data);
+      setScopeLabel(result.label);
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }, [scope]);
+
+  useEffect(() => { const id = window.setTimeout(() => void load(scope), 0); return () => window.clearTimeout(id); }, [load, scope]);
+
+  async function joinRanking() {
+    setError(null);
+    try {
+      await updateMe({ rankingOptIn: true });
+      setNotice("Ranking ativado. Depois da primeira missao, novos usuarios entram automaticamente; voce ainda pode sair pelo perfil.");
+      await load(scope);
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+
+  const podium = items.slice(0, 3);
+  const tabs: Array<{ value: RankingScope; label: string; detail: string }> = [
+    { value: "global", label: "Global", detail: "Toda a comunidade" },
+    { value: "nutrition", label: "Nutri Pro", detail: "Seu nutricionista" },
+    { value: "run", label: "Run Pro", detail: "Seu coach" },
+  ];
+
+  return <Screen title="Ranking" description="Competicao saudavel por XP, separada entre global e profissionais conectados." action={<button onClick={joinRanking} className="secondary-button"><ShieldCheck size={18} /> Ativar ranking</button>}>
+    <Notice message={notice} />
+    <Notice message={error} tone="danger" />
+    <section className="app-card mb-4 p-3">
+      <div className="grid gap-2 sm:grid-cols-3">
+        {tabs.map((tab) => <button key={tab.value} type="button" onClick={() => setScope(tab.value)} className={`rounded-[8px] border p-3 text-left transition ${scope === tab.value ? "border-[var(--lime)] bg-[rgba(183,255,42,0.12)]" : "border-[var(--border)] bg-[rgba(8,11,15,0.26)] hover:border-[var(--border-strong)]"}`}>
+          <span className="block text-sm font-black text-white">{tab.label}</span>
+          <span className="mt-1 block text-xs font-bold text-[var(--text-muted)]">{tab.detail}</span>
+        </button>)}
+      </div>
+    </section>
+    {loading ? <LoadingCard /> : <section className="mb-4 grid gap-4 lg:grid-cols-[1fr_360px]">
+      <div className="app-card p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div><p className="eyebrow text-[var(--gold)]">{scope === "global" ? "Top global" : scopeLabel}</p><h2 className="mt-2 text-lg font-black text-white">XP conquistado com constancia</h2></div>
+          <Pill tone="gold"><Trophy size={14} /> {scope === "global" ? "GLOBAL" : scope === "run" ? "RUN PRO" : "NUTRI PRO"}</Pill>
+        </div>
+        {podium.length ? <div className="mt-5 grid gap-3 md:grid-cols-3">{podium.map((person) => <article key={person.userId} className={`subtle-card p-4 ${person.rank === 1 ? "border-[rgba(250,204,21,0.45)]" : ""}`}>
+          <div className="flex items-center justify-between"><span className={`grid size-11 place-items-center rounded-[7px] ${person.rank === 1 ? "bg-[rgba(250,204,21,0.16)] text-[var(--gold)]" : "bg-[var(--surface-soft)] text-[var(--text-muted)]"}`}><Medal size={22} /></span><span className="text-xs font-black text-[var(--text-dim)]">#{person.rank}</span></div>
+          <h3 className="mt-4 font-black text-white">{person.displayName}</h3>
+          <p className="mt-1 text-xs text-[var(--text-muted)]">Nivel {person.level} - {person.streak} dias</p>
+          <p className="mt-4 text-xl font-black text-[var(--lime)]">{person.totalXp.toLocaleString("pt-BR")} XP</p>
+        </article>)}</div> : <p className="mt-6 text-sm text-[var(--text-muted)]">{scope === "global" ? "Ainda nao ha participantes no ranking global." : "Conecte um profissional desse tipo ou aguarde mais participantes ativos nesse grupo."}</p>}
+      </div>
+      <aside className="app-card p-5">
+        <p className="eyebrow text-[var(--cyan)]">Como funciona</p>
+        <h2 className="mt-2 text-lg font-black text-white">Primeira missao libera o ranking</h2>
+        <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">Ao concluir a primeira missao, o usuario entra no ranking automaticamente. Se preferir sair depois, a escolha fica no controle dele.</p>
+        <div className="mt-5 border-l-2 border-[var(--lime)] bg-[rgba(183,255,42,0.06)] p-4"><p className="text-sm font-black text-white">Dados nunca exibidos</p><p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">Peso, medidas, fotos, refeicoes detalhadas e informacoes sensiveis de saude.</p></div>
+        <button onClick={joinRanking} className="primary-button mt-5 w-full"><UsersRound size={18} /> Ativar agora</button>
+      </aside>
+    </section>}
+    {!loading && items.length > 0 && <section className="app-card px-5"><div className="divide-y divide-[var(--border)]">{items.map((person) => <div key={person.userId} className="flex min-h-[78px] items-center gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-[7px] bg-[var(--surface-soft)] text-sm font-black text-white">#{person.rank}</span><div className="min-w-0 flex-1"><p className="truncate text-sm font-black text-white">{person.displayName}</p><p className="mt-1 truncate text-xs text-[var(--text-muted)]">Nivel {person.level}</p></div><span className="hidden text-xs font-black text-[var(--gold)] sm:inline">{person.streak} dias</span><span className="text-sm font-black text-[var(--lime)]">{person.totalXp.toLocaleString("pt-BR")} XP</span></div>)}</div></section>}
+  </Screen>;
+}
+
+export function LegacyRankingLivePage() {
   const [items, setItems] = useState<RankingEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState<string | null>(null);

@@ -258,6 +258,14 @@ export type RankingEntry = {
   streak: number;
 };
 
+export type RankingScope = "global" | "nutrition" | "run";
+
+export type RankingResponse = {
+  scope: RankingScope;
+  label: string;
+  data: RankingEntry[];
+};
+
 export type XpEvent = {
   id: string;
   amount: number;
@@ -448,7 +456,7 @@ export function listMissions() {
 }
 
 export async function completeMission(id: string) {
-  const result = await apiRequest<{ mission: UserMission; xpAwarded: number }>(`/missions/${id}/complete`, { method: "PATCH" });
+  const result = await apiRequest<{ mission: UserMission; xpAwarded: number; rankingAutoJoined?: boolean }>(`/missions/${id}/complete`, { method: "PATCH" });
   notifyXpUpdate(result.xpAwarded);
   return result;
 }
@@ -608,8 +616,9 @@ export function getXpSummary() {
   return apiRequest<XpSummary>("/xp");
 }
 
-export function listRanking() {
-  return apiRequest<{ data: RankingEntry[] }>("/ranking");
+export function listRanking(scope: RankingScope = "global") {
+  const params = new URLSearchParams({ scope });
+  return apiRequest<RankingResponse>(`/ranking?${params.toString()}`);
 }
 
 export function listNotifications() {

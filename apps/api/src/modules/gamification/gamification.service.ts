@@ -4,6 +4,7 @@ import { asUtcDate } from "../../common/date";
 import { PrismaService } from "../../infrastructure/prisma/prisma.service";
 
 type DatabaseClient = Prisma.TransactionClient | PrismaService;
+type RankingScope = "global" | "nutrition" | "run";
 type AchievementRule = {
   key: string;
   reason?: XpReason;
@@ -146,9 +147,33 @@ export class GamificationService {
     return { data: achievements.map(({ users, ...item }) => ({ ...item, unlocked: users.length > 0, unlockedAt: users[0]?.unlockedAt ?? null })) };
   }
 
-  async ranking() {
+  async ranking(userId: string, scope: RankingScope = "global") {
+    const normalizedScope: RankingScope = scope === "nutrition" || scope === "run" ? scope : "global";
+    const professionalKeys = normalizedScope === "global" ? [] : await this.prisma.professionalConnection.findMany({
+      where: { userId, kind: normalizedScope, status: "active", deletedAt: null },
+      select: { professionalKey: true, professionalName: true },
+    });
+
+    if (normalizedScope !== "global" && professionalKeys.length === 0) {
+      return { scope: normalizedScope, label: normalizedScope === "run" ? "Run Pro" : "Nutri Pro", data: [] };
+    }
+
     const users = await this.prisma.user.findMany({
-      where: { rankingOptIn: true, status: "active", deletedAt: null },
+      where: {
+        rankingOptIn: true,
+        status: "active",
+        deletedAt: null,
+        ...(normalizedScope === "global" ? {} : {
+          professionalConnections: {
+            some: {
+              kind: normalizedScope,
+              status: "active",
+              deletedAt: null,
+              professionalKey: { in: professionalKeys.map((connection) => connection.professionalKey) },
+            },
+          },
+        }),
+      },
       select: {
         id: true,
         rankingOptIn: true,
@@ -161,6 +186,8 @@ export class GamificationService {
     });
 
     return {
+      scope: normalizedScope,
+      label: normalizedScope === "global" ? "Global" : professionalKeys.map((connection) => connection.professionalName).join(", "),
       data: users.map((user, index) => ({
         rank: index + 1,
         userId: user.id,
