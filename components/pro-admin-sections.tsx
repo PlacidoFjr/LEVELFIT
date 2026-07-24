@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CheckCircle2, Copy, Plus, RefreshCw, ShieldCheck, Trash2 } from "lucide-react";
+import { Ban, CheckCircle2, Copy, Plus, RefreshCw, RotateCcw, ShieldCheck, Trash2 } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   getAdminOverview,
@@ -14,10 +14,12 @@ import {
   getAdminUsers,
   confirmOwnerStepUp,
   createAdminProfessionalInvite,
+  deleteAdminUserAccess,
   grantAdminRole,
   hasFreshOwnerStepUp,
   revokeAdminProfessionalInvite,
   revokeAdminRole,
+  updateAdminUserStatus,
   type AdminOverview,
   type AdminProfessionalInvite,
   type AdminProductRow,
@@ -256,26 +258,94 @@ export function AdminProductsPage() {
 export function AdminUsersPage() {
   const [rows, setRows] = useState<AdminUserRow[]>([]);
   const [message, setMessage] = useState<string | null>(null);
-  useEffect(() => { getAdminUsers().then((result) => setRows(result.data)).catch(() => setMessage("Nao foi possivel carregar usuarios.")); }, []);
+  const [tone, setTone] = useState<"neutral" | "error" | "success">("neutral");
+  const [savingUserId, setSavingUserId] = useState<string | null>(null);
+  const stepUp = useOwnerStepUpDialog(setTone, setMessage);
+
+  async function load() {
+    const result = await getAdminUsers();
+    setRows(result.data);
+  }
+
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      load().catch(() => {
+        setTone("error");
+        setMessage("Nao foi possivel carregar usuarios.");
+      });
+    }, 0);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  async function changeStatus(user: AdminUserRow, status: "active" | "suspended") {
+    if (!user.canManageAccess) return;
+    const confirmed = status === "suspended" ? window.confirm(`Suspender acesso de ${user.displayName}? A sessao atual sera encerrada.`) : true;
+    if (!confirmed) return;
+    setSavingUserId(user.id);
+    setMessage(null);
+    try {
+      const confirmed = await stepUp.requestStepUp();
+      if (!confirmed) return;
+      await updateAdminUserStatus(user.id, status);
+      setTone("success");
+      setMessage(status === "suspended" ? "Acesso suspenso e sessoes encerradas." : "Acesso reativado.");
+      await load();
+    } catch (error) {
+      setTone("error");
+      setMessage(error instanceof Error ? error.message : "Nao foi possivel alterar o acesso.");
+    } finally {
+      setSavingUserId(null);
+    }
+  }
+
+  async function deleteAccess(user: AdminUserRow) {
+    if (!user.canManageAccess) return;
+    if (!window.confirm(`Excluir/desativar a conta de ${user.displayName}? Isso remove o login da base ativa e revoga conexoes.`)) return;
+    setSavingUserId(user.id);
+    setMessage(null);
+    try {
+      const confirmed = await stepUp.requestStepUp();
+      if (!confirmed) return;
+      await deleteAdminUserAccess(user.id);
+      setTone("success");
+      setMessage("Usuario removido da base ativa.");
+      await load();
+    } catch (error) {
+      setTone("error");
+      setMessage(error instanceof Error ? error.message : "Nao foi possivel excluir/desativar o usuario.");
+    } finally {
+      setSavingUserId(null);
+    }
+  }
+
   return (
     <>
       <AdminHeader eyebrow="Usuarios" title="Base de usuarios" description="Lista operacional para verificar status, ultimo login, papeis ativos e atividade sem abrir dados sensiveis." />
-      <Notice message={message} tone="error" />
+      <Notice message={message} tone={tone} />
       <div className="app-card overflow-hidden">
         {rows.map((user) => (
-          <article key={user.id} className="grid gap-3 border-b border-[var(--border)] p-4 last:border-b-0 lg:grid-cols-[1fr_160px_220px] lg:items-center">
+          <article key={user.id} className="grid gap-3 border-b border-[var(--border)] p-4 last:border-b-0 xl:grid-cols-[1fr_140px_220px_320px] xl:items-center">
             <div>
               <p className="font-black text-white">{user.displayName}</p>
               <p className="mt-1 text-xs font-bold text-[var(--text-muted)]">{user.email}</p>
             </div>
-            <p className="text-sm font-black text-[var(--lime)]">{user.status}</p>
+            <p className={`text-sm font-black ${user.status === "suspended" ? "text-[var(--coral)]" : "text-[var(--lime)]"}`}>{user.status}</p>
             <div className="flex flex-wrap gap-2">
               {user.roles.length ? user.roles.map((role) => <span key={role} className="rounded-[5px] bg-[rgba(183,255,42,0.1)] px-2 py-1 text-[0.68rem] font-black text-[var(--lime)]">{role}</span>) : <span className="text-xs font-bold text-[var(--text-dim)]">Sem perfil Pro</span>}
+            </div>
+            <div className="flex flex-wrap gap-2 xl:justify-end">
+              {user.status === "suspended" ? (
+                <button type="button" onClick={() => void changeStatus(user, "active")} disabled={!user.canManageAccess || savingUserId === user.id} className="secondary-button min-h-10 px-3 text-xs disabled:opacity-45"><RotateCcw size={15} /> Reativar</button>
+              ) : (
+                <button type="button" onClick={() => void changeStatus(user, "suspended")} disabled={!user.canManageAccess || savingUserId === user.id} className="secondary-button min-h-10 px-3 text-xs disabled:opacity-45"><Ban size={15} /> Suspender</button>
+              )}
+              <button type="button" onClick={() => void deleteAccess(user)} disabled={!user.canManageAccess || savingUserId === user.id} className="secondary-button min-h-10 border-[rgba(255,107,61,0.35)] px-3 text-xs text-[var(--coral)] disabled:opacity-45"><Trash2 size={15} /> Excluir acesso</button>
             </div>
           </article>
         ))}
       </div>
       {!rows.length && <EmptyState text="Nenhum usuario carregado ainda." />}
+      {stepUp.dialog}
     </>
   );
 }

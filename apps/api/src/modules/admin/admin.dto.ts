@@ -9,6 +9,11 @@ export class GrantRoleDto {
   role!: "OWNER" | "NUTRITIONIST" | "RUN_COACH";
 }
 
+export class UpdateUserStatusDto {
+  @IsIn(["active", "suspended"])
+  status!: "active" | "suspended";
+}
+
 export class CreateProfessionalInviteDto {
   @IsIn(["nutrition", "run"])
   kind!: "nutrition" | "run";

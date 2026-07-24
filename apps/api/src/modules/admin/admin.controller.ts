@@ -1,8 +1,8 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Req, UseGuards } from "@nestjs/common";
 import type { Request } from "express";
 import type { AuthUser } from "../../common/auth-user";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
-import { CreateProfessionalInviteDto, GrantRoleDto } from "./admin.dto";
+import { CreateProfessionalInviteDto, GrantRoleDto, UpdateUserStatusDto } from "./admin.dto";
 import { AdminService } from "./admin.service";
 import { OwnerGuard } from "./owner.guard";
 import { OwnerStepUpGuard } from "./owner-step-up.guard";
@@ -23,8 +23,20 @@ export class AdminController {
   }
 
   @Get("users")
-  users() {
-    return this.admin.users();
+  users(@Req() request: Request & { user: AuthUser }) {
+    return this.admin.users(request.user.userId);
+  }
+
+  @Patch("users/:id/status")
+  @UseGuards(OwnerStepUpGuard)
+  updateUserStatus(@Req() request: Request & { user: AuthUser }, @Param("id", new ParseUUIDPipe({ version: "4" })) id: string, @Body() body: UpdateUserStatusDto) {
+    return this.admin.updateUserStatus(request.user.userId, id, body.status);
+  }
+
+  @Delete("users/:id")
+  @UseGuards(OwnerStepUpGuard)
+  deleteUserAccess(@Req() request: Request & { user: AuthUser }, @Param("id", new ParseUUIDPipe({ version: "4" })) id: string) {
+    return this.admin.deleteUserAccess(request.user.userId, id);
   }
 
   @Get("professionals")

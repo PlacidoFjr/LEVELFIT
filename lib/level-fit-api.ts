@@ -380,6 +380,7 @@ export type AdminUserRow = {
   createdAt: string;
   lastLoginAt?: string | null;
   roles: AdminRoleName[];
+  canManageAccess: boolean;
   activity: { professionalConnections: number; workoutSessions: number; foodLogs: number };
 };
 
@@ -753,6 +754,21 @@ export function getAdminProducts() {
 
 export function getAdminUsers() {
   return apiRequest<{ data: AdminUserRow[] }>("/admin/users");
+}
+
+export function updateAdminUserStatus(id: string, status: "active" | "suspended") {
+  return apiRequest<{ id: string; status: string }>(`/admin/users/${id}/status`, {
+    method: "PATCH",
+    headers: ownerStepUpHeaders(),
+    body: JSON.stringify({ status }),
+  });
+}
+
+export function deleteAdminUserAccess(id: string) {
+  return apiRequest<{ id: string; status: string; deletedAt: string }>(`/admin/users/${id}`, {
+    method: "DELETE",
+    headers: ownerStepUpHeaders(),
+  });
 }
 
 export function getAdminProfessionals() {

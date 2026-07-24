@@ -93,9 +93,11 @@ export class AuthService {
       });
 
       if (existing) {
+        if (existing.status === "suspended") throw new ForbiddenException({ code: "ACCOUNT_SUSPENDED", message: "Conta temporariamente indisponivel." });
+        if (existing.status === "deleted") throw new ForbiddenException({ code: "ACCOUNT_DELETED", message: "Conta indisponivel." });
         await tx.user.update({
           where: { id: existing.id },
-          data: { status: existing.status === "deleted" ? existing.status : "active", emailVerifiedAt: existing.emailVerifiedAt ?? now, lastLoginAt: now },
+          data: { status: "active", emailVerifiedAt: existing.emailVerifiedAt ?? now, lastLoginAt: now },
         });
         if (!existing.profile) {
           await tx.userProfile.create({ data: { userId: existing.id, displayName, gender: dto.gender, timezone } });

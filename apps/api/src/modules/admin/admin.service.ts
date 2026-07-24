@@ -136,7 +136,23 @@ export class AdminService {
     };
   }
 
-  async users() {
+  private async assertManageableUser(actorUserId: string, targetUserId: string) {
+    if (actorUserId === targetUserId) {
+      throw new BadRequestException({ code: "CANNOT_MANAGE_SELF", message: "Use outro Owner para alterar seu proprio acesso." });
+    }
+    const target = await this.prisma.user.findFirst({
+      where: { id: targetUserId, deletedAt: null },
+      select: { id: true, email: true, roleAssignments: { where: { revokedAt: null, role: "OWNER" }, select: { id: true } } },
+    });
+    if (!target) throw new NotFoundException({ code: "USER_NOT_FOUND", message: "Usuario nao encontrado." });
+    const envOwner = splitEmails(this.config.get<string>("OWNER_EMAILS")).includes(target.email.toLowerCase());
+    if (envOwner || target.roleAssignments.length > 0) {
+      throw new BadRequestException({ code: "OWNER_USER_PROTECTED", message: "Usuarios Owner nao podem ser suspensos ou excluidos por esta tela." });
+    }
+    return target;
+  }
+
+  async users(actorUserId: string) {
     const users = await this.prisma.user.findMany({
       where: { deletedAt: null },
       select: {
@@ -153,18 +169,52 @@ export class AdminService {
       take: 80,
     });
 
+    const envRows = this.envRoleRows();
     return {
-      data: users.map((user) => ({
+      data: users.map((user) => {
+        const roles = [...envRows.filter((item) => item.email === user.email.toLowerCase()).map((item) => item.role), ...user.roleAssignments.map((item) => item.role as AdminRole)];
+        return ({
         id: user.id,
         email: user.email,
         displayName: user.profile?.displayName ?? user.email.split("@")[0],
         status: user.status,
         createdAt: user.createdAt,
         lastLoginAt: user.lastLoginAt,
-        roles: [...this.envRoleRows().filter((item) => item.email === user.email.toLowerCase()).map((item) => item.role), ...user.roleAssignments.map((item) => item.role as AdminRole)],
+        roles,
+        canManageAccess: user.id !== actorUserId && !roles.includes("OWNER"),
         activity: { professionalConnections: user._count.professionalConnections, workoutSessions: user._count.workoutSessions, foodLogs: user._count.foodLogs },
-      })),
+      });
+      }),
     };
+  }
+
+  async updateUserStatus(actorUserId: string, targetUserId: string, status: "active" | "suspended") {
+    const target = await this.assertManageableUser(actorUserId, targetUserId);
+    const now = new Date();
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.update({ where: { id: target.id }, data: { status } });
+      if (status === "suspended") {
+        await tx.session.updateMany({ where: { userId: target.id, revokedAt: null }, data: { revokedAt: now } });
+        await tx.refreshToken.updateMany({ where: { userId: target.id, revokedAt: null }, data: { revokedAt: now } });
+      }
+      await tx.auditLog.create({ data: { actorUserId, targetUserId: target.id, action: status === "suspended" ? "admin_user_suspended" : "admin_user_reactivated", entityType: "user", entityId: target.id, metadata: { email: target.email } } });
+      return user;
+    });
+    return { id: updated.id, status: updated.status };
+  }
+
+  async deleteUserAccess(actorUserId: string, targetUserId: string) {
+    const target = await this.assertManageableUser(actorUserId, targetUserId);
+    const now = new Date();
+    await this.prisma.$transaction([
+      this.prisma.user.update({ where: { id: target.id }, data: { status: "deleted", deletedAt: now } }),
+      this.prisma.session.updateMany({ where: { userId: target.id, revokedAt: null }, data: { revokedAt: now } }),
+      this.prisma.refreshToken.updateMany({ where: { userId: target.id, revokedAt: null }, data: { revokedAt: now } }),
+      this.prisma.userRoleAssignment.updateMany({ where: { userId: target.id, revokedAt: null, source: { not: "env" } }, data: { revokedAt: now } }),
+      this.prisma.professionalConnection.updateMany({ where: { userId: target.id, status: "active", deletedAt: null }, data: { status: "revoked", revokedAt: now } }),
+      this.prisma.auditLog.create({ data: { actorUserId, targetUserId: target.id, action: "admin_user_deleted", entityType: "user", entityId: target.id, metadata: { email: target.email, mode: "soft_delete" } } }),
+    ]);
+    return { id: target.id, status: "deleted", deletedAt: now };
   }
 
   async products() {
@@ -376,6 +426,9 @@ export class AdminService {
       "professional_touch_sent",
       "admin_role_granted",
       "admin_role_revoked",
+      "admin_user_suspended",
+      "admin_user_reactivated",
+      "admin_user_deleted",
       "owner_step_up_success",
       "owner_step_up_failed",
     ];
